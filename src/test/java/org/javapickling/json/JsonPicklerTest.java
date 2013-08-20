@@ -19,7 +19,7 @@ public class JsonPicklerTest {
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 
-        final House house = Utils.house();
+        final House house = Utils.house(0);
 
         final Utils.RoundTrip jsonTimeMs = roundTripViaJson(house);
         System.out.println(jsonTimeMs);

@@ -18,7 +18,7 @@ public class ByteIOPicklerTest {
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 
-        final House house = Utils.house();
+        final House house = Utils.house(0);
 
         final Utils.RoundTrip byteIOTimeMs = roundTripViaByteIO(house);
         System.out.println(byteIOTimeMs);

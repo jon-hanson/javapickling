@@ -41,16 +41,21 @@ public abstract class Utils {
         return new Person("tom", 10, false, longs);
     }
 
-    public static List<Person> persons() {
-        final List<Person> persons = Lists.newArrayListWithCapacity(3);
+    public static List<Object> persons() {
+        final List<Object> persons = Lists.newArrayListWithCapacity(3);
         persons.add(createPerson("tom", 10, false, 0));
         persons.add(createPerson("diane", 20, true, 1));
         persons.add(createPerson("harry", 30, false, 2));
         return persons;
     }
 
-    public static House house() {
-        return new House(1234.5678, persons());
+    public static House house(int i) {
+        if (i == 0)
+            return new House(House.Type.DETACHED, 1.23, persons());
+        else if (i == 1)
+            return new House(House.Type.SEMI_DETACHED, 2.34, persons());
+        else
+            return new House(House.Type.FLAT, 3.45, persons());
     }
 
     public static RoundTrip roundTripViaJavaSer(House house) throws IOException, ClassNotFoundException {

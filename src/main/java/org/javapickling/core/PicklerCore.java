@@ -40,6 +40,12 @@ public interface PicklerCore<PF> {
     Pickler<Double, PF> dbl();
 
     /**
+     * @param <T>
+     * @return a Piclker for an enum.
+     */
+    <T extends Enum<T>> Pickler<T, PF> enm(final Class<T> enumClass);
+
+    /**
      * Provide a Pickler for an array.
      * @param elemPickler a Pickler for the array element type.
      * @param <T>
@@ -75,5 +81,5 @@ public interface PicklerCore<PF> {
      * @param <T>
      * @return a Pickler for the specified Class.
      */
-    <T> Pickler<T, PF> object(Class<T> clazz);
+    <T> Pickler<T, PF> object(final Class<T> clazz);
 }

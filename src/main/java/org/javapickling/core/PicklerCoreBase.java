@@ -139,6 +139,9 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     public <T> Pickler<T, PF> object(Class<T> clazz) {
-        return (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
+        final Pickler<T, PF> result = (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
+        if (result == null)
+            throw new PicklerException("No pickler registered for class " + clazz);
+        return result;
     }
 }

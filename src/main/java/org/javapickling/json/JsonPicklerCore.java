@@ -166,6 +166,23 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
+    public <T extends Enum<T>> Pickler<T, JsonNode> enm(final Class<T> enumClass) {
+
+        return new ObjectPickler<T, JsonNode>() {
+
+            @Override
+            public JsonNode pickle(T t, JsonNode target) throws IOException {
+                return nodeFactory.textNode(t.name());
+            }
+
+            @Override
+            public T unpickle(JsonNode source) throws IOException {
+                return T.valueOf(enumClass, source.asText());
+            }
+        };
+    }
+
+    @Override
     public <T> Pickler<T[], JsonNode> array(final Pickler<T, JsonNode> elemPickler) {
 
         return new Pickler<T[], JsonNode>() {

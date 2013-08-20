@@ -161,6 +161,24 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
+    public <T extends Enum<T>> Pickler<T, ByteIO> enm(final Class<T> enumClass) {
+
+        return new ObjectPickler<T, ByteIO>() {
+
+            @Override
+            public ByteIO pickle(T t, ByteIO target) throws IOException {
+                target.writeString(t.name());
+                return target;
+            }
+
+            @Override
+            public T unpickle(ByteIO source) throws IOException {
+                return T.valueOf(enumClass, source.readString());
+            }
+        };
+    }
+
+    @Override
     public <T> Pickler<T[], ByteIO> array(final Pickler<T, ByteIO> elemPickler) {
 
         return new Pickler<T[], ByteIO>() {
