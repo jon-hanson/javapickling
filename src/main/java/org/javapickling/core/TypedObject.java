@@ -8,20 +8,20 @@ public class TypedObject<T> {
 
     public enum Type {
         NULL,
-        BOOL,
+        BOOLEAN,
         BYTE,
         CHAR,
-        INT,
+        INTEGER,
         SHORT,
         LONG,
         FLOAT,
         DOUBLE,
         STRING,
         OBJECT,
-        BOOL_ARRAY,
+        BOOLEAN_ARRAY,
         BYTE_ARRAY,
         CHAR_ARRAY,
-        INT_ARRAY,
+        INTEGER_ARRAY,
         SHORT_ARRAY,
         LONG_ARRAY,
         FLOAT_ARRAY,
@@ -36,10 +36,10 @@ public class TypedObject<T> {
         }
 
         static {
-            register(Boolean.class, BOOL);
+            register(Boolean.class, BOOLEAN);
             register(Byte.class, BYTE);
             register(Character.class, CHAR);
-            register(Integer.class, INT);
+            register(Integer.class, INTEGER);
             register(Short.class, SHORT);
             register(Long.class, LONG);
             register(Float.class, FLOAT);
@@ -47,10 +47,10 @@ public class TypedObject<T> {
             register(String.class, STRING);
             register(Object.class, OBJECT);
 
-            register(Boolean[].class, BOOL_ARRAY);
+            register(Boolean[].class, BOOLEAN_ARRAY);
             register(Byte[].class, BYTE_ARRAY);
             register(Character[].class, CHAR_ARRAY);
-            register(Integer[].class, INT_ARRAY);
+            register(Integer[].class, INTEGER_ARRAY);
             register(Short[].class, SHORT_ARRAY);
             register(Long[].class, LONG_ARRAY);
             register(Float[].class, FLOAT_ARRAY);
@@ -63,7 +63,7 @@ public class TypedObject<T> {
             if (clazz == null) {
                 return NULL;
             } else {
-                Type type = typeRegistry.get(clazz);
+                Type type = typeRegistry.get(clazz.getName());
                 if (type != null) {
                     return type;
                 } else {
@@ -77,20 +77,26 @@ public class TypedObject<T> {
     public final Type type;
     public final T value;
 
-    TypedObject() {
+    public TypedObject() {
         this(null);
     }
 
-    TypedObject(T value) {
+    public TypedObject(T value) {
         if (value == null) {
             this.clazz = null;
             this.type = Type.NULL;
             this.value = null;
         } else {
-            this.clazz = (Class<T>) value.getClass();
+            this.clazz = (Class<T>)value.getClass();
             this.type = Type.ofClass(clazz);
             this.value = value;
         }
+    }
+
+    public TypedObject(Type type, T value) {
+        this.clazz = (Class<T>)value.getClass();
+        this.type = type;
+        this.value = value;
     }
 
     public boolean isArray() {

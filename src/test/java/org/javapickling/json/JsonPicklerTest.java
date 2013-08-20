@@ -32,7 +32,7 @@ public class JsonPicklerTest {
 
         final long startTime1 = System.nanoTime();
 
-        final Pickler<House, JsonNode> pickler = jsonPickler.object(House.class);
+        final Pickler<House, JsonNode> pickler = jsonPickler.object_p(House.class);
 
         final JsonNode node = pickler.pickle(house, null);
 

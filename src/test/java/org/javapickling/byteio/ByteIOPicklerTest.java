@@ -31,7 +31,7 @@ public class ByteIOPicklerTest {
 
         final long startTime1 = System.nanoTime();
 
-        final Pickler<House, ByteIO> pickler = byteIOPickler.object(House.class);
+        final Pickler<House, ByteIO> pickler = byteIOPickler.object_p(House.class);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ByteIO byteOutput = new ByteIO(new DataOutputStream(baos));

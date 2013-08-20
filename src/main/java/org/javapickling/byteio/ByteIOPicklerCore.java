@@ -24,6 +24,20 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         }
     };
 
+    protected final Pickler<Byte, ByteIO> byteP = new Pickler<Byte, ByteIO>() {
+
+        @Override
+        public ByteIO pickle(Byte b, ByteIO target) throws IOException {
+            target.output.writeByte(b);
+            return target;
+        }
+
+        @Override
+        public Byte unpickle(ByteIO source) throws IOException {
+            return source.input.readByte();
+        }
+    };
+
     protected final Pickler<Character, ByteIO> charP = new Pickler<Character, ByteIO>() {
 
         @Override
@@ -66,6 +80,20 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         }
     };
 
+    protected final Pickler<Short, ByteIO> shortP = new Pickler<Short, ByteIO>() {
+
+        @Override
+        public ByteIO pickle(Short s, ByteIO target) throws IOException {
+            target.output.writeShort(s);
+            return target;
+        }
+
+        @Override
+        public Short unpickle(ByteIO source) throws IOException {
+            return source.input.readShort();
+        }
+    };
+
     protected final Pickler<Long, ByteIO> longP = new Pickler<Long, ByteIO>() {
 
         @Override
@@ -77,6 +105,20 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         @Override
         public Long unpickle(ByteIO source) throws IOException {
             return source.input.readLong();
+        }
+    };
+
+    protected final Pickler<Float, ByteIO> floatP = new Pickler<Float, ByteIO>() {
+
+        @Override
+        public ByteIO pickle(Float f, ByteIO target) throws IOException {
+            target.output.writeFloat(f);
+            return target;
+        }
+
+        @Override
+        public Float unpickle(ByteIO source) throws IOException {
+            return source.input.readFloat();
         }
     };
 
@@ -131,39 +173,54 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     };
 
     @Override
-    public Pickler<Boolean, ByteIO> bool() {
+    public Pickler<Boolean, ByteIO> boolean_p() {
         return boolP;
     }
 
     @Override
-    public Pickler<Character, ByteIO> chr() {
+    public Pickler<Byte, ByteIO> byte_p() {
+        return byteP;
+    }
+
+    @Override
+    public Pickler<Character, ByteIO> char_p() {
         return charP;
     }
 
     @Override
-    public Pickler<String, ByteIO> str() {
+    public Pickler<String, ByteIO> string_p() {
         return stringP;
     }
 
     @Override
-    public Pickler<Integer, ByteIO> integer() {
+    public Pickler<Integer, ByteIO> integer_p() {
         return integerP;
     }
 
     @Override
-    public Pickler<Long, ByteIO> lng() {
+    public Pickler<Short, ByteIO> short_p() {
+        return shortP;
+    }
+
+    @Override
+    public Pickler<Long, ByteIO> long_p() {
         return longP;
     }
 
     @Override
-    public Pickler<Double, ByteIO> dbl() {
+    public Pickler<Float, ByteIO> float_p() {
+        return floatP;
+    }
+
+    @Override
+    public Pickler<Double, ByteIO> double_p() {
         return doubleP;
     }
 
     @Override
-    public <T extends Enum<T>> Pickler<T, ByteIO> enm(final Class<T> enumClass) {
+    public <T extends Enum<T>> Pickler<T, ByteIO> enum_p(final Class<T> enumClass) {
 
-        return new ObjectPickler<T, ByteIO>() {
+        return new Pickler<T, ByteIO>() {
 
             @Override
             public ByteIO pickle(T t, ByteIO target) throws IOException {
@@ -179,7 +236,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<T[], ByteIO> array(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler) {
 
         return new Pickler<T[], ByteIO>() {
 
@@ -211,7 +268,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<List<T>, ByteIO> list(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<List<T>, ByteIO> list_p(final Pickler<T, ByteIO> elemPickler) {
 
         return new Pickler<List<T>, ByteIO>() {
 
@@ -243,7 +300,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, ByteIO> map(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<Map<String, T>, ByteIO> map_p(final Pickler<T, ByteIO> elemPickler) {
 
         return new Pickler<Map<String, T>, ByteIO>() {
 
@@ -277,7 +334,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public MapPickler<ByteIO> map() {
+    public MapPickler<ByteIO> object_map() {
         return mapP;
     }
 }

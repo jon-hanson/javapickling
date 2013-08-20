@@ -19,33 +19,33 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     protected abstract class FieldPicklerBase implements FieldPickler<PF> {
 
         @Override
-        public void bool(String name, Boolean value) throws IOException {
-            field(name, value, PicklerCoreBase.this.bool());
+        public void boolean_f(String name, Boolean value) throws IOException {
+            field(name, value, PicklerCoreBase.this.boolean_p());
         }
 
         @Override
-        public void chr(String name, Character value) throws IOException {
-            field(name, value, PicklerCoreBase.this.chr());
+        public void char_f(String name, Character value) throws IOException {
+            field(name, value, PicklerCoreBase.this.char_p());
         }
 
         @Override
-        public void str(String name, String value) throws IOException {
-            field(name, value, PicklerCoreBase.this.str());
+        public void string_f(String name, String value) throws IOException {
+            field(name, value, PicklerCoreBase.this.string_p());
         }
 
         @Override
-        public void integer(String name, Integer value) throws IOException {
-            field(name, value, PicklerCoreBase.this.integer());
+        public void integer_f(String name, Integer value) throws IOException {
+            field(name, value, PicklerCoreBase.this.integer_p());
         }
 
         @Override
-        public void lng(String name, Long value) throws IOException {
-            field(name, value, PicklerCoreBase.this.lng());
+        public void long_f(String name, Long value) throws IOException {
+            field(name, value, PicklerCoreBase.this.long_p());
         }
 
         @Override
-        public void dbl(String name, Double value) throws IOException {
-            field(name, value, PicklerCoreBase.this.dbl());
+        public void double_f(String name, Double value) throws IOException {
+            field(name, value, PicklerCoreBase.this.double_p());
         }
     }
 
@@ -55,33 +55,33 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     protected abstract class FieldUnpicklerBase implements FieldUnpickler<PF> {
 
         @Override
-        public Boolean bool(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.bool());
+        public Boolean boolean_f(String name, PF pf) throws IOException {
+            return field(name, pf, PicklerCoreBase.this.boolean_p());
         }
 
         @Override
-        public Character chr(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.chr());
+        public Character char_f(String name, PF pf) throws IOException {
+            return field(name, pf, PicklerCoreBase.this.char_p());
         }
 
         @Override
-        public String str(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.str());
+        public String string_f(String name, PF pf) throws IOException {
+            return field(name, pf, PicklerCoreBase.this.string_p());
         }
 
         @Override
-        public Integer integer(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.integer());
+        public Integer integer_f(String name, PF pf) throws IOException {
+            return field(name, pf, PicklerCoreBase.this.integer_p());
         }
 
         @Override
-        public Long lng(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.lng());
+        public Long long_f(String name, PF pf) throws IOException {
+            return field(name, pf, PicklerCoreBase.this.long_p());
         }
 
         @Override
-        public Double dbl(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.dbl());
+        public Double double_f(String name, PF pf) throws IOException {
+            return field(name, pf, PicklerCoreBase.this.double_p());
         }
     }
 
@@ -91,11 +91,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     private final Map<String, Pickler<?, PF>> picklerRegistry = Maps.newTreeMap();
 
     public PicklerCoreBase() {
-        register(Boolean.class, bool());
-        register(Integer.class, integer());
-        register(Double.class, dbl());
-        register(Long.class, lng());
-        register(String.class, str());
+        register(Boolean.class, boolean_p());
+        register(Integer.class, integer_p());
+        register(Double.class, double_p());
+        register(Long.class, long_p());
+        register(String.class, string_p());
     }
 
     /**
@@ -138,10 +138,14 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         }
     }
 
-    public <T> Pickler<T, PF> object(Class<T> clazz) {
+    public <T> Pickler<T, PF> object_p(Class<T> clazz) {
         final Pickler<T, PF> result = (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
         if (result == null)
             throw new PicklerException("No pickler registered for class " + clazz);
         return result;
+    }
+
+    public Pickler<Object, PF> unknown_p() {
+        return new TypedObjectPickler<PF>(this);
     }
 }

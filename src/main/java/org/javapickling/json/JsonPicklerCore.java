@@ -36,6 +36,19 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         }
     };
 
+    protected final Pickler<Byte, JsonNode> byteP = new Pickler<Byte, JsonNode>() {
+
+        @Override
+        public JsonNode pickle(Byte b, JsonNode unused) {
+            return nodeFactory.numberNode(b);
+        }
+
+        @Override
+        public Byte unpickle(JsonNode node) {
+            return (byte)node.asInt();
+        }
+    };
+
     protected final Pickler<Character, JsonNode> charP = new Pickler<Character, JsonNode>() {
 
         @Override
@@ -75,6 +88,18 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         }
     };
 
+    protected final Pickler<Short, JsonNode> shortP = new Pickler<Short, JsonNode>() {
+
+        @Override
+        public JsonNode pickle(Short s, JsonNode unused) {
+            return nodeFactory.numberNode(s);
+        }
+
+        @Override
+        public Short unpickle(JsonNode source) {
+            return source.shortValue();
+        }
+    };
     protected final Pickler<Long, JsonNode> longP = new Pickler<Long, JsonNode>() {
 
         @Override
@@ -85,6 +110,19 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         @Override
         public Long unpickle(JsonNode source) {
             return source.asLong();
+        }
+    };
+
+    protected final Pickler<Float, JsonNode> floatP = new Pickler<Float, JsonNode>() {
+
+        @Override
+        public JsonNode pickle(Float d, JsonNode unused) {
+            return nodeFactory.numberNode(d);
+        }
+
+        @Override
+        public Float unpickle(JsonNode source) {
+            return source.floatValue();
         }
     };
 
@@ -136,39 +174,54 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     };
 
     @Override
-    public Pickler<Boolean, JsonNode> bool() {
+    public Pickler<Boolean, JsonNode> boolean_p() {
         return booleanP;
     }
 
     @Override
-    public Pickler<Character, JsonNode> chr() {
+    public Pickler<Byte, JsonNode> byte_p() {
+        return byteP;
+    }
+
+    @Override
+    public Pickler<Character, JsonNode> char_p() {
         return charP;
     }
 
     @Override
-    public Pickler<String, JsonNode> str() {
+    public Pickler<String, JsonNode> string_p() {
         return stringP;
     }
 
     @Override
-    public Pickler<Integer, JsonNode> integer() {
+    public Pickler<Integer, JsonNode> integer_p() {
         return integerP;
     }
 
     @Override
-    public Pickler<Long, JsonNode> lng() {
+    public Pickler<Short, JsonNode> short_p() {
+        return shortP;
+    }
+
+    @Override
+    public Pickler<Long, JsonNode> long_p() {
         return longP;
     }
 
     @Override
-    public Pickler<Double, JsonNode> dbl() {
+    public Pickler<Float, JsonNode> float_p() {
+        return floatP;
+    }
+
+    @Override
+    public Pickler<Double, JsonNode> double_p() {
         return doubleP;
     }
 
     @Override
-    public <T extends Enum<T>> Pickler<T, JsonNode> enm(final Class<T> enumClass) {
+    public <T extends Enum<T>> Pickler<T, JsonNode> enum_p(final Class<T> enumClass) {
 
-        return new ObjectPickler<T, JsonNode>() {
+        return new Pickler<T, JsonNode>() {
 
             @Override
             public JsonNode pickle(T t, JsonNode target) throws IOException {
@@ -183,7 +236,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<T[], JsonNode> array(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<T[], JsonNode> array_p(final Pickler<T, JsonNode> elemPickler) {
 
         return new Pickler<T[], JsonNode>() {
 
@@ -221,7 +274,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<List<T>, JsonNode> list(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<List<T>, JsonNode> list_p(final Pickler<T, JsonNode> elemPickler) {
 
         return new Pickler<List<T>, JsonNode>() {
 
@@ -257,7 +310,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, JsonNode> map(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<Map<String, T>, JsonNode> map_p(final Pickler<T, JsonNode> elemPickler) {
 
         return new Pickler<Map<String, T>, JsonNode>() {
 
@@ -293,7 +346,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public MapPickler<JsonNode> map() {
+    public MapPickler<JsonNode> object_map() {
         return mapP;
     }
 }
