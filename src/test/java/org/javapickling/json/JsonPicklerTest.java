@@ -1,6 +1,7 @@
 package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import junit.framework.Assert;
 import org.javapickling.common.*;
 import org.javapickling.core.*;
 import org.junit.Test;
@@ -47,6 +48,8 @@ public class JsonPicklerTest {
         final House house2 = pickler.unpickle(node);
 
         final long endTime2 = System.nanoTime();
+
+        Assert.assertEquals(house, house2);
 
         return new Utils.RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }

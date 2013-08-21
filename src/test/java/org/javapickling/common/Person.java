@@ -16,4 +16,30 @@ public class Person implements Serializable {
         this.female = female;
         this.longs = longs;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Person))
+            return false;
+
+        final Person rhs = (Person)obj;
+
+        if (!name.equals(rhs.name))
+            return false;
+        if (!age.equals(rhs.age))
+            return false;
+        if (female != rhs.female)
+            return false;
+
+        if (longs.size() != rhs.longs.size())
+            return false;
+
+        for (int i = 0; i < longs.size(); ++i) {
+            if (longs.get(i).equals(rhs.longs.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

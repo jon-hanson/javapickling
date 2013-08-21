@@ -1,5 +1,6 @@
 package org.javapickling.byteio;
 
+import junit.framework.Assert;
 import org.javapickling.common.*;
 import org.javapickling.core.Pickler;
 import org.junit.Test;
@@ -49,6 +50,8 @@ public class ByteIOPicklerTest {
         final House house2 = pickler.unpickle(byteInput);
 
         final long endTime2 = System.nanoTime();
+
+        Assert.assertEquals(house, house2);
 
         return new Utils.RoundTrip("ByteIOPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }

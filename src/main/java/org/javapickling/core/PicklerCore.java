@@ -58,7 +58,7 @@ public interface PicklerCore<PF> {
      * @param <T>
      * @return a Pickler for an enum.
      */
-    <T extends Enum<T>> Pickler<T, PF> enum_p(final Class<T> enumClass);
+    <T extends Enum<T>> Pickler<T, PF> enum_p(final Class<T> enumClass, final T[] values);
 
     /**
      * Provide a Pickler for an array.
@@ -92,10 +92,15 @@ public interface PicklerCore<PF> {
      */
     <T> Pickler<T, PF> object_p(final Class<T> clazz);
 
-    Pickler<Object, PF> unknown_p();
+    /**
+     * Provide a Pickler for objects where the static type is unknown.
+     * @return a Pickler for weakly-typed objects.
+     */
+    Pickler<Object, PF> object_p();
 
     /**
-     * Provide a proxy for pickling heterogeneous maps (including objects).
+     * Provide a proxy for pickling heterogeneous maps of strings to a static type.
+     * Generally used for pickling objects.
      * @return a Pickler for a Map.
      */
     MapPickler<PF> object_map();

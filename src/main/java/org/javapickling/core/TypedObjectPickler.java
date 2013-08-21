@@ -4,20 +4,19 @@ import java.io.IOException;
 
 public class TypedObjectPickler<PF> extends ObjectPickler<Object, PF> {
 
-    protected final Pickler<TypedObject.Type, PF> typePickler;
-
-    private final ObjectPickler<Object, PF> objectWithTypePickler;
+    protected final Pickler<ObjectType, PF> typePickler;
+    protected final ObjectPickler<Object, PF> objectWithTypePickler;
 
     public TypedObjectPickler(PicklerCore<PF> core) {
         super(core);
-        this.typePickler = core.enum_p(TypedObject.Type.class);
+        this.typePickler = core.enum_p(ObjectType.class, ObjectType.values());
         this.objectWithTypePickler = new ObjectPickler<Object, PF>(core) {
 
             @Override
             public PF pickle(Object obj, PF target) throws IOException {
                 final FieldPickler<PF> mp = core.object_map().pickler(target);
                 mp.string_f("class", obj.getClass().getName());
-                mp.field("object", obj, core.object_p((Class<Object>)obj.getClass()));
+                mp.field("object", obj, core.object_p((Class<Object>) obj.getClass()));
                 return mp.pickle(target);
             }
 
@@ -37,71 +36,71 @@ public class TypedObjectPickler<PF> extends ObjectPickler<Object, PF> {
 
     @Override
     public PF pickle(Object obj, PF target) throws IOException {
-        final TypedObject typedObject = new TypedObject(obj);
+        final ObjectType type = ObjectType.ofObject(obj);
         final FieldPickler<PF> mp = core.object_map().pickler(target);
-        mp.field("type", typedObject.type, typePickler);
-        switch (typedObject.type) {
+        mp.field("type", type, typePickler);
+        switch (type) {
             case NULL:
                 throw new RuntimeException("");
             case BOOLEAN:
-                mp.field("value", (Boolean)typedObject.value, core.boolean_p());
+                mp.field("value", (Boolean)obj, core.boolean_p());
                 break;
             case BYTE:
-                mp.field("value", (Byte)typedObject.value, core.byte_p());
+                mp.field("value", (Byte)obj, core.byte_p());
                 break;
             case CHAR:
-                mp.field("value", (Character)typedObject.value, core.char_p());
+                mp.field("value", (Character)obj, core.char_p());
                 break;
             case INTEGER:
-                mp.field("value", (Integer)typedObject.value, core.integer_p());
+                mp.field("value", (Integer)obj, core.integer_p());
                 break;
             case SHORT:
-                mp.field("value", (Short)typedObject.value, core.short_p());
+                mp.field("value", (Short)obj, core.short_p());
                 break;
             case LONG:
-                mp.field("value", (Long)typedObject.value, core.long_p());
+                mp.field("value", (Long)obj, core.long_p());
                 break;
             case FLOAT:
-                mp.field("value", (Float)typedObject.value, core.float_p());
+                mp.field("value", (Float)obj, core.float_p());
                 break;
             case DOUBLE:
-                mp.field("value", (Double)typedObject.value, core.double_p());
+                mp.field("value", (Double)obj, core.double_p());
                 break;
             case STRING:
-                mp.field("value", (String)typedObject.value, core.string_p());
+                mp.field("value", (String)obj, core.string_p());
                 break;
             case OBJECT:
-                mp.field("value", typedObject.value, objectWithTypePickler);
+                mp.field("value", obj, objectWithTypePickler);
                 break;
             case BOOLEAN_ARRAY:
-                mp.field("value", (Boolean[])typedObject.value, core.array_p(core.boolean_p()));
+                mp.field("value", (Boolean[])obj, core.array_p(core.boolean_p()));
                 break;
             case BYTE_ARRAY:
-                mp.field("value", (Byte[])typedObject.value, core.array_p(core.byte_p()));
+                mp.field("value", (Byte[])obj, core.array_p(core.byte_p()));
                 break;
             case CHAR_ARRAY:
-                mp.field("value", (Character[])typedObject.value, core.array_p(core.char_p()));
+                mp.field("value", (Character[])obj, core.array_p(core.char_p()));
                 break;
             case INTEGER_ARRAY:
-                mp.field("value", (Integer[])typedObject.value, core.array_p(core.integer_p()));
+                mp.field("value", (Integer[])obj, core.array_p(core.integer_p()));
                 break;
             case SHORT_ARRAY:
-                mp.field("value", (Short[])typedObject.value, core.array_p(core.short_p()));
+                mp.field("value", (Short[])obj, core.array_p(core.short_p()));
                 break;
             case LONG_ARRAY:
-                mp.field("value", (Long[])typedObject.value, core.array_p(core.long_p()));
+                mp.field("value", (Long[])obj, core.array_p(core.long_p()));
                 break;
             case FLOAT_ARRAY:
-                mp.field("value", (Float[])typedObject.value, core.array_p(core.float_p()));
+                mp.field("value", (Float[])obj, core.array_p(core.float_p()));
                 break;
             case DOUBLE_ARRAY:
-                mp.field("value", (Double[])typedObject.value, core.array_p(core.double_p()));
+                mp.field("value", (Double[])obj, core.array_p(core.double_p()));
                 break;
             case STRING_ARRAY:
-                mp.field("value", (String[])typedObject.value, core.array_p(core.string_p()));
+                mp.field("value", (String[])obj, core.array_p(core.string_p()));
                 break;
             case OBJECT_ARRAY:
-                mp.field("value", (Object[])typedObject.value, core.array_p(objectWithTypePickler));
+                mp.field("value", (Object[])obj, core.array_p(objectWithTypePickler));
                 break;
         }
 
@@ -110,50 +109,51 @@ public class TypedObjectPickler<PF> extends ObjectPickler<Object, PF> {
 
     @Override
     public Object unpickle(PF source) throws IOException {
-        final TypedObject.Type type = typePickler.unpickle(source);
+        final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
+        final ObjectType type = mu.field("type", source, typePickler);
         switch (type) {
             case NULL:
-                return new TypedObject();
+                return null;
             case BOOLEAN:
-                return core.boolean_p().unpickle(source);
+                return mu.field("value", source, core.boolean_p());
             case BYTE:
-                return core.byte_p().unpickle(source);
+                return mu.field("value", source, core.byte_p());
             case CHAR:
-                return core.char_p().unpickle(source);
+                return mu.field("value", source, core.char_p());
             case INTEGER:
-                return core.integer_p().unpickle(source);
+                return mu.field("value", source, core.integer_p());
             case SHORT:
-                return core.short_p().unpickle(source);
+                return mu.field("value", source, core.short_p());
             case LONG:
-                return core.long_p().unpickle(source);
+                return mu.field("value", source, core.long_p());
             case FLOAT:
-                return core.float_p().unpickle(source);
+                return mu.field("value", source, core.float_p());
             case DOUBLE:
-                return core.double_p().unpickle(source);
+                return mu.field("value", source, core.double_p());
             case STRING:
-                return core.string_p().unpickle(source);
+                return mu.field("value", source, core.string_p());
             case OBJECT:
-                return objectWithTypePickler.unpickle(source);
+                return mu.field("value", source, objectWithTypePickler);
             case BOOLEAN_ARRAY:
-                return core.array_p(core.boolean_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.boolean_p()));
             case BYTE_ARRAY:
-                return core.array_p(core.byte_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.byte_p()));
             case CHAR_ARRAY:
-                return core.array_p(core.char_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.char_p()));
             case INTEGER_ARRAY:
-                return core.array_p(core.integer_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.integer_p()));
             case SHORT_ARRAY:
-                return core.array_p(core.short_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.short_p()));
             case LONG_ARRAY:
-                return core.array_p(core.long_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.long_p()));
             case FLOAT_ARRAY:
-                return core.array_p(core.float_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.float_p()));
             case DOUBLE_ARRAY:
-                return core.array_p(core.double_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.double_p()));
             case STRING_ARRAY:
-                return core.array_p(core.string_p()).unpickle(source);
+                return mu.field("value", source, core.array_p(core.string_p()));
             case OBJECT_ARRAY:
-                return core.array_p(objectWithTypePickler).unpickle(source);
+                return mu.field("value", source, core.array_p(objectWithTypePickler));
             default:
                 throw new PicklerException("Unexpected Type enum value - " + type);
         }

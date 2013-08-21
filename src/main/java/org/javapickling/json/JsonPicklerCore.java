@@ -219,7 +219,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T extends Enum<T>> Pickler<T, JsonNode> enum_p(final Class<T> enumClass) {
+    public <T extends Enum<T>> Pickler<T, JsonNode> enum_p(final Class<T> enumClass, final T[] values) {
 
         return new Pickler<T, JsonNode>() {
 
