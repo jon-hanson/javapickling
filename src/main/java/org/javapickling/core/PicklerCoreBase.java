@@ -92,10 +92,15 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
     public PicklerCoreBase() {
         register(Boolean.class, boolean_p());
-        register(Integer.class, integer_p());
-        register(Double.class, double_p());
-        register(Long.class, long_p());
+        register(Byte.class, byte_p());
+        register(Character.class, char_p());
         register(String.class, string_p());
+        register(Integer.class, integer_p());
+        register(Short.class, short_p());
+        register(Long.class, long_p());
+        register(Float.class, float_p());
+        register(Double.class, double_p());
+        register(Object.class, object_p());
     }
 
     /**

@@ -5,10 +5,24 @@ import com.google.common.collect.Maps;
 import org.javapickling.core.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 
 public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
+
+    protected final Pickler<Object, ByteIO> nullP = new Pickler<Object, ByteIO>() {
+
+        @Override
+        public ByteIO pickle(Object obj, ByteIO target) throws IOException {
+            return target;
+        }
+
+        @Override
+        public Object unpickle(ByteIO source) throws IOException {
+            return null;
+        }
+    };
 
     protected final Pickler<Boolean, ByteIO> boolP = new Pickler<Boolean, ByteIO>() {
 
@@ -173,6 +187,11 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     };
 
     @Override
+    public Pickler<Object, ByteIO> null_p() {
+        return nullP;
+    }
+
+    @Override
     public Pickler<Boolean, ByteIO> boolean_p() {
         return boolP;
     }
@@ -236,16 +255,16 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler, final Class<T> clazz) {
 
         return new Pickler<T[], ByteIO>() {
 
             @Override
-            public ByteIO pickle(T[] list, ByteIO target) throws IOException {
+            public ByteIO pickle(T[] arr, ByteIO target) throws IOException {
 
-                target.output.writeInt(list.length);
+                target.output.writeInt(arr.length);
 
-                for (T elem : list) {
+                for (T elem : arr) {
                     elemPickler.pickle(elem, target);
                 }
 
@@ -256,7 +275,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             public T[] unpickle(ByteIO source) throws IOException {
 
                 int size = source.input.readInt();
-                final T[] result = (T[]) new Object[size];
+                final T[] result = (T[])Array.newInstance(clazz, size);
 
                 for (int i = 0; i < size; ++i) {
                     result[i] = elemPickler.unpickle(source);

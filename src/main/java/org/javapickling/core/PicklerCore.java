@@ -10,6 +10,11 @@ import java.util.Map;
 public interface PicklerCore<PF> {
 
     /**
+     * @return a Pickler for nulls.
+     */
+    Pickler<Object, PF> null_p();
+
+    /**
      * @return a Pickler for Booleans.
      */
     Pickler<Boolean, PF> boolean_p();
@@ -66,7 +71,7 @@ public interface PicklerCore<PF> {
      * @param <T>
      * @return a Pickler for an array.
      */
-    <T> Pickler<T[], PF> array_p(final Pickler<T, PF> elemPickler);
+    <T> Pickler<T[], PF> array_p(final Pickler<T, PF> elemPickler, final Class<T> clazz);
 
     /**
      * Provide a Pickler for an List.

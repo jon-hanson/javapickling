@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import org.javapickling.core.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,19 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     JsonPicklerCore(JsonNodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
+
+    protected final Pickler<Object, JsonNode> nullP = new Pickler<Object, JsonNode>() {
+
+        @Override
+        public JsonNode pickle(Object obj, JsonNode unused) {
+            return nodeFactory.nullNode();
+        }
+
+        @Override
+        public Object unpickle(JsonNode node) {
+            return null;
+        }
+    };
 
     protected final Pickler<Boolean, JsonNode> booleanP = new Pickler<Boolean, JsonNode>() {
 
@@ -174,6 +188,11 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     };
 
     @Override
+    public Pickler<Object, JsonNode> null_p() {
+        return nullP;
+    }
+
+    @Override
     public Pickler<Boolean, JsonNode> boolean_p() {
         return booleanP;
     }
@@ -236,7 +255,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<T[], JsonNode> array_p(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<T[], JsonNode> array_p(final Pickler<T, JsonNode> elemPickler, final Class<T> clazz) {
 
         return new Pickler<T[], JsonNode>() {
 
@@ -260,7 +279,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode contNode = (ArrayNode)source;
 
-                final T[] result = (T[]) new Object[contNode.size()];
+                final T[] result = (T[]) Array.newInstance(clazz, contNode.size());
 
                 int i = 0;
                 for (JsonNode elem : contNode) {
