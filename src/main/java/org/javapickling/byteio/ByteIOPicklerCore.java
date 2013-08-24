@@ -2,12 +2,12 @@ package org.javapickling.byteio;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.javapickling.core.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
@@ -237,25 +237,25 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T extends Enum<T>> Pickler<T, ByteIO> enum_p(final Class<T> enumClass, final T[] values) {
+    public <T extends Enum<T>> Pickler<T, ByteIO> enum_p(final Class<T> enumClass) {
 
         return new Pickler<T, ByteIO>() {
 
             @Override
             public ByteIO pickle(T t, ByteIO target) throws IOException {
-                target.output.writeInt(t.ordinal());
+                target.writeString(t.name());
                 return target;
             }
 
             @Override
             public T unpickle(ByteIO source) throws IOException {
-                return values[source.input.readInt()];
+                return T.valueOf(enumClass, source.readString());
             }
         };
     }
 
     @Override
-    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler, final Class<T> clazz) {
+    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler, final Class<T> enumClass) {
 
         return new Pickler<T[], ByteIO>() {
 
@@ -275,7 +275,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             public T[] unpickle(ByteIO source) throws IOException {
 
                 int size = source.input.readInt();
-                final T[] result = (T[])Array.newInstance(clazz, size);
+                final T[] result = (T[])Array.newInstance(enumClass, size);
 
                 for (int i = 0; i < size; ++i) {
                     result[i] = elemPickler.unpickle(source);
@@ -319,7 +319,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, ByteIO> map_p(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<Map<String, T>, ByteIO> map_p(final Pickler<T, ByteIO> valuePickler) {
 
         return new Pickler<Map<String, T>, ByteIO>() {
 
@@ -330,7 +330,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
                 for (Map.Entry<String, T> entry : map.entrySet()) {
                     target.writeString(entry.getKey());
-                    elemPickler.pickle(entry.getValue(), target);
+                    valuePickler.pickle(entry.getValue(), target);
                 }
 
                 return target;
@@ -344,7 +344,76 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
                 final Map<String, T> result = Maps.newTreeMap();
                 for (int i = 0; i < size; ++i) {
                     final String key = source.readString();
-                    result.put(key, elemPickler.unpickle(source));
+                    result.put(key, valuePickler.unpickle(source));
+                }
+
+                return result;
+            }
+        };
+    }
+
+    @Override
+    public <K, V> Pickler<Map<K, V>, ByteIO> map_p(
+            final Pickler<K, ByteIO> keyPickler,
+            final Pickler<V, ByteIO> valuePickler) {
+
+        return new Pickler<Map<K, V>, ByteIO>() {
+
+            @Override
+            public ByteIO pickle(Map<K, V> map, ByteIO target) throws IOException {
+
+                target.output.writeInt(map.size());
+
+                for (Map.Entry<K, V> entry : map.entrySet()) {
+                    keyPickler.pickle(entry.getKey(), target);
+                    valuePickler.pickle(entry.getValue(), target);
+                }
+
+                return target;
+            }
+
+            @Override
+            public Map<K, V> unpickle(ByteIO source) throws IOException {
+
+                final Map<K, V> result = new TreeMap<K, V>();
+
+                final int size = source.input.readInt();
+                for (int i = 0; i < size; ++i) {
+                    final K key = keyPickler.unpickle(source);
+                    final V value = valuePickler.unpickle(source);
+                    result.put(key, value);
+                }
+
+                return result;
+            }
+        };
+    }
+
+    @Override
+    public <T> Pickler<Set<T>, ByteIO> set_p(final Pickler<T, ByteIO> elemPickler) {
+
+        return new Pickler<Set<T>, ByteIO>() {
+
+            @Override
+            public ByteIO pickle(Set<T> set, ByteIO target) throws IOException {
+
+                target.output.writeInt(set.size());
+
+                for (T elem : set) {
+                    elemPickler.pickle(elem, target);
+                }
+
+                return target;
+            }
+
+            @Override
+            public Set<T> unpickle(ByteIO source) throws IOException {
+
+                final Set<T> result = new TreeSet<T>();;
+
+                int size = source.input.readInt();
+                for (int i = 0; i < size; ++i) {
+                    result.add(elemPickler.unpickle(source));
                 }
 
                 return result;

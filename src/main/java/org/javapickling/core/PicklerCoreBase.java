@@ -151,6 +151,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     public Pickler<Object, PF> object_p() {
-        return new TypedObjectPickler<PF>(this);
+        return new DynamicObjectPickler<PF>(this);
     }
 }

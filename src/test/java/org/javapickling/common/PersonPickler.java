@@ -21,6 +21,7 @@ public class PersonPickler<T, PF> extends PicklerBase<Person<T>, PF> {
         mp.boolean_f("female", person.female);
         mp.field("longs", person.longs, lngListPickler);
         mp.field("test", person.test, core.object_p());
+        mp.field("obj", person.obj, core.object_p());
         return mp.pickle(target);
     }
 
@@ -32,6 +33,7 @@ public class PersonPickler<T, PF> extends PicklerBase<Person<T>, PF> {
         final boolean female = mu.boolean_f("female", source);
         final List<Long> longs = mu.field("longs", source, lngListPickler);
         final T test = (T)mu.field("test", source, core.object_p());
-        return new Person<T>(name, age, female, longs, test);
+        final Object obj = mu.field("obj", source, core.object_p());
+        return new Person<T>(name, age, female, longs, test, obj);
     }
 }

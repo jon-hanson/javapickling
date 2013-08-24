@@ -64,16 +64,16 @@ public interface PicklerCore<PF> {
      * @param <T>
      * @return a Pickler for an enum.
      */
-    <T extends Enum<T>> Pickler<T, PF> enum_p(final Class<T> enumClass, final T[] values);
+    <T extends Enum<T>> Pickler<T, PF> enum_p(final Class<T> enumClass);
 
     /**
      * Provide a Pickler for an array.
      * @param elemPickler a Pickler for the array element type.
-     * @param clazz element class.
+     * @param enumClass element class.
      * @param <T>
      * @return a Pickler for an array.
      */
-    <T> Pickler<T[], PF> array_p(final Pickler<T, PF> elemPickler, final Class<T> clazz);
+    <T> Pickler<T[], PF> array_p(final Pickler<T, PF> elemPickler, final Class<T> enumClass);
 
     /**
      * Provide a Pickler for an List.
@@ -99,7 +99,7 @@ public interface PicklerCore<PF> {
      * @param <V>
      * @return
      */
-    <K extends Comparable<K>, V> Pickler<Map<K, V>, PF> map_p(final Pickler<K, PF> keyPickler, final Pickler<V, PF> valuePickler);
+    <K, V> Pickler<Map<K, V>, PF> map_p(final Pickler<K, PF> keyPickler, final Pickler<V, PF> valuePickler);
 
     /**
      * Provide a Pickler for a homogeneous Set.
@@ -107,7 +107,7 @@ public interface PicklerCore<PF> {
      * @param <T>
      * @return a Pickler for an Map.
      */
-    <T extends Comparable<T>> Pickler<Set<T>, PF> set_p(final Pickler<T, PF> elemPickler);
+    <T> Pickler<Set<T>, PF> set_p(final Pickler<T, PF> elemPickler);
 
     /**
      * Provide a Pickler corresponding to the specified Class.

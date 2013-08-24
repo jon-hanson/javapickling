@@ -11,10 +11,7 @@ import org.javapickling.core.*;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
@@ -242,7 +239,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T extends Enum<T>> Pickler<T, JsonNode> enum_p(final Class<T> enumClass, final T[] values) {
+    public <T extends Enum<T>> Pickler<T, JsonNode> enum_p(final Class<T> enumClass) {
 
         return new Pickler<T, JsonNode>() {
 
@@ -259,7 +256,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<T[], JsonNode> array_p(final Pickler<T, JsonNode> elemPickler, final Class<T> clazz) {
+    public <T> Pickler<T[], JsonNode> array_p(final Pickler<T, JsonNode> elemPickler, final Class<T> enumClass) {
 
         return new Pickler<T[], JsonNode>() {
 
@@ -283,7 +280,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode contNode = (ArrayNode)source;
 
-                final T[] result = (T[]) Array.newInstance(clazz, contNode.size());
+                final T[] result = (T[]) Array.newInstance(enumClass, contNode.size());
 
                 int i = 0;
                 for (JsonNode elem : contNode) {
@@ -370,7 +367,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <K extends Comparable<K>, V> Pickler<Map<K, V>, JsonNode> map_p(
+    public <K, V> Pickler<Map<K, V>, JsonNode> map_p(
             final Pickler<K, JsonNode> keyPickler,
             final Pickler<V, JsonNode> valuePickler) {
 
@@ -402,7 +399,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode arrayNode = (ArrayNode)source;
 
-                final Map<K, V> result = Maps.newTreeMap();
+                final Map<K, V> result = new TreeMap<K, V>();
 
                 for (JsonNode child : arrayNode) {
                     final ObjectNode objectNode = (ObjectNode)child;
@@ -417,7 +414,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T extends Comparable<T>> Pickler<Set<T>, JsonNode> set_p(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<Set<T>, JsonNode> set_p(final Pickler<T, JsonNode> elemPickler) {
 
         return new Pickler<Set<T>, JsonNode>() {
 
@@ -441,7 +438,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode contNode = (ArrayNode)source;
 
-                final Set<T> result = Sets.newTreeSet();
+                final Set<T> result = new TreeSet<T>();
 
                 for (JsonNode elem : contNode) {
                     result.add(elemPickler.unpickle(elem));

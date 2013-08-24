@@ -10,13 +10,15 @@ public class Person<T> implements Serializable {
     public final boolean female;
     public final List<Long> longs;
     public final T test;
+    public final Object obj;
 
-    public Person(String name, Integer age, boolean female, List<Long> longs, T test) {
+    public Person(String name, Integer age, boolean female, List<Long> longs, T test, Object obj) {
         this.name = name;
         this.age = age;
         this.female = female;
         this.longs = longs;
         this.test = test;
+        this.obj = obj;
     }
 
     @Override
@@ -42,6 +44,9 @@ public class Person<T> implements Serializable {
             }
         }
 
-        return test.equals(rhs.test);
+        if (test != rhs.test)
+            return false;
+
+        return obj.equals(rhs.obj);
     }
 }
