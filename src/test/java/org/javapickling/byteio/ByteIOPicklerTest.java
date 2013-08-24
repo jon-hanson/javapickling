@@ -24,6 +24,7 @@ public class ByteIOPicklerTest {
         final Utils.RoundTrip byteIOTimeMs = roundTripViaByteIO(house);
         System.out.println(byteIOTimeMs);
 
+        Utils.roundTripViaJavaSer(house);
         final Utils.RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(house);
         System.out.println(javaSerTimeMs);
     }

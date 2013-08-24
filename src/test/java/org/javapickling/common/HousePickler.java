@@ -5,13 +5,13 @@ import org.javapickling.core.*;
 import java.io.IOException;
 import java.util.List;
 
-public class HousePickler<PF> extends ObjectPickler<House, PF> {
+public class HousePickler<PF> extends PicklerBase<House, PF> {
 
-    private final Pickler<List<Object>, PF> personsPickler;
+    private final Pickler<List<Person<Long>>, PF> personsPickler;
 
     public HousePickler(PicklerCore<PF> core) {
         super(core);
-        this.personsPickler = core.list_p(core.object_p());
+        this.personsPickler = core.list_p(new PersonPickler<Long, PF>(core));
     }
 
     @Override
@@ -28,7 +28,7 @@ public class HousePickler<PF> extends ObjectPickler<House, PF> {
         final FieldUnpickler<PF> mu = core.object_map().unpickler(pf);
         final House.Type type = mu.field("type", pf, core.enum_p(House.Type.class, House.Type.values()));
         final double volume = mu.field("volume", pf, core.double_p());
-        final List<Object> occupants = mu.field("occupants", pf, personsPickler);
+        final List<Person<Long>> occupants = mu.field("occupants", pf, personsPickler);
         return new House(type, volume, occupants);
     }
 }

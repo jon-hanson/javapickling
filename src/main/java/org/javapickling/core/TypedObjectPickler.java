@@ -2,15 +2,15 @@ package org.javapickling.core;
 
 import java.io.IOException;
 
-public class TypedObjectPickler<PF> extends ObjectPickler<Object, PF> {
+public class TypedObjectPickler<PF> extends PicklerBase<Object, PF> {
 
     protected final Pickler<ObjectType, PF> typePickler;
-    protected final ObjectPickler<Object, PF> objectWithTypePickler;
+    protected final PicklerBase<Object, PF> objectWithTypePickler;
 
     public TypedObjectPickler(PicklerCore<PF> core) {
         super(core);
         this.typePickler = core.enum_p(ObjectType.class, ObjectType.values());
-        this.objectWithTypePickler = new ObjectPickler<Object, PF>(core) {
+        this.objectWithTypePickler = new PicklerBase<Object, PF>(core) {
 
             @Override
             public PF pickle(Object obj, PF target) throws IOException {
@@ -28,7 +28,7 @@ public class TypedObjectPickler<PF> extends ObjectPickler<Object, PF> {
                     final Class<?> clazz = Class.forName(clazzName);
                     return mu.field("object", source, core.object_p(clazz));
                 } catch (ClassNotFoundException ex) {
-                    throw new PicklerException("Could not construct a TypedObject", ex);
+                    throw new PicklerException("Could not construct a typed object", ex);
                 }
             }
         };
@@ -36,6 +36,7 @@ public class TypedObjectPickler<PF> extends ObjectPickler<Object, PF> {
 
     @Override
     public PF pickle(Object obj, PF target) throws IOException {
+
         final ObjectType type = ObjectType.ofObject(obj);
         final FieldPickler<PF> mp = core.object_map().pickler(target);
         mp.field("type", type, typePickler);

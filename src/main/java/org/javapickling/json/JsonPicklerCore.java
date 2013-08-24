@@ -1,9 +1,12 @@
 package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.*;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.javapickling.core.*;
 
 import java.io.IOException;
@@ -11,16 +14,17 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
     private final JsonNodeFactory nodeFactory;
 
-    JsonPicklerCore() {
+    public JsonPicklerCore() {
         this(JsonNodeFactory.instance);
     }
 
-    JsonPicklerCore(JsonNodeFactory nodeFactory) {
+    public JsonPicklerCore(JsonNodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
 
@@ -275,7 +279,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
             public T[] unpickle(JsonNode source) throws IOException {
 
                 if (!source.isArray())
-                    throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into a List");
+                    throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
 
                 final ArrayNode contNode = (ArrayNode)source;
 
@@ -329,7 +333,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, JsonNode> map_p(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<Map<String, T>, JsonNode> map_p(final Pickler<T, JsonNode> valuePickler) {
 
         return new Pickler<Map<String, T>, JsonNode>() {
 
@@ -339,7 +343,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
                 final ObjectNode result = nodeFactory.objectNode();
 
                 for (Map.Entry<String, T> entry : map.entrySet()) {
-                    result.put(entry.getKey(), elemPickler.pickle(entry.getValue(), result));
+                    result.put(entry.getKey(), valuePickler.pickle(entry.getValue(), result));
                 }
 
                 return result;
@@ -347,6 +351,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
             @Override
             public Map<String, T> unpickle(JsonNode source) throws IOException {
+
                 if (!source.isObject())
                     throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into a Map");
 
@@ -356,7 +361,90 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 for (Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields(); iter.hasNext();) {
                     final Map.Entry<String, JsonNode> entry = iter.next();
-                    result.put(entry.getKey(), elemPickler.unpickle(entry.getValue()));
+                    result.put(entry.getKey(), valuePickler.unpickle(entry.getValue()));
+                }
+
+                return result;
+            }
+        };
+    }
+
+    @Override
+    public <K extends Comparable<K>, V> Pickler<Map<K, V>, JsonNode> map_p(
+            final Pickler<K, JsonNode> keyPickler,
+            final Pickler<V, JsonNode> valuePickler) {
+
+        return new Pickler<Map<K, V>, JsonNode>() {
+
+            private static final String keyF = "key";
+            private static final String valueF = "value";
+
+            @Override
+            public JsonNode pickle(Map<K, V> map, JsonNode unused) throws IOException {
+
+                final ArrayNode result = nodeFactory.arrayNode();
+
+                for (Map.Entry<K, V> entry : map.entrySet()) {
+                    final ObjectNode elem = nodeFactory.objectNode();
+                    elem.put(keyF, keyPickler.pickle(entry.getKey(), result));
+                    elem.put(valueF, valuePickler.pickle(entry.getValue(), result));
+                    result.add(elem);
+                }
+
+                return result;
+            }
+
+            @Override
+            public Map<K, V> unpickle(JsonNode source) throws IOException {
+
+                if (!source.isObject())
+                    throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into a Map");
+
+                final ArrayNode arrayNode = (ArrayNode)source;
+
+                final Map<K, V> result = Maps.newTreeMap();
+
+                for (JsonNode child : arrayNode) {
+                    final ObjectNode objectNode = (ObjectNode)child;
+                    final K key = keyPickler.unpickle(objectNode.get(keyF));
+                    final V value = valuePickler.unpickle(objectNode.get(valueF));
+                    result.put(key, value);
+                }
+
+                return result;
+            }
+        };
+    }
+
+    @Override
+    public <T extends Comparable<T>> Pickler<Set<T>, JsonNode> set_p(final Pickler<T, JsonNode> elemPickler) {
+
+        return new Pickler<Set<T>, JsonNode>() {
+
+            @Override
+            public JsonNode pickle(Set<T> set, JsonNode unused) throws IOException {
+
+                final ArrayNode result = nodeFactory.arrayNode();
+
+                for (T elem : set) {
+                    result.add(elemPickler.pickle(elem, result));
+                }
+
+                return result;
+            }
+
+            @Override
+            public Set<T> unpickle(JsonNode source) throws IOException {
+
+                if (!source.isArray())
+                    throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into a Set");
+
+                final ArrayNode contNode = (ArrayNode)source;
+
+                final Set<T> result = Sets.newTreeSet();
+
+                for (JsonNode elem : contNode) {
+                    result.add(elemPickler.unpickle(elem));
                 }
 
                 return result;

@@ -32,20 +32,20 @@ public abstract class Utils {
         }
     }
 
-    public static Person createPerson(String name, int age, boolean female, int i) {
+    public static Person<Long> createPerson(String name, int age, boolean female, int i, Long test) {
         final List<Long> longs = Lists.newLinkedList();
         longs.add(0l);
         if (i > 0) longs.add(1l);
         if (i > 1) longs.add(2l);
         if (i > 2) longs.add(3l);
-        return new Person("tom", 10, false, longs);
+        return new Person(name, age, female, longs, test);
     }
 
-    public static List<Object> persons() {
-        final List<Object> persons = Lists.newArrayListWithCapacity(3);
-        persons.add(createPerson("tom", 10, false, 0));
-        persons.add(createPerson("diane", 20, true, 1));
-        persons.add(createPerson("harry", 30, false, 2));
+    public static List<Person<Long>> persons() {
+        final List<Person<Long>> persons = Lists.newArrayListWithCapacity(3);
+        persons.add(createPerson("tom", 10, false, 0, 12l));
+        persons.add(createPerson("diane", 20, true, 1, 34l));
+        persons.add(createPerson("harry", 30, false, 2, -999l));
         return persons;
     }
 

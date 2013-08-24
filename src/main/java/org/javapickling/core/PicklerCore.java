@@ -2,6 +2,7 @@ package org.javapickling.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * PicklerCore models the core set of picklers an implementation must provide.
@@ -10,17 +11,17 @@ import java.util.Map;
 public interface PicklerCore<PF> {
 
     /**
-     * @return a Pickler for nulls.
+     * @return a Pickler for null.
      */
     Pickler<Object, PF> null_p();
 
     /**
-     * @return a Pickler for Booleans.
+     * @return a Pickler for Boolean.
      */
     Pickler<Boolean, PF> boolean_p();
 
     /**
-     * @return a Pickler for Booleans.
+     * @return a Pickler for Byte.
      */
     Pickler<Byte, PF> byte_p();
 
@@ -68,6 +69,7 @@ public interface PicklerCore<PF> {
     /**
      * Provide a Pickler for an array.
      * @param elemPickler a Pickler for the array element type.
+     * @param clazz element class.
      * @param <T>
      * @return a Pickler for an array.
      */
@@ -82,12 +84,30 @@ public interface PicklerCore<PF> {
     <T> Pickler<List<T>, PF> list_p(final Pickler<T, PF> elemPickler);
 
     /**
-     * Provide a Pickler for a homogeneous Map.
-     * @param elemPickler a Pickler for the Map value type.
+     * Provide a Pickler for a homogeneous String to value Map.
+     * @param valuePickler a Pickler for the Map value type.
      * @param <T>
      * @return a Pickler for an Map.
      */
-    <T> Pickler<Map<String, T>, PF> map_p(final Pickler<T, PF> elemPickler);
+    <T> Pickler<Map<String, T>, PF> map_p(final Pickler<T, PF> valuePickler);
+
+    /**
+     * Provide a Pickler for a homogeneous Map.
+     * @param keyPickler a Pickler for the Map key type.
+     * @param valuePickler a Pickler for the Map value type.
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    <K extends Comparable<K>, V> Pickler<Map<K, V>, PF> map_p(final Pickler<K, PF> keyPickler, final Pickler<V, PF> valuePickler);
+
+    /**
+     * Provide a Pickler for a homogeneous Set.
+     * @param elemPickler a Pickler for the Set value type.
+     * @param <T>
+     * @return a Pickler for an Map.
+     */
+    <T extends Comparable<T>> Pickler<Set<T>, PF> set_p(final Pickler<T, PF> elemPickler);
 
     /**
      * Provide a Pickler corresponding to the specified Class.
@@ -106,7 +126,7 @@ public interface PicklerCore<PF> {
     /**
      * Provide a proxy for pickling heterogeneous maps of strings to a static type.
      * Generally used for pickling objects.
-     * @return a Pickler for a Map.
+     * @return a Pickler for a object/Map.
      */
     MapPickler<PF> object_map();
 }

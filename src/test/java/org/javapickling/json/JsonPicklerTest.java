@@ -25,6 +25,7 @@ public class JsonPicklerTest {
         final Utils.RoundTrip jsonTimeMs = roundTripViaJson(house);
         System.out.println(jsonTimeMs);
 
+        Utils.roundTripViaJavaSer(house);
         final Utils.RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(house);
         System.out.println(javaSerTimeMs);
     }
@@ -41,7 +42,7 @@ public class JsonPicklerTest {
 
         System.out.println("JSON=");
         System.out.println(node);
-        final int size = node.toString().length();
+        final int size = node.toString().getBytes().length;
 
         final long startTime2 = System.nanoTime();
 

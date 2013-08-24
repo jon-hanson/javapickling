@@ -3,18 +3,20 @@ package org.javapickling.common;
 import java.io.Serializable;
 import java.util.List;
 
-public class Person implements Serializable {
+public class Person<T> implements Serializable {
 
     public final String name;
     public final Integer age;
     public final boolean female;
     public final List<Long> longs;
+    public final T test;
 
-    public Person(String name, Integer age, boolean female, List<Long> longs) {
+    public Person(String name, Integer age, boolean female, List<Long> longs, T test) {
         this.name = name;
         this.age = age;
         this.female = female;
         this.longs = longs;
+        this.test = test;
     }
 
     @Override
@@ -40,6 +42,6 @@ public class Person implements Serializable {
             }
         }
 
-        return true;
+        return test.equals(rhs.test);
     }
 }

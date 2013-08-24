@@ -12,9 +12,9 @@ public class House implements Serializable {
 
     public final Type type;
     public final double volume;
-    public final List<Object> occupants;
+    public final List<Person<Long>> occupants;
 
-    public House(Type type, double volume, List<Object> occupants) {
+    public House(Type type, double volume, List<Person<Long>> occupants) {
         this.type = type;
         this.volume = volume;
         this.occupants = occupants;
