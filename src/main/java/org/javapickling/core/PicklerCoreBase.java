@@ -1,6 +1,7 @@
 package org.javapickling.core;
 
 import com.google.common.collect.Maps;
+import org.javapickling.byteio.ByteIO;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -18,9 +19,20 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      */
     protected abstract class FieldPicklerBase implements FieldPickler<PF> {
 
+        protected final PF target;
+
+        public FieldPicklerBase(PF target) {
+            this.target = target;
+        }
+
         @Override
         public void boolean_f(String name, Boolean value) throws IOException {
             field(name, value, PicklerCoreBase.this.boolean_p());
+        }
+
+        @Override
+        public void byte_f(String name, Byte value) throws IOException {
+            field(name, value, PicklerCoreBase.this.byte_p());
         }
 
         @Override
@@ -29,13 +41,8 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         }
 
         @Override
-        public void string_f(String name, String value) throws IOException {
-            field(name, value, PicklerCoreBase.this.string_p());
-        }
-
-        @Override
-        public void integer_f(String name, Integer value) throws IOException {
-            field(name, value, PicklerCoreBase.this.integer_p());
+        public void short_f(String name, Short value) throws IOException {
+            field(name, value, PicklerCoreBase.this.short_p());
         }
 
         @Override
@@ -44,8 +51,28 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         }
 
         @Override
+        public void integer_f(String name, Integer value) throws IOException {
+            field(name, value, PicklerCoreBase.this.integer_p());
+        }
+
+        @Override
+        public void float_f(String name, Float value) throws IOException {
+            field(name, value, PicklerCoreBase.this.float_p());
+        }
+
+        @Override
         public void double_f(String name, Double value) throws IOException {
             field(name, value, PicklerCoreBase.this.double_p());
+        }
+
+        @Override
+        public <T extends Enum<T>> void enum_f(String name, T value, Class<T> clazz) throws IOException {
+            field(name, value, PicklerCoreBase.this.enum_p(clazz));
+        }
+
+        @Override
+        public void string_f(String name, String value) throws IOException {
+            field(name, value, PicklerCoreBase.this.string_p());
         }
     }
 
@@ -54,34 +81,60 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      */
     protected abstract class FieldUnpicklerBase implements FieldUnpickler<PF> {
 
-        @Override
-        public Boolean boolean_f(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.boolean_p());
+        protected final PF source;
+
+        public FieldUnpicklerBase(PF source) {
+            this.source = source;
         }
 
         @Override
-        public Character char_f(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.char_p());
+        public Boolean boolean_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.boolean_p());
         }
 
         @Override
-        public String string_f(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.string_p());
+        public Byte byte_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.byte_p());
         }
 
         @Override
-        public Integer integer_f(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.integer_p());
+        public Character char_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.char_p());
         }
 
         @Override
-        public Long long_f(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.long_p());
+        public Short short_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.short_p());
         }
 
         @Override
-        public Double double_f(String name, PF pf) throws IOException {
-            return field(name, pf, PicklerCoreBase.this.double_p());
+        public Long long_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.long_p());
+        }
+
+        @Override
+        public Integer integer_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.integer_p());
+        }
+
+        @Override
+        public Float float_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.float_p());
+        }
+
+        @Override
+        public Double double_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.double_p());
+        }
+
+        @Override
+        public <T extends Enum<T>> T enum_f(String name, Class<T> clazz) throws IOException {
+            return field(name, PicklerCoreBase.this.enum_p(clazz));
+        }
+
+        @Override
+        public String string_f(String name) throws IOException {
+            return field(name, PicklerCoreBase.this.string_p());
         }
     }
 

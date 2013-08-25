@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.javapickling.core.*;
 
 import java.io.IOException;
@@ -28,12 +27,12 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Object, JsonNode> nullP = new Pickler<Object, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Object obj, JsonNode unused) {
+        public JsonNode pickle(Object obj, JsonNode target) {
             return nodeFactory.nullNode();
         }
 
         @Override
-        public Object unpickle(JsonNode node) {
+        public Object unpickle(JsonNode source) {
             return null;
         }
     };
@@ -41,26 +40,26 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Boolean, JsonNode> booleanP = new Pickler<Boolean, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Boolean b, JsonNode unused) {
+        public JsonNode pickle(Boolean b, JsonNode target) {
             return nodeFactory.booleanNode(b);
         }
 
         @Override
-        public Boolean unpickle(JsonNode node) {
-            return node.asBoolean();
+        public Boolean unpickle(JsonNode source) {
+            return source.asBoolean();
         }
     };
 
     protected final Pickler<Byte, JsonNode> byteP = new Pickler<Byte, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Byte b, JsonNode unused) {
+        public JsonNode pickle(Byte b, JsonNode target) {
             return nodeFactory.numberNode(b);
         }
 
         @Override
-        public Byte unpickle(JsonNode node) {
-            return (byte)node.asInt();
+        public Byte unpickle(JsonNode source) {
+            return (byte)source.asInt();
         }
     };
 
@@ -80,7 +79,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<String, JsonNode> stringP = new Pickler<String, JsonNode>() {
 
         @Override
-        public JsonNode pickle(String s, JsonNode unused) {
+        public JsonNode pickle(String s, JsonNode target) {
             return nodeFactory.textNode(s);
         }
 
@@ -93,7 +92,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Integer, JsonNode> integerP = new Pickler<Integer, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Integer i, JsonNode unused) {
+        public JsonNode pickle(Integer i, JsonNode target) {
             return nodeFactory.numberNode(i);
         }
 
@@ -106,7 +105,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Short, JsonNode> shortP = new Pickler<Short, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Short s, JsonNode unused) {
+        public JsonNode pickle(Short s, JsonNode target) {
             return nodeFactory.numberNode(s);
         }
 
@@ -118,7 +117,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Long, JsonNode> longP = new Pickler<Long, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Long l, JsonNode unused) {
+        public JsonNode pickle(Long l, JsonNode target) {
             return nodeFactory.numberNode(l);
         }
 
@@ -131,7 +130,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Float, JsonNode> floatP = new Pickler<Float, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Float d, JsonNode unused) {
+        public JsonNode pickle(Float d, JsonNode target) {
             return nodeFactory.numberNode(d);
         }
 
@@ -144,7 +143,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Double, JsonNode> doubleP = new Pickler<Double, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Double d, JsonNode unused) {
+        public JsonNode pickle(Double d, JsonNode target) {
             return nodeFactory.numberNode(d);
         }
 
@@ -157,32 +156,32 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final MapPickler<JsonNode> mapP = new MapPickler<JsonNode>() {
 
         @Override
-        public FieldPickler<JsonNode> pickler(final JsonNode unused) {
+        public FieldPickler<JsonNode> pickler(final JsonNode target) {
 
-            return new FieldPicklerBase() {
+            return new FieldPicklerBase(target) {
 
                 private ObjectNode objectNode = nodeFactory.objectNode();
 
                 @Override
                 public <T> void field(String name, T value, Pickler<T, JsonNode> pickler) throws IOException {
-                    objectNode.put(name, pickler.pickle(value, unused));
+                    objectNode.put(name, pickler.pickle(value, target));
                 }
 
                 @Override
-                public JsonNode pickle(JsonNode node) {
+                public JsonNode pickle(JsonNode source) {
                     return objectNode;
                 }
             };
         }
 
         @Override
-        public FieldUnpickler<JsonNode> unpickler(final JsonNode node) {
+        public FieldUnpickler<JsonNode> unpickler(final JsonNode source) {
 
-            return new FieldUnpicklerBase() {
+            return new FieldUnpicklerBase(source) {
 
                 @Override
-                public <T> T field(String name, JsonNode pf, Pickler<T, JsonNode> pickler) throws IOException {
-                    return pickler.unpickle(node.get(name));
+                public <T> T field(String name, Pickler<T, JsonNode> pickler) throws IOException {
+                    return pickler.unpickle(source.get(name));
                 }
             };
         }
@@ -261,7 +260,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         return new Pickler<T[], JsonNode>() {
 
             @Override
-            public JsonNode pickle(T[] arr, JsonNode unused) throws IOException {
+            public JsonNode pickle(T[] arr, JsonNode target) throws IOException {
 
                 final ArrayNode result = nodeFactory.arrayNode();
 
@@ -299,7 +298,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         return new Pickler<List<T>, JsonNode>() {
 
             @Override
-            public JsonNode pickle(List<T> list, JsonNode unused) throws IOException {
+            public JsonNode pickle(List<T> list, JsonNode target) throws IOException {
 
                 final ArrayNode result = nodeFactory.arrayNode();
 
@@ -335,7 +334,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         return new Pickler<Map<String, T>, JsonNode>() {
 
             @Override
-            public JsonNode pickle(Map<String, T> map, JsonNode unused) throws IOException {
+            public JsonNode pickle(Map<String, T> map, JsonNode target) throws IOException {
 
                 final ObjectNode result = nodeFactory.objectNode();
 
@@ -367,9 +366,10 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <K, V> Pickler<Map<K, V>, JsonNode> map_p(
+    public <K, V, M extends Map<K, V>> Pickler<Map<K, V>, JsonNode> map_p(
             final Pickler<K, JsonNode> keyPickler,
-            final Pickler<V, JsonNode> valuePickler) {
+            final Pickler<V, JsonNode> valuePickler,
+            final Class<M> mapClass) {
 
         return new Pickler<Map<K, V>, JsonNode>() {
 
@@ -377,7 +377,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
             private static final String valueF = "value";
 
             @Override
-            public JsonNode pickle(Map<K, V> map, JsonNode unused) throws IOException {
+            public JsonNode pickle(Map<K, V> map, JsonNode target) throws IOException {
 
                 final ArrayNode result = nodeFactory.arrayNode();
 
@@ -394,12 +394,19 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
             @Override
             public Map<K, V> unpickle(JsonNode source) throws IOException {
 
-                if (!source.isObject())
+                if (!source.isArray())
                     throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into a Map");
 
                 final ArrayNode arrayNode = (ArrayNode)source;
 
-                final Map<K, V> result = new TreeMap<K, V>();
+                final Map<K, V> result;
+                try {
+                    result = mapClass.newInstance();
+                } catch (InstantiationException ex) {
+                    throw new PicklerException("Can not create map class", ex);
+                } catch (IllegalAccessException ex) {
+                    throw new PicklerException("Can not create map class", ex);
+                }
 
                 for (JsonNode child : arrayNode) {
                     final ObjectNode objectNode = (ObjectNode)child;
@@ -419,7 +426,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         return new Pickler<Set<T>, JsonNode>() {
 
             @Override
-            public JsonNode pickle(Set<T> set, JsonNode unused) throws IOException {
+            public JsonNode pickle(Set<T> set, JsonNode target) throws IOException {
 
                 final ArrayNode result = nodeFactory.arrayNode();
 

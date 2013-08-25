@@ -99,7 +99,10 @@ public interface PicklerCore<PF> {
      * @param <V>
      * @return
      */
-    <K, V> Pickler<Map<K, V>, PF> map_p(final Pickler<K, PF> keyPickler, final Pickler<V, PF> valuePickler);
+    <K, V, M extends Map<K, V>> Pickler<Map<K, V>, PF> map_p(
+            final Pickler<K, PF> keyPickler,
+            final Pickler<V, PF> valuePickler,
+            final Class<M> mapClass);
 
     /**
      * Provide a Pickler for a homogeneous Set.

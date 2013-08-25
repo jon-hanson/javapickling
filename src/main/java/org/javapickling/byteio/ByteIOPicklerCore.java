@@ -155,7 +155,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         @Override
         public FieldPickler<ByteIO> pickler(final ByteIO target) {
 
-            return new FieldPicklerBase() {
+            return new FieldPicklerBase(target) {
 
                 @Override
                 public <T> void field(final String name, final T value, final Pickler<T, ByteIO> pickler) throws IOException {
@@ -173,10 +173,10 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         @Override
         public FieldUnpickler<ByteIO> unpickler(final ByteIO source) {
 
-            return new FieldUnpicklerBase() {
+            return new FieldUnpicklerBase(source) {
 
                 @Override
-                public <T> T field(String name, ByteIO source, Pickler<T, ByteIO> pickler) throws IOException {
+                public <T> T field(String name, Pickler<T, ByteIO> pickler) throws IOException {
                     final String s = source.readString();
                     if (!s.equals(name))
                         throw new PicklerException("Expecting field name '" + name + "' but got '" + s + "'");
@@ -353,9 +353,10 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <K, V> Pickler<Map<K, V>, ByteIO> map_p(
+    public <K, V, M extends Map<K, V>> Pickler<Map<K, V>, ByteIO> map_p(
             final Pickler<K, ByteIO> keyPickler,
-            final Pickler<V, ByteIO> valuePickler) {
+            final Pickler<V, ByteIO> valuePickler,
+            final Class<M> mapClass) {
 
         return new Pickler<Map<K, V>, ByteIO>() {
 
@@ -375,7 +376,14 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             @Override
             public Map<K, V> unpickle(ByteIO source) throws IOException {
 
-                final Map<K, V> result = new TreeMap<K, V>();
+                final Map<K, V> result;
+                try {
+                    result = mapClass.newInstance();
+                } catch (InstantiationException ex) {
+                    throw new PicklerException("Can not create map class", ex);
+                } catch (IllegalAccessException ex) {
+                    throw new PicklerException("Can not create map class", ex);
+                }
 
                 final int size = source.input.readInt();
                 for (int i = 0; i < size; ++i) {

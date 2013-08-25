@@ -2,8 +2,9 @@ package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import junit.framework.Assert;
-import org.javapickling.common.*;
+import org.javapickling.common.SimpleClass;
 import org.javapickling.core.*;
+import org.javapickling.example.Utils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,30 +14,29 @@ public class JsonPicklerTest {
     private static final JsonPicklerCore jsonPickler = new JsonPicklerCore();
 
     static {
-        jsonPickler.register(Person.class, PersonPickler.class);
-        jsonPickler.register(House.class, HousePickler.class);
+        jsonPickler.register(SimpleClass.class, SimpleClass.Pickler.class);
     }
 
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 
-        final House house = Utils.house(0);
+        final SimpleClass simple = SimpleClass.createInstance(true);
 
-        final Utils.RoundTrip jsonTimeMs = roundTripViaJson(house);
+        final org.javapickling.common.Utils.RoundTrip jsonTimeMs = roundTripViaJson(simple);
         System.out.println(jsonTimeMs);
 
-        Utils.roundTripViaJavaSer(house);
-        final Utils.RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(house);
+        Utils.roundTripViaJavaSer(simple);
+        final org.javapickling.common.Utils.RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(simple);
         System.out.println(javaSerTimeMs);
     }
 
-    private static Utils.RoundTrip roundTripViaJson(House house) throws IOException {
+    private static org.javapickling.common.Utils.RoundTrip roundTripViaJson(SimpleClass simple) throws IOException {
 
         final long startTime1 = System.nanoTime();
 
-        final Pickler<House, JsonNode> pickler = jsonPickler.object_p(House.class);
+        final Pickler<SimpleClass, JsonNode> pickler = jsonPickler.object_p(SimpleClass.class);
 
-        final JsonNode node = pickler.pickle(house, null);
+        final JsonNode node = pickler.pickle(simple, null);
 
         final long endTime1 = System.nanoTime();
 
@@ -46,12 +46,12 @@ public class JsonPicklerTest {
 
         final long startTime2 = System.nanoTime();
 
-        final House house2 = pickler.unpickle(node);
+        final SimpleClass simple2 = pickler.unpickle(node);
 
         final long endTime2 = System.nanoTime();
 
-        Assert.assertEquals(house, house2);
+        Assert.assertEquals(simple, simple2);
 
-        return new Utils.RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
+        return new org.javapickling.common.Utils.RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }
 }

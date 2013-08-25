@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A class which describes types.
+ */
 public class MetaType {
 
     private static final String ARRAY_SUFFIX = "[]";
@@ -47,10 +50,10 @@ public class MetaType {
                 case DOUBLE:    return core.double_p();
                 case ENUM:      return core.enum_p(castEnumClass(clazz));
                 case STRING:    return core.string_p();
-                case MAP:       return core.map_p(core.object_p(), core.object_p());
+                case MAP:       return core.map_p(core.object_p(), core.object_p(), (Class<Map<Object, Object>>)clazz);
                 case LIST:      return core.list_p(core.object_p());
                 case SET:       return core.set_p(core.object_p());
-                case OBJECT:    return core.object_p();
+                case OBJECT:    return core.object_p(clazz);
                 default:        throw new PicklerException("Unexpected Type value - " + name());
             }
         }
@@ -92,7 +95,7 @@ public class MetaType {
         }
 
         if (clazz.isEnum()) {
-            return new MetaType(Type.ENUM, arrayDepth);
+            return new MetaType(Type.ENUM, clazz, arrayDepth);
         } else {
             Type type = classTypeMap.get(clazz.getName());
             if (type != null) {
