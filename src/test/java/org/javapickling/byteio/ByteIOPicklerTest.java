@@ -1,6 +1,6 @@
 package org.javapickling.byteio;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.javapickling.common.SimpleClass;
 import org.javapickling.core.Pickler;
 import org.javapickling.example.Utils;

@@ -14,6 +14,9 @@ public class MetaType {
 
     private static final String ARRAY_SUFFIX = "[]";
 
+    /**
+     * An enum for what we consider to be the base types.
+     */
     public enum Type {
         NULL(Object.class),
         BOOLEAN(Boolean.class),
@@ -51,8 +54,8 @@ public class MetaType {
                 case ENUM:      return core.enum_p(castEnumClass(clazz));
                 case STRING:    return core.string_p();
                 case MAP:       return core.map_p(core.object_p(), core.object_p(), (Class<Map<Object, Object>>)clazz);
-                case LIST:      return core.list_p(core.object_p());
-                case SET:       return core.set_p(core.object_p());
+                case LIST:      return core.list_p(core.object_p(), (Class<List<Object>>)clazz);
+                case SET:       return core.set_p(core.object_p(), (Class<Set<Object>>)clazz);
                 case OBJECT:    return core.object_p(clazz);
                 default:        throw new PicklerException("Unexpected Type value - " + name());
             }
@@ -107,6 +110,7 @@ public class MetaType {
     }
 
     public static MetaType ofName(String name) {
+
         int arrayDepth = 0;
         while (name.endsWith(ARRAY_SUFFIX)) {
             ++arrayDepth;

@@ -1,7 +1,6 @@
 package org.javapickling.core;
 
 import com.google.common.collect.Maps;
-import org.javapickling.byteio.ByteIO;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -13,6 +12,16 @@ import java.util.Map;
  * @param <PF>
  */
 public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
+
+    protected static <T> T newInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException ex) {
+            throw new PicklerException("Can not create map class", ex);
+        } catch (IllegalAccessException ex) {
+            throw new PicklerException("Can not create map class", ex);
+        }
+    }
 
     /**
      * FieldPicklerBase adds helper methods to simplify calling FieldPickler.field().

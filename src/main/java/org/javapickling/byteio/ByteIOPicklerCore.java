@@ -1,8 +1,5 @@
 package org.javapickling.byteio;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.javapickling.core.*;
 
 import java.io.IOException;
@@ -255,7 +252,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler, final Class<T> enumClass) {
+    public <T> Pickler<T[], ByteIO> array_p(final Pickler<T, ByteIO> elemPickler, final Class<T> elemClass) {
 
         return new Pickler<T[], ByteIO>() {
 
@@ -275,7 +272,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             public T[] unpickle(ByteIO source) throws IOException {
 
                 int size = source.input.readInt();
-                final T[] result = (T[])Array.newInstance(enumClass, size);
+                final T[] result = (T[])Array.newInstance(elemClass, size);
 
                 for (int i = 0; i < size; ++i) {
                     result[i] = elemPickler.unpickle(source);
@@ -287,7 +284,9 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<List<T>, ByteIO> list_p(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<List<T>, ByteIO> list_p(
+            final Pickler<T, ByteIO> elemPickler,
+            final Class<? extends List> listClass) {
 
         return new Pickler<List<T>, ByteIO>() {
 
@@ -307,7 +306,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             public List<T> unpickle(ByteIO source) throws IOException {
 
                 int size = source.input.readInt();
-                final List<T> result = Lists.newArrayListWithCapacity(size);
+                final List<T> result = newInstance(listClass);
 
                 for (int i = 0; i < size; ++i) {
                     result.add(elemPickler.unpickle(source));
@@ -319,7 +318,9 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, ByteIO> map_p(final Pickler<T, ByteIO> valuePickler) {
+    public <T> Pickler<Map<String, T>, ByteIO> map_p(
+            final Pickler<T, ByteIO> valuePickler,
+            final Class<? extends Map> mapClass) {
 
         return new Pickler<Map<String, T>, ByteIO>() {
 
@@ -341,7 +342,8 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
                 final int size = source.input.readInt();
 
-                final Map<String, T> result = Maps.newTreeMap();
+                final Map<String, T> result = newInstance(mapClass);
+
                 for (int i = 0; i < size; ++i) {
                     final String key = source.readString();
                     result.put(key, valuePickler.unpickle(source));
@@ -353,10 +355,10 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <K, V, M extends Map<K, V>> Pickler<Map<K, V>, ByteIO> map_p(
+    public <K, V> Pickler<Map<K, V>, ByteIO> map_p(
             final Pickler<K, ByteIO> keyPickler,
             final Pickler<V, ByteIO> valuePickler,
-            final Class<M> mapClass) {
+            final Class<?  extends Map> mapClass) {
 
         return new Pickler<Map<K, V>, ByteIO>() {
 
@@ -376,14 +378,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             @Override
             public Map<K, V> unpickle(ByteIO source) throws IOException {
 
-                final Map<K, V> result;
-                try {
-                    result = mapClass.newInstance();
-                } catch (InstantiationException ex) {
-                    throw new PicklerException("Can not create map class", ex);
-                } catch (IllegalAccessException ex) {
-                    throw new PicklerException("Can not create map class", ex);
-                }
+                final Map<K, V> result = newInstance(mapClass);
 
                 final int size = source.input.readInt();
                 for (int i = 0; i < size; ++i) {
@@ -398,7 +393,9 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public <T> Pickler<Set<T>, ByteIO> set_p(final Pickler<T, ByteIO> elemPickler) {
+    public <T> Pickler<Set<T>, ByteIO> set_p(
+            final Pickler<T, ByteIO> elemPickler,
+            final Class<? extends Set> setClass) {
 
         return new Pickler<Set<T>, ByteIO>() {
 
@@ -417,7 +414,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             @Override
             public Set<T> unpickle(ByteIO source) throws IOException {
 
-                final Set<T> result = new TreeSet<T>();;
+                final Set<T> result = newInstance(setClass);
 
                 int size = source.input.readInt();
                 for (int i = 0; i < size; ++i) {

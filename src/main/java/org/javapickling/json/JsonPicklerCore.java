@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.javapickling.core.*;
 
 import java.io.IOException;
@@ -255,7 +253,9 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<T[], JsonNode> array_p(final Pickler<T, JsonNode> elemPickler, final Class<T> enumClass) {
+    public <T> Pickler<T[], JsonNode> array_p(
+            final Pickler<T, JsonNode> elemPickler,
+            final Class<T> elemClass) {
 
         return new Pickler<T[], JsonNode>() {
 
@@ -279,7 +279,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode contNode = (ArrayNode)source;
 
-                final T[] result = (T[]) Array.newInstance(enumClass, contNode.size());
+                final T[] result = (T[]) Array.newInstance(elemClass, contNode.size());
 
                 int i = 0;
                 for (JsonNode elem : contNode) {
@@ -293,7 +293,9 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<List<T>, JsonNode> list_p(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<List<T>, JsonNode> list_p(
+            final Pickler<T, JsonNode> elemPickler,
+            final Class<? extends List> listClass) {
 
         return new Pickler<List<T>, JsonNode>() {
 
@@ -317,7 +319,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode contNode = (ArrayNode)source;
 
-                final List<T> result = Lists.newArrayListWithCapacity(contNode.size());
+                final List<T> result = newInstance(listClass);
 
                 for (JsonNode elem : contNode) {
                     result.add(elemPickler.unpickle(elem));
@@ -329,7 +331,9 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, JsonNode> map_p(final Pickler<T, JsonNode> valuePickler) {
+    public <T> Pickler<Map<String, T>, JsonNode> map_p(
+            final Pickler<T, JsonNode> valuePickler,
+            final Class<? extends Map> mapClass) {
 
         return new Pickler<Map<String, T>, JsonNode>() {
 
@@ -353,7 +357,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ObjectNode objectNode = (ObjectNode)source;
 
-                final Map<String, T> result = Maps.newTreeMap();
+                final Map<String, T> result = newInstance(mapClass);
 
                 for (Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields(); iter.hasNext();) {
                     final Map.Entry<String, JsonNode> entry = iter.next();
@@ -366,10 +370,10 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <K, V, M extends Map<K, V>> Pickler<Map<K, V>, JsonNode> map_p(
+    public <K, V> Pickler<Map<K, V>, JsonNode> map_p(
             final Pickler<K, JsonNode> keyPickler,
             final Pickler<V, JsonNode> valuePickler,
-            final Class<M> mapClass) {
+            final Class<?  extends Map> mapClass) {
 
         return new Pickler<Map<K, V>, JsonNode>() {
 
@@ -421,7 +425,9 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public <T> Pickler<Set<T>, JsonNode> set_p(final Pickler<T, JsonNode> elemPickler) {
+    public <T> Pickler<Set<T>, JsonNode> set_p(
+            final Pickler<T, JsonNode> elemPickler,
+            final Class<? extends Set> setClass) {
 
         return new Pickler<Set<T>, JsonNode>() {
 
@@ -445,7 +451,7 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
 
                 final ArrayNode contNode = (ArrayNode)source;
 
-                final Set<T> result = new TreeSet<T>();
+                final Set<T> result = newInstance(setClass);
 
                 for (JsonNode elem : contNode) {
                     result.add(elemPickler.unpickle(elem));

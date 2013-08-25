@@ -33,13 +33,13 @@ public class SimpleClass implements Serializable {
             mp.double_f("double", sc.doubleF);
             mp.enum_f("enum", sc.enumF, Colour.class);
             mp.string_f("string", sc.stringF);
-            mp.field("strDblMap", sc.strDblMapF, core.map_p(core.double_p()));
+            mp.field("strDblMap", sc.strDblMapF, core.map_p(core.double_p(), TreeMap.class));
             mp.field("intEnumMap", sc.intEnumMapF, core.map_p(core.integer_p(), core.enum_p(Colour.class), TreeMap.class));
             mp.field("objObjMap", sc.objObjMapF, core.map_p(core.object_p(), core.object_p(), TreeMap.class));
-            mp.field("strSet", sc.strSetF, core.set_p(core.string_p()));
-            mp.field("strObj", sc.strObjF, core.set_p(core.object_p()));
-            mp.field("listStr", sc.listStrF, core.list_p(core.string_p()));
-            mp.field("listObj", sc.listObjF, core.list_p(core.object_p()));
+            mp.field("strSet", sc.strSetF, core.set_p(core.string_p(), TreeSet.class));
+            mp.field("strObj", sc.strObjF, core.set_p(core.object_p(), TreeSet.class));
+            mp.field("listStr", sc.listStrF, core.list_p(core.string_p(), ArrayList.class));
+            mp.field("listObj", sc.listObjF, core.list_p(core.object_p(), ArrayList.class));
             return mp.pickle(target);
         }
 
@@ -56,13 +56,13 @@ public class SimpleClass implements Serializable {
             final double doubleF = mu.double_f("double");
             final Colour enumF = mu.enum_f("enum", Colour.class);
             final String stringF = mu.string_f("string");
-            final Map<String, Double> strDblMapF = mu.field("strDblMap", core.map_p(core.double_p()));
-                final Map<Integer, Colour> intEnumMapF = (Map<Integer, Colour>)mu.field("intEnumMap", core.map_p(core.integer_p(), core.enum_p(Colour.class), TreeMap.class));
+            final Map<String, Double> strDblMapF = mu.field("strDblMap", core.map_p(core.double_p(), TreeMap.class));
+            final Map<Integer, Colour> intEnumMapF = (Map<Integer, Colour>)mu.field("intEnumMap", core.map_p(core.integer_p(), core.enum_p(Colour.class), TreeMap.class));
             final Map<Object, Object> objObjMapF = (Map<Object, Object>)mu.field("objObjMap", core.map_p(core.object_p(), core.object_p(), TreeMap.class));
-            final Set<String> strSetF = mu.field("strSet", core.set_p(core.string_p()));
-            final Set<Object> strObjF = mu.field("strObj", core.set_p(core.object_p()));
-            final List<String> listStrF = mu.field("listStr", core.list_p(core.string_p()));
-            final List<Object> listObjF = mu.field("listObj", core.list_p(core.object_p()));
+            final Set<String> strSetF = mu.field("strSet", core.set_p(core.string_p(), TreeSet.class));
+            final Set<Object> strObjF = mu.field("strObj", core.set_p(core.object_p(), TreeSet.class));
+            final List<String> listStrF = mu.field("listStr", core.list_p(core.string_p(), ArrayList.class));
+            final List<Object> listObjF = mu.field("listObj", core.list_p(core.object_p(), ArrayList.class));
             return new SimpleClass(
                 booleanF,
                 byteF,

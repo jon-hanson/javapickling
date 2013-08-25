@@ -1,7 +1,7 @@
 package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.javapickling.common.SimpleClass;
 import org.javapickling.core.*;
 import org.javapickling.example.Utils;
