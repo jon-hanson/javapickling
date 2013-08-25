@@ -1,8 +1,8 @@
 package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.javapickling.common.ComplexClass;
 import org.junit.Assert;
-import org.javapickling.common.SimpleClass;
 import org.javapickling.core.*;
 import org.javapickling.example.Utils;
 import org.junit.Test;
@@ -14,13 +14,13 @@ public class JsonPicklerTest {
     private static final JsonPicklerCore jsonPickler = new JsonPicklerCore();
 
     static {
-        jsonPickler.register(SimpleClass.class, SimpleClass.Pickler.class);
+        jsonPickler.register(ComplexClass.class, ComplexClass.Pickler.class);
     }
 
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 
-        final SimpleClass simple = SimpleClass.createInstance(true);
+        final ComplexClass simple = ComplexClass.createInstance(true);
 
         final org.javapickling.common.Utils.RoundTrip jsonTimeMs = roundTripViaJson(simple);
         System.out.println(jsonTimeMs);
@@ -30,11 +30,11 @@ public class JsonPicklerTest {
         System.out.println(javaSerTimeMs);
     }
 
-    private static org.javapickling.common.Utils.RoundTrip roundTripViaJson(SimpleClass simple) throws IOException {
+    private static org.javapickling.common.Utils.RoundTrip roundTripViaJson(ComplexClass simple) throws IOException {
 
         final long startTime1 = System.nanoTime();
 
-        final Pickler<SimpleClass, JsonNode> pickler = jsonPickler.object_p(SimpleClass.class);
+        final Pickler<ComplexClass, JsonNode> pickler = jsonPickler.object_p(ComplexClass.class);
 
         final JsonNode node = pickler.pickle(simple, null);
 
@@ -46,7 +46,7 @@ public class JsonPicklerTest {
 
         final long startTime2 = System.nanoTime();
 
-        final SimpleClass simple2 = pickler.unpickle(node);
+        final ComplexClass simple2 = pickler.unpickle(node);
 
         final long endTime2 = System.nanoTime();
 

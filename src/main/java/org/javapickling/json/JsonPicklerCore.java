@@ -166,6 +166,11 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
                 }
 
                 @Override
+                public <T> void field(Field<T, JsonNode> field, T value) throws IOException {
+                    objectNode.put(field.name, field.pickler.pickle(value, target));
+                }
+
+                @Override
                 public JsonNode pickle(JsonNode source) {
                     return objectNode;
                 }
@@ -180,6 +185,11 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
                 @Override
                 public <T> T field(String name, Pickler<T, JsonNode> pickler) throws IOException {
                     return pickler.unpickle(source.get(name));
+                }
+
+                @Override
+                public <T> T field(Field<T, JsonNode> field) throws IOException {
+                    return field.pickler.unpickle(source.get(field.name));
                 }
             };
         }

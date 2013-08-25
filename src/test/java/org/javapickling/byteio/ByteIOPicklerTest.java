@@ -1,7 +1,7 @@
 package org.javapickling.byteio;
 
+import org.javapickling.common.ComplexClass;
 import org.junit.Assert;
-import org.javapickling.common.SimpleClass;
 import org.javapickling.core.Pickler;
 import org.javapickling.example.Utils;
 import org.junit.Test;
@@ -13,13 +13,13 @@ public class ByteIOPicklerTest {
     private static final ByteIOPicklerCore byteIOPickler = new ByteIOPicklerCore();
 
     static {
-        byteIOPickler.register(SimpleClass.class, SimpleClass.Pickler.class);
+        byteIOPickler.register(ComplexClass.class, ComplexClass.Pickler.class);
     }
 
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 
-        final SimpleClass simple = SimpleClass.createInstance(true);
+        final ComplexClass simple = ComplexClass.createInstance(true);
 
         final org.javapickling.common.Utils.RoundTrip byteIOTimeMs = roundTripViaByteIO(simple);
         System.out.println(byteIOTimeMs);
@@ -29,11 +29,11 @@ public class ByteIOPicklerTest {
         System.out.println(javaSerTimeMs);
     }
 
-    private static org.javapickling.common.Utils.RoundTrip roundTripViaByteIO(SimpleClass simple) throws IOException {
+    private static org.javapickling.common.Utils.RoundTrip roundTripViaByteIO(ComplexClass simple) throws IOException {
 
         final long startTime1 = System.nanoTime();
 
-        final Pickler<SimpleClass, ByteIO> pickler = byteIOPickler.object_p(SimpleClass.class);
+        final Pickler<ComplexClass, ByteIO> pickler = byteIOPickler.object_p(ComplexClass.class);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ByteIO byteOutput = new ByteIO(new DataOutputStream(baos));
@@ -48,7 +48,7 @@ public class ByteIOPicklerTest {
 
         final ByteArrayInputStream bais = new ByteArrayInputStream(ba);
         final ByteIO byteInput = new ByteIO(new DataInputStream(bais));
-        final SimpleClass simple2 = pickler.unpickle(byteInput);
+        final ComplexClass simple2 = pickler.unpickle(byteInput);
 
         final long endTime2 = System.nanoTime();
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 public interface FieldUnpickler<PF> {
 
     <T> T field(String name, Pickler<T, PF> pickler) throws IOException;
+    <T> T field(Field<T, PF> field) throws IOException;
 
     Boolean boolean_f(String name) throws IOException;
     Byte byte_f(String name) throws IOException;

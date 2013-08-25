@@ -156,8 +156,12 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
                 @Override
                 public <T> void field(final String name, final T value, final Pickler<T, ByteIO> pickler) throws IOException {
-                    target.writeString(name);
                     pickler.pickle(value, target);
+                }
+
+                @Override
+                public <T> void field(Field<T, ByteIO> field, T value) throws IOException {
+                    field.pickler.pickle(value, target);
                 }
 
                 @Override
@@ -174,10 +178,12 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
                 @Override
                 public <T> T field(String name, Pickler<T, ByteIO> pickler) throws IOException {
-                    final String s = source.readString();
-                    if (!s.equals(name))
-                        throw new PicklerException("Expecting field name '" + name + "' but got '" + s + "'");
                     return pickler.unpickle(source);
+                }
+
+                @Override
+                public <T> T field(Field<T, ByteIO> field) throws IOException {
+                    return field.pickler.unpickle(source);
                 }
             };
         }
