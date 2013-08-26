@@ -13,10 +13,6 @@ public class JsonPicklerTest {
 
     private static final JsonPicklerCore jsonPickler = new JsonPicklerCore();
 
-    static {
-        jsonPickler.register(ComplexClass.class, ComplexClass.Pickler.class);
-    }
-
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 

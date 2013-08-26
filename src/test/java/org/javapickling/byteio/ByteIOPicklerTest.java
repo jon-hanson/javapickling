@@ -12,10 +12,6 @@ public class ByteIOPicklerTest {
 
     private static final ByteIOPicklerCore byteIOPickler = new ByteIOPicklerCore();
 
-    static {
-        byteIOPickler.register(ComplexClass.class, ComplexClass.Pickler.class);
-    }
-
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
+@DefaultPickler(pickler=ComplexClass.Pickler.class)
 public class ComplexClass implements Serializable {
 
     enum Colour {
@@ -17,23 +18,23 @@ public class ComplexClass implements Serializable {
 
     public static class Pickler<PF> extends PicklerBase<ComplexClass, PF> {
 
-        private final Field<Boolean, PF> booleanF = field("bool", boolean_p());
-        private final Field<Byte, PF> byteF = field("byte", byte_p());
-        private final Field<Character, PF> charF = field("char", char_p());
-        private final Field<Short, PF> shortF = field("short", short_p());
-        private final Field<Long, PF> longF = field("long", long_p());
-        private final Field<Integer, PF> intF = field("int", integer_p());
-        private final Field<Float, PF> floatF = field("float", float_p());
-        private final Field<Double, PF> doubleF = field("double", double_p());
-        private final Field<Colour, PF> enumF = field("enum", enum_p(Colour.class));
-        private final Field<String, PF> stringF = field("string", string_p());
-        private final Field<Map<String, Double>, PF> strDblMapF = field("strDblMap", map_p(double_p(), TreeMap.class));
-        private final Field<Map<Integer, Colour>, PF> intEnumMapF = field("intEnumMap", map_p(integer_p(), enum_p(Colour.class), TreeMap.class));
-        private final Field<Map<Object, Object>, PF> objObjMapF = field("objObjMap", map_p(object_p(), object_p(), TreeMap.class));
-        private final Field<Set<String>, PF> strSetF = field("strSet", set_p(string_p(), TreeSet.class));
-        private final Field<Set<Object>, PF> objSetF = field("objSet", set_p(object_p(), TreeSet.class));
-        private final Field<List<String>, PF> listStrF = field("listStr", list_p(string_p(), ArrayList.class));
-        private final Field<List<Object>, PF> listObjF = nullableField("listObj", list_p(object_p(), ArrayList.class));
+        final Field<Boolean, PF>                booleanF =      field("bool",       boolean_p());
+        final Field<Byte, PF>                   byteF =         field("byte",       byte_p());
+        final Field<Character, PF>              charF =         field("char",       char_p());
+        final Field<Short, PF>                  shortF =        field("short",      short_p());
+        final Field<Long, PF>                   longF =         field("long",       long_p());
+        final Field<Integer, PF>                intF =          field("int",        integer_p());
+        final Field<Float, PF>                  floatF =        field("float",      float_p());
+        final Field<Double, PF>                 doubleF =       field("double",     double_p());
+        final Field<Colour, PF>                 enumF =         field("enum",       enum_p(Colour.class));
+        final Field<String, PF>                 stringF =       field("string",     string_p());
+        final Field<Map<String, Double>, PF>    strDblMapF =    field("strDblMap",  map_p(double_p(), TreeMap.class));
+        final Field<Map<Integer, Colour>, PF>   intEnumMapF =   field("intEnumMap", map_p(integer_p(), enum_p(Colour.class), TreeMap.class));
+        final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMap",  map_p(object_p(), object_p(), TreeMap.class));
+        final Field<Set<String>, PF>            strSetF =       field("strSet",     set_p(string_p(), TreeSet.class));
+        final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(object_p(), TreeSet.class));
+        final Field<List<String>, PF>           listStrF =      field("listStr",    list_p(string_p(), ArrayList.class));
+        final Field<List<Object>, PF>           listObjF =      nullableField("listObj", list_p(object_p(), ArrayList.class));
 
         public Pickler(PicklerCore<PF> core) {
             super(core);
@@ -42,23 +43,23 @@ public class ComplexClass implements Serializable {
         @Override
         public PF pickle(ComplexClass sc, PF target) throws IOException {
             final FieldPickler<PF> mp = core.object_map().pickler(target);
-            mp.field(booleanF, sc.booleanF);
-            mp.field(byteF, sc.byteF);
-            mp.field(charF, sc.charF);
-            mp.field(shortF, sc.shortF);
-            mp.field(longF, sc.longF);
-            mp.field(intF, sc.intF);
-            mp.field(floatF, sc.floatF);
-            mp.field(doubleF, sc.doubleF);
-            mp.field(enumF, sc.enumF);
-            mp.field(stringF, sc.stringF);
-            mp.field(strDblMapF, sc.strDblMapF);
-            mp.field(intEnumMapF, sc.intEnumMapF);
-            mp.field(objObjMapF, sc.objObjMapF);
-            mp.field(strSetF, sc.strSetF);
-            mp.field(objSetF, sc.objSetF);
-            mp.field(listStrF, sc.listStrF);
-            mp.field(listObjF, sc.listObjF);
+            mp.field(booleanF,      sc.booleanF);
+            mp.field(byteF,         sc.byteF);
+            mp.field(charF,         sc.charF);
+            mp.field(shortF,        sc.shortF);
+            mp.field(longF,         sc.longF);
+            mp.field(intF,          sc.intF);
+            mp.field(floatF,        sc.floatF);
+            mp.field(doubleF,       sc.doubleF);
+            mp.field(enumF,         sc.enumF);
+            mp.field(stringF,       sc.stringF);
+            mp.field(strDblMapF,    sc.strDblMapF);
+            mp.field(intEnumMapF,   sc.intEnumMapF);
+            mp.field(objObjMapF,    sc.objObjMapF);
+            mp.field(strSetF,       sc.strSetF);
+            mp.field(objSetF,       sc.objSetF);
+            mp.field(listStrF,      sc.listStrF);
+            mp.field(listObjF,      sc.listObjF);
             return mp.pickle(target);
         }
 
@@ -265,30 +266,5 @@ public class ComplexClass implements Serializable {
         if (stringF != null ? !stringF.equals(that.stringF) : that.stringF != null) return false;
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = (booleanF ? 1 : 0);
-        result = 31 * result + (int) byteF;
-        result = 31 * result + (int) charF;
-        result = 31 * result + (int) shortF;
-        result = 31 * result + (int) (longF ^ (longF >>> 32));
-        result = 31 * result + intF;
-        result = 31 * result + (floatF != +0.0f ? Float.floatToIntBits(floatF) : 0);
-        temp = Double.doubleToLongBits(doubleF);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (enumF != null ? enumF.hashCode() : 0);
-        result = 31 * result + (stringF != null ? stringF.hashCode() : 0);
-        result = 31 * result + (strDblMapF != null ? strDblMapF.hashCode() : 0);
-        result = 31 * result + (intEnumMapF != null ? intEnumMapF.hashCode() : 0);
-        result = 31 * result + (objObjMapF != null ? objObjMapF.hashCode() : 0);
-        result = 31 * result + (strSetF != null ? strSetF.hashCode() : 0);
-        result = 31 * result + (objSetF != null ? objSetF.hashCode() : 0);
-        result = 31 * result + (listStrF != null ? listStrF.hashCode() : 0);
-        result = 31 * result + (listObjF != null ? listObjF.hashCode() : 0);
-        return result;
     }
 }
