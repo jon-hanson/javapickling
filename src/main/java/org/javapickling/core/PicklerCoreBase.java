@@ -215,4 +215,38 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     public Pickler<Object, PF> object_p() {
         return new DynamicObjectPickler<PF>(this);
     }
+
+    @Override
+    public <T> Field<T, PF> field(String name, Pickler<T, PF> pickler) {
+        return new Field<T, PF>(name, pickler);
+    }
+
+    @Override
+    public <T> Field<T, PF> nullableField(String name, Pickler<T, PF> pickler) {
+        return new Field<T, PF>(name, nullable(pickler));
+    }
+
+    public <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler) {
+        return new Pickler<T, PF>() {
+
+            @Override
+            public PF pickle(T t, PF target) throws IOException {
+                final PF target2 = boolean_p().pickle(t != null, target);
+                if (t != null) {
+                    return pickler.pickle(t, target2);
+                } else {
+                    return target2;
+                }
+            }
+
+            @Override
+            public T unpickle(PF source) throws IOException {
+                if (boolean_p().unpickle(source)) {
+                    return pickler.unpickle(source);
+                } else {
+                    return null;
+                }
+            }
+        };
+    }
 }

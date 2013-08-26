@@ -140,4 +140,15 @@ public interface PicklerCore<PF> {
      * @return a Pickler for a object/Map.
      */
     MapPickler<PF> object_map();
+
+    <T> Field<T, PF> field(String name, Pickler<T, PF> pickler);
+    <T> Field<T, PF> nullableField(String name, Pickler<T, PF> pickler);
+
+    /**
+     * Convert a pickler which doesn't check for nulls into one that does.
+     * @param pickler
+     * @param <T>
+     * @return
+     */
+    <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler);
 }

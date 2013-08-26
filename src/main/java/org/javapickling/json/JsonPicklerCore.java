@@ -3,6 +3,7 @@ package org.javapickling.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.javapickling.core.*;
 
@@ -475,5 +476,29 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     @Override
     public MapPickler<JsonNode> object_map() {
         return mapP;
+    }
+
+    @Override
+    public <T> Pickler<T, JsonNode> nullable(final Pickler<T, JsonNode> pickler) {
+        return new Pickler<T, JsonNode>() {
+
+            @Override
+            public JsonNode pickle(T t, JsonNode target) throws IOException {
+                if (t == null) {
+                    return nodeFactory.nullNode();
+                } else {
+                    return pickler.pickle(t, target);
+                }
+            }
+
+            @Override
+            public T unpickle(JsonNode source) throws IOException {
+                if (source.isNull()) {
+                    return null;
+                } else {
+                    return pickler.unpickle(source);
+                }
+            }
+        };
     }
 }

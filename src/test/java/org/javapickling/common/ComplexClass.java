@@ -11,25 +11,29 @@ import java.util.*;
 
 public class ComplexClass implements Serializable {
 
+    enum Colour {
+        RED, GREEN, BLUE
+    }
+
     public static class Pickler<PF> extends PicklerBase<ComplexClass, PF> {
 
-        private final Field<Boolean, PF> booleanF = Field.create("bool", core.boolean_p());
-        private final Field<Byte, PF> byteF = Field.create("byte", core.byte_p());
-        private final Field<Character, PF> charF = Field.create("char", core.char_p());
-        private final Field<Short, PF> shortF = Field.create("short", core.short_p());
-        private final Field<Long, PF> longF = Field.create("long", core.long_p());
-        private final Field<Integer, PF> intF = Field.create("int", core.integer_p());
-        private final Field<Float, PF> floatF = Field.create("float", core.float_p());
-        private final Field<Double, PF> doubleF = Field.create("double", core.double_p());
-        private final Field<Colour, PF> enumF = Field.create("enum", core.enum_p(Colour.class));
-        private final Field<String, PF> stringF = Field.create("string", core.string_p());
-        private final Field<Map<String, Double>, PF> strDblMapF = Field.create("strDblMap", core.map_p(core.double_p(), TreeMap.class));
-        private final Field<Map<Integer, Colour>, PF> intEnumMapF = Field.create("intEnumMap", core.map_p(core.integer_p(), core.enum_p(Colour.class), TreeMap.class));
-        private final Field<Map<Object, Object>, PF> objObjMapF = Field.create("objObjMap", core.map_p(core.object_p(), core.object_p(), TreeMap.class));
-        private final Field<Set<String>, PF> strSetF = Field.create("strSet", core.set_p(core.string_p(), TreeSet.class));
-        private final Field<Set<Object>, PF> objSetF = Field.create("objSet", core.set_p(core.object_p(), TreeSet.class));
-        private final Field<List<String>, PF> listStrF = Field.create("listStr", core.list_p(core.string_p(), ArrayList.class));
-        private final Field<List<Object>, PF> listObjF = Field.create("listObj", core.list_p(core.object_p(), ArrayList.class));
+        private final Field<Boolean, PF> booleanF = field("bool", boolean_p());
+        private final Field<Byte, PF> byteF = field("byte", byte_p());
+        private final Field<Character, PF> charF = field("char", char_p());
+        private final Field<Short, PF> shortF = field("short", short_p());
+        private final Field<Long, PF> longF = field("long", long_p());
+        private final Field<Integer, PF> intF = field("int", integer_p());
+        private final Field<Float, PF> floatF = field("float", float_p());
+        private final Field<Double, PF> doubleF = field("double", double_p());
+        private final Field<Colour, PF> enumF = field("enum", enum_p(Colour.class));
+        private final Field<String, PF> stringF = field("string", string_p());
+        private final Field<Map<String, Double>, PF> strDblMapF = field("strDblMap", map_p(double_p(), TreeMap.class));
+        private final Field<Map<Integer, Colour>, PF> intEnumMapF = field("intEnumMap", map_p(integer_p(), enum_p(Colour.class), TreeMap.class));
+        private final Field<Map<Object, Object>, PF> objObjMapF = field("objObjMap", map_p(object_p(), object_p(), TreeMap.class));
+        private final Field<Set<String>, PF> strSetF = field("strSet", set_p(string_p(), TreeSet.class));
+        private final Field<Set<Object>, PF> objSetF = field("objSet", set_p(object_p(), TreeSet.class));
+        private final Field<List<String>, PF> listStrF = field("listStr", list_p(string_p(), ArrayList.class));
+        private final Field<List<Object>, PF> listObjF = nullableField("listObj", list_p(object_p(), ArrayList.class));
 
         public Pickler(PicklerCore<PF> core) {
             super(core);
@@ -81,10 +85,6 @@ public class ComplexClass implements Serializable {
                     mu.field(listObjF)
             );
         }
-    }
-
-    enum Colour {
-        RED, GREEN, BLUE
     }
 
     public static ComplexClass createInstance(boolean first) {
@@ -157,7 +157,7 @@ public class ComplexClass implements Serializable {
             final Set<String> strSetF = Sets.newTreeSet();
             final Set<Object> strObjF = new TreeSet<Object>();
             final List<String> listStrF = Lists.newArrayList();
-            final List<Object> listObjF = Lists.newArrayList();
+            final List<Object> listObjF = null;
 
             return new ComplexClass(
                     booleanF,
