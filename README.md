@@ -29,14 +29,32 @@ See ByteIOPicklerTest.java and JsonPicklerTest.java for example usage, however o
 1. Either register your Pickler class with the `PicklerCore` implementation you're about to use, or use the `DefaultPickler` annotation to specify your Pickler.
 1. Call `PicklerCore.pickle(obj, target)` to pickle your class into the target, and `obj = PicklerCore.unpickler(source)` to reconstitute a class from a source.
 
-## 
+## Documentation
+
+The framework is based around two interfaces, described in more detail in the following sections. The `Pickler` interface allows the serialisation of types to be expressed independently of a specific target format. The `PicklerCore` interface provides a means for serialisation into a specific format to be expressed as a set of `Pickler`s for the base types.
+
+### Pickler
+
+jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java
+
+    public interface Pickler<T, PF> {
+        PF pickle(T t, PF target) throws IOException;
+        T unpickle(PF source) throws IOException;
+    }
+
+`Pickler` is the primary interface in the framework. Classes which provide a pickling implementation for a class T implement `Pickler<T, PF>`. The `PF` type parameter represents the target type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
+
+### PicklerCore
+
+jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java
+
 ## History
 
 (or why do we need another Java serialisation library/framework ?)
 
 The library was born out the need for a Java serialisation framework that satisfied the following requirements:
 
-1. Must be Java-based and able to serialise any Java type.
+1. Must be Java-based and able to serialise any Java type, including Generics and Enums.
 1. Multiple target formats must be supportable, with byte arrays and JSON being the inital set of target formats.
 1. Boilerplate serialisation code for custom classes is acceptable but should be minimal, and should not have to be repeated for each target format.
 1. Serialisers should be composable - it should be possible to express serialisers for classes as being composed of the serislisers for the constituent fields.
