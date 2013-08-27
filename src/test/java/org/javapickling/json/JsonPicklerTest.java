@@ -28,12 +28,10 @@ public class JsonPicklerTest {
 
     private static org.javapickling.common.Utils.RoundTrip roundTripViaJson(ComplexClass simple) throws IOException {
 
-        final long startTime1 = System.nanoTime();
-
         final Pickler<ComplexClass, JsonNode> pickler = jsonPickler.object_p(ComplexClass.class);
 
+        final long startTime1 = System.nanoTime();
         final JsonNode node = pickler.pickle(simple, null);
-
         final long endTime1 = System.nanoTime();
 
         System.out.println("JSON=");
@@ -41,9 +39,7 @@ public class JsonPicklerTest {
         final int size = node.toString().getBytes().length;
 
         final long startTime2 = System.nanoTime();
-
         final ComplexClass simple2 = pickler.unpickle(node);
-
         final long endTime2 = System.nanoTime();
 
         Assert.assertEquals(simple, simple2);

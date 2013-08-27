@@ -27,25 +27,23 @@ public class ByteIOPicklerTest {
 
     private static org.javapickling.common.Utils.RoundTrip roundTripViaByteIO(ComplexClass simple) throws IOException {
 
-        final long startTime1 = System.nanoTime();
-
         final Pickler<ComplexClass, ByteIO> pickler = byteIOPickler.object_p(ComplexClass.class);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ByteIO byteOutput = new ByteIO(new DataOutputStream(baos));
 
+        final long startTime1 = System.nanoTime();
         pickler.pickle(simple, byteOutput);
         final long endTime1 = System.nanoTime();
 
         final byte[] ba = baos.toByteArray();
         final int size = ba.length;
 
-        final long startTime2 = System.nanoTime();
-
         final ByteArrayInputStream bais = new ByteArrayInputStream(ba);
         final ByteIO byteInput = new ByteIO(new DataInputStream(bais));
-        final ComplexClass simple2 = pickler.unpickle(byteInput);
 
+        final long startTime2 = System.nanoTime();
+        final ComplexClass simple2 = pickler.unpickle(byteInput);
         final long endTime2 = System.nanoTime();
 
         Assert.assertEquals(simple, simple2);
