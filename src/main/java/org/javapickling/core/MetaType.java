@@ -51,7 +51,10 @@ public class MetaType {
                 case LONG:      return core.long_p();
                 case FLOAT:     return core.float_p();
                 case DOUBLE:    return core.double_p();
-                case ENUM:      return core.enum_p(castEnumClass(clazz));
+                case ENUM:
+                    // TODO: Remove the use of Type from the following line once we upgrade to Java 7.
+                    // It's required for the Java 6 compiler as the type inference is too weak.
+                    return core.enum_p(MetaType.<Type>castEnumClass(clazz));
                 case STRING:    return core.string_p();
                 case MAP:       return core.map_p(core.object_p(), core.object_p(), (Class<Map<Object, Object>>)clazz);
                 case LIST:      return core.list_p(core.object_p(), (Class<List<Object>>)clazz);
