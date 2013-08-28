@@ -35,7 +35,7 @@ The framework is based around two interfaces, described in more detail in the fo
 
 ### Pickler
 
-[https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java]
+[Source code](https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java)
 
     public interface Pickler<T, PF> {
         PF pickle(T t, PF target) throws IOException;
@@ -46,7 +46,7 @@ Classes which provide a pickling implementation for a class T implement `Pickler
 
 ### PicklerCore
 
-[https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java]
+[Source code](https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java)
 
     public interface PicklerCore<PF> {
 
@@ -79,6 +79,7 @@ A class which provides an implementation of pickling to a specific format implem
 
 ### Custom Class Pickling
 
+TBD...
 
 ## History
 
