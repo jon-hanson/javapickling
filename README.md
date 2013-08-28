@@ -1,7 +1,7 @@
 javapickling
 ============
 
-**Java Pickling** is a Java framework for pickling objects into target pickled formats and vice versa (i.e. unpickling).
+**Java Pickling** is a Java framework for pickling values into target pickled formats and vice versa (i.e. unpickling). "Pickling" essentially means serialisation.
 It was inspired by the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), and by the [Scala Pickling project](https://github.com/scala/pickling).
 
 The pickling is driven by the static types of values, however it will also handle objects where the static type is unknown. At present it does not provide automatic of pickling of custom classes, ergo pickling of those types must be implemented by the user. The custom picklers only need be defined once - the same pickler will be used regardless of the pickled format.
@@ -35,18 +35,50 @@ The framework is based around two interfaces, described in more detail in the fo
 
 ### Pickler
 
-jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java
+[https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java]
 
     public interface Pickler<T, PF> {
         PF pickle(T t, PF target) throws IOException;
         T unpickle(PF source) throws IOException;
     }
 
-`Pickler` is the primary interface in the framework. Classes which provide a pickling implementation for a class T implement `Pickler<T, PF>`. The `PF` type parameter represents the target type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
+Classes which provide a pickling implementation for a class T implement `Pickler<T, PF>`. The `PF` type parameter represents the target type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
 
 ### PicklerCore
 
-jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java
+[https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java]
+
+    public interface PicklerCore<PF> {
+
+        Pickler<Object, PF> null_p();
+        Pickler<Boolean, PF> boolean_p();
+        // all primitive types...
+        <T extends Enum<T>> Pickler<T, PF> enum_p(final Class<T> enumClass);
+
+        <T> Pickler<T[], PF> array_p(final Pickler<T, PF> elemPickler, final Class<T> elemClass);
+        <T> Pickler<List<T>, PF> list_p(
+                final Pickler<T, PF> elemPickler,
+                Class<? extends List> listClass);
+        // further collection types...
+
+        <T> Pickler<T, PF> object_p(final Class<T> clazz);
+        Pickler<Object, PF> object_p();
+        MapPickler<PF> object_map();
+        <T> Field<T, PF> field(String name, Pickler<T, PF> pickler);
+        <T> Field<T, PF> nullableField(String name, Pickler<T, PF> pickler);
+        <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler);
+    }
+
+A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`, where the PF type parameter specifies the target format. For example,
+
+    public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
+        // ...
+    }
+
+`PicklerCore<PF>` implementations provide `Pickler<T, PF>` implementations for the core types (primitives, collections and enums). The also provide the tools required to facilitate implementing picklers for custom classes.
+
+### Custom Class Pickling
+
 
 ## History
 
