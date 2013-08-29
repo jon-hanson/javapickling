@@ -9,14 +9,93 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-@DefaultPickler(pickler=ComplexClass.Pickler.class)
+@DefaultPickler(pickler=ComplexClass.ComplexClassPickler.class)
 public class ComplexClass implements Serializable {
 
     enum Colour {
         RED, GREEN, BLUE
     }
 
-    public static class Pickler<PF> extends PicklerBase<ComplexClass, PF> {
+    interface Interface {
+        boolean equals(Object rhs);
+    }
+
+    @DefaultPickler(pickler=IdWrapperPickler.class)
+    public static class IdWrapper implements Interface, Serializable {
+        public final String id;
+
+        IdWrapper(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final IdWrapper rhs = (IdWrapper)o;
+            return id.equals(rhs.id);
+        }
+    }
+
+    public static class IdWrapperPickler<PF> extends PicklerBase<IdWrapper, PF> {
+
+        public IdWrapperPickler(PicklerCore core) {
+            super(core);
+        }
+
+        @Override
+        public PF pickle(IdWrapper idw, PF target) throws IOException {
+            return string_p().pickle(idw.id, target);
+        }
+
+        @Override
+        public IdWrapper unpickle(PF source) throws IOException {
+            return new IdWrapper(string_p().unpickle(source));
+        }
+    }
+
+    @DefaultPickler(pickler=Generic.class)
+    public static class Generic<T extends Interface> implements Serializable {
+
+        public final T value;
+
+        public Generic(T value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Generic<T> rhs = (Generic<T>)o;
+            return value.equals(rhs.value);
+        }
+    }
+
+    public static class GenericPickler<PF, T extends Interface> extends PicklerBase<Generic<T>, PF> {
+
+        private final Field<T, PF> valueF;
+
+        protected GenericPickler(PicklerCore<PF> core, Pickler<T, PF> valuePickler) {
+            super(core);
+            valueF = field("value", valuePickler);
+        }
+
+        @Override
+        public PF pickle(Generic<T> generic, PF target) throws IOException {
+            final FieldPickler<PF> mp = core.object_map().pickler(target);
+            mp.field(valueF, generic.value);
+            return mp.pickle(target);
+        }
+
+        @Override
+        public Generic<T> unpickle(PF source) throws IOException {
+            final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
+            return new Generic<T>(mu.field(valueF));
+        }
+    }
+
+    public static class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
         final Field<Boolean, PF>                booleanF =      field("bool",       boolean_p());
         final Field<Byte, PF>                   byteF =         field("byte",       byte_p());
@@ -35,8 +114,10 @@ public class ComplexClass implements Serializable {
         final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), TreeSet.class));
         final Field<List<String>, PF>           listStrF =      field("listStr",    list_p(string_p(), ArrayList.class));
         final Field<List<Object>, PF>           listObjF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
+        final Field<Generic<IdWrapper>, PF>     genericF =      field("generic",    new GenericPickler<PF, IdWrapper>(this, new IdWrapperPickler(this)));
+        final Field<Generic<Interface>, PF>     generic2F =     field("generic2",    new GenericPickler<PF, Interface>(this, d_object_p(Interface.class)));
 
-        public Pickler(PicklerCore<PF> core) {
+        public ComplexClassPickler(PicklerCore<PF> core) {
             super(core);
         }
 
@@ -60,6 +141,8 @@ public class ComplexClass implements Serializable {
             mp.field(objSetF,       sc.objSetF);
             mp.field(listStrF,      sc.listStrF);
             mp.field(listObjF,      sc.listObjF);
+            mp.field(genericF,      sc.genericF);
+            mp.field(generic2F,      sc.generic2F);
             return mp.pickle(target);
         }
 
@@ -83,7 +166,9 @@ public class ComplexClass implements Serializable {
                     mu.field(strSetF),
                     mu.field(objSetF),
                     mu.field(listStrF),
-                    mu.field(listObjF)
+                    mu.field(listObjF),
+                    mu.field(genericF),
+                    mu.field(generic2F)
             );
         }
     }
@@ -121,6 +206,9 @@ public class ComplexClass implements Serializable {
             final List<String> listStrF = Lists.newArrayList("anna", "betty");
             final List<Object> listObjF = Lists.newArrayList((Object)Colour.BLUE, Colour.RED);
 
+            final Generic<IdWrapper> genericF = new Generic<IdWrapper>(new IdWrapper("Dan"));
+            final Generic<Interface> generic2F = new Generic<Interface>(new IdWrapper("John"));
+
             return new ComplexClass(
                     booleanF,
                     byteF,
@@ -138,7 +226,9 @@ public class ComplexClass implements Serializable {
                     strSetF,
                     strObjF,
                     listStrF,
-                    listObjF
+                    listObjF,
+                    genericF,
+                    generic2F
             );
         } else {
             final boolean booleanF = true;
@@ -159,6 +249,8 @@ public class ComplexClass implements Serializable {
             final Set<Object> strObjF = new TreeSet<Object>();
             final List<String> listStrF = Lists.newArrayList();
             final List<Object> listObjF = null;
+            final Generic<IdWrapper> genericF = new Generic<IdWrapper>(new IdWrapper("Ackroyd"));
+            final Generic<Interface> generic2F = new Generic<Interface>(new IdWrapper("Belushi"));
 
             return new ComplexClass(
                     booleanF,
@@ -177,7 +269,9 @@ public class ComplexClass implements Serializable {
                     strSetF,
                     strObjF,
                     listStrF,
-                    listObjF
+                    listObjF,
+                    genericF,
+                    generic2F
             );
         }
     }
@@ -203,6 +297,9 @@ public class ComplexClass implements Serializable {
     public final List<String> listStrF;
     public final List<Object> listObjF;
 
+    public final Generic<IdWrapper> genericF;
+    public final Generic<Interface> generic2F;
+
     public ComplexClass(
             boolean booleanF,
             byte byteF,
@@ -220,7 +317,9 @@ public class ComplexClass implements Serializable {
             Set<String> strSetF,
             Set<Object> objSetF,
             List<String> listStrF,
-            List<Object> listObjF) {
+            List<Object> listObjF,
+            Generic<IdWrapper> genericF,
+            Generic<Interface> generic2F) {
         this.booleanF = booleanF;
         this.byteF = byteF;
         this.charF = charF;
@@ -238,6 +337,8 @@ public class ComplexClass implements Serializable {
         this.objSetF = objSetF;
         this.listStrF = listStrF;
         this.listObjF = listObjF;
+        this.genericF = genericF;
+        this.generic2F = generic2F;
     }
 
     @Override
@@ -264,6 +365,8 @@ public class ComplexClass implements Serializable {
         if (objSetF != null ? !objSetF.equals(that.objSetF) : that.objSetF != null) return false;
         if (strSetF != null ? !strSetF.equals(that.strSetF) : that.strSetF != null) return false;
         if (stringF != null ? !stringF.equals(that.stringF) : that.stringF != null) return false;
+        if (genericF != null ? !genericF.equals(that.genericF) : that.genericF != null) return false;
+        if (generic2F != null ? !generic2F.equals(that.generic2F) : that.generic2F != null) return false;
 
         return true;
     }
