@@ -49,7 +49,6 @@ Classes which provide a pickling implementation for a class T implement `Pickler
 [Source code](https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java)
 
     public interface PicklerCore<PF> {
-
         Pickler<Object, PF> null_p();
         Pickler<Boolean, PF> boolean_p();
         // all primitive types...
@@ -78,6 +77,8 @@ A class which provides an implementation of pickling to a specific format implem
 `PicklerCore<PF>` implementations provide `Pickler<T, PF>` implementations for the core types (primitives, collections and enums). The also provide the tools required to facilitate implementing picklers for custom classes.
 
 ### Custom Class Pickling
+
+By "custom class" I mean any class not directly supported by the framework.
 
 TBD...
 
