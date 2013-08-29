@@ -1,5 +1,6 @@
 package org.javapickling.core;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,6 +75,11 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
+    public <T> Pickler<Class<T>, PF> class_p() {
+        return core.class_p();
+    }
+
+    @Override
     public <T> Pickler<T[], PF> array_p(Pickler<T, PF> elemPickler, Class<T> elemClass) {
         return core.array_p(elemPickler, elemClass);
     }
@@ -104,8 +110,13 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public Pickler<Object, PF> object_p() {
-        return core.object_p();
+    public Pickler<Object, PF> d_object_p() {
+        return core.d_object_p();
+    }
+
+    @Override
+    public <T, S extends T> Pickler<S, PF> d_object_p(Class<T> clazz) {
+        return core.d_object_p(clazz);
     }
 
     @Override
@@ -119,8 +130,8 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public <T> Field<T, PF> nullableField(String name, Pickler<T, PF> pickler) {
-        return core.nullableField(name, pickler);
+    public <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler) {
+        return core.null_field(name, pickler);
     }
 
     @Override

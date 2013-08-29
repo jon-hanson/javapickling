@@ -67,6 +67,11 @@ public interface PicklerCore<PF> {
     <T extends Enum<T>> Pickler<T, PF> enum_p(final Class<T> enumClass);
 
     /**
+     * @return a Pickler for Class objects.
+     */
+    <T> Pickler<Class<T>, PF> class_p();
+
+    /**
      * Provide a Pickler for an array.
      * @param elemPickler a Pickler for the array element type.
      * @param elemClass element class.
@@ -132,7 +137,13 @@ public interface PicklerCore<PF> {
      * Provide a Pickler for objects where the static type is unknown.
      * @return a Pickler for weakly-typed objects.
      */
-    Pickler<Object, PF> object_p();
+    Pickler<Object, PF> d_object_p();
+
+    /**
+     * Provide a Pickler for objects where the static type is unknown.
+     * @return a Pickler for weakly-typed objects.
+     */
+    <T, S extends T> Pickler<S, PF> d_object_p(final Class<T> clazz);
 
     /**
      * Provide a proxy for pickling heterogeneous maps of strings to a static type.
@@ -142,10 +153,10 @@ public interface PicklerCore<PF> {
     MapPickler<PF> object_map();
 
     <T> Field<T, PF> field(String name, Pickler<T, PF> pickler);
-    <T> Field<T, PF> nullableField(String name, Pickler<T, PF> pickler);
+    <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler);
 
     /**
-     * Convert a pickler which doesn't check for nulls into one that does.
+     * Convert a pickler into one that checks for nulls.
      * @param pickler
      * @param <T>
      * @return

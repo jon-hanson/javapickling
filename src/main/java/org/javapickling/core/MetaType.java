@@ -56,9 +56,9 @@ public class MetaType {
                     // It's required for the Java 6 compiler as the type inference is too weak.
                     return core.enum_p(MetaType.<Type>castEnumClass(clazz));
                 case STRING:    return core.string_p();
-                case MAP:       return core.map_p(core.object_p(), core.object_p(), (Class<Map<Object, Object>>)clazz);
-                case LIST:      return core.list_p(core.object_p(), (Class<List<Object>>)clazz);
-                case SET:       return core.set_p(core.object_p(), (Class<Set<Object>>)clazz);
+                case MAP:       return core.map_p(core.d_object_p(), core.d_object_p(), (Class<Map<Object, Object>>)clazz);
+                case LIST:      return core.list_p(core.d_object_p(), (Class<List<Object>>)clazz);
+                case SET:       return core.set_p(core.d_object_p(), (Class<Set<Object>>)clazz);
                 case OBJECT:    return core.object_p(clazz);
                 default:        throw new PicklerException("Unexpected Type value - " + name());
             }

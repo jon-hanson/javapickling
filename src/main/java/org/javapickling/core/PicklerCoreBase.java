@@ -162,7 +162,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         register(Long.class, long_p());
         register(Float.class, float_p());
         register(Double.class, double_p());
-        register(Object.class, object_p());
+        register(Object.class, d_object_p());
     }
 
     /**
@@ -205,6 +205,28 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         }
     }
 
+    @Override
+    public <T> Pickler<Class<T>, PF> class_p() {
+        return new Pickler<Class<T>, PF>() {
+
+            @Override
+            public PF pickle(Class<T> clazz, PF target) throws IOException {
+                return string_p().pickle(clazz.getName(), target);
+            }
+
+            @Override
+            public Class<T> unpickle(PF source) throws IOException {
+                final String name = string_p().unpickle(source);
+                try {
+                    return (Class<T>)Class.forName(name);
+                } catch (ClassNotFoundException ex) {
+                    throw new IOException("Can not create class from name '" + name + "'", ex);
+                }
+            }
+        };
+    }
+
+    @Override
     public <T> Pickler<T, PF> object_p(Class<T> clazz) {
         final Pickler<T, PF> result = (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
         if (result == null) {
@@ -220,8 +242,14 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         return result;
     }
 
-    public Pickler<Object, PF> object_p() {
-        return new DynamicObjectPickler<PF>(this);
+    @Override
+    public Pickler<Object, PF> d_object_p() {
+        return new DynamicObjectPickler<PF, Object>(this);
+    }
+
+    @Override
+    public <T, S extends T> Pickler<S, PF> d_object_p(Class<T> clazz) {
+        return new DynamicObjectPickler<PF, S>(this);
     }
 
     @Override
@@ -230,7 +258,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     @Override
-    public <T> Field<T, PF> nullableField(String name, Pickler<T, PF> pickler) {
+    public <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler) {
         return new Field<T, PF>(name, nullable(pickler));
     }
 

@@ -30,11 +30,11 @@ public class ComplexClass implements Serializable {
         final Field<String, PF>                 stringF =       field("string",     string_p());
         final Field<Map<String, Double>, PF>    strDblMapF =    field("strDblMap",  map_p(double_p(), TreeMap.class));
         final Field<Map<Integer, Colour>, PF>   intEnumMapF =   field("intEnumMap", map_p(integer_p(), enum_p(Colour.class), TreeMap.class));
-        final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMap",  map_p(object_p(), object_p(), TreeMap.class));
+        final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMap",  map_p(d_object_p(), d_object_p(), TreeMap.class));
         final Field<Set<String>, PF>            strSetF =       field("strSet",     set_p(string_p(), TreeSet.class));
-        final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(object_p(), TreeSet.class));
+        final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), TreeSet.class));
         final Field<List<String>, PF>           listStrF =      field("listStr",    list_p(string_p(), ArrayList.class));
-        final Field<List<Object>, PF>           listObjF =      nullableField("listObj", list_p(object_p(), ArrayList.class));
+        final Field<List<Object>, PF>           listObjF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
 
         public Pickler(PicklerCore<PF> core) {
             super(core);

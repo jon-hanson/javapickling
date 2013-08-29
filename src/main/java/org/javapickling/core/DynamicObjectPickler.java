@@ -2,7 +2,7 @@ package org.javapickling.core;
 
 import java.io.IOException;
 
-public class DynamicObjectPickler<PF> extends PicklerBase<Object, PF> {
+public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
 
     private final String TYPE_NAME = "type";
     private final String CLASS_NAME = "class";
@@ -13,7 +13,7 @@ public class DynamicObjectPickler<PF> extends PicklerBase<Object, PF> {
     }
 
     @Override
-    public PF pickle(Object obj, PF target) throws IOException {
+    public PF pickle(T obj, PF target) throws IOException {
 
         final MetaType metaType = MetaType.ofObject(obj);
 
@@ -31,9 +31,12 @@ public class DynamicObjectPickler<PF> extends PicklerBase<Object, PF> {
     }
 
     @Override
-    public Object unpickle(PF source) throws IOException {
+    public T unpickle(PF source) throws IOException {
+
         final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
+
         final MetaType metaType = MetaType.ofName(mu.string_f(TYPE_NAME));
+
         if (metaType.type == MetaType.Type.ENUM || metaType.type == MetaType.Type.OBJECT) {
             try {
                 metaType.clazz = Class.forName(mu.string_f(CLASS_NAME));
@@ -43,7 +46,7 @@ public class DynamicObjectPickler<PF> extends PicklerBase<Object, PF> {
         }
 
         if (metaType.type != MetaType.Type.NULL) {
-            return mu.field(VALUE_NAME, metaType.pickler(core));
+            return (T)mu.field(VALUE_NAME, metaType.pickler(core));
         } else {
             return null;
         }
