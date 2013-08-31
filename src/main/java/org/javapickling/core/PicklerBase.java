@@ -80,6 +80,11 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
+    public <T, S extends T> Pickler<Class<S>, PF> class_p(Class<T> clazz) {
+        return core.class_p(clazz);
+    }
+
+    @Override
     public <T> Pickler<T[], PF> array_p(Pickler<T, PF> elemPickler, Class<T> elemClass) {
         return core.array_p(elemPickler, elemClass);
     }

@@ -206,6 +206,22 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     @Override
+    public <T> Pickler<T, PF> object_p(Class<T> clazz) {
+        final Pickler<T, PF> result = (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
+        if (result == null) {
+            if (clazz.isAnnotationPresent(DefaultPickler.class)) {
+                final DefaultPickler defPickAnn = clazz.getAnnotation(DefaultPickler.class);
+                final Class<?> picklerClazz = defPickAnn.pickler();
+                register(clazz, (Class<? extends Pickler<T,PF>>)picklerClazz);
+                return object_p(clazz);
+            } else {
+                throw new PicklerException("No pickler registered for class " + clazz);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public <T> Pickler<Class<T>, PF> class_p() {
         return new Pickler<Class<T>, PF>() {
 
@@ -227,19 +243,24 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     @Override
-    public <T> Pickler<T, PF> object_p(Class<T> clazz) {
-        final Pickler<T, PF> result = (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
-        if (result == null) {
-            if (clazz.isAnnotationPresent(DefaultPickler.class)) {
-                final DefaultPickler defPickAnn = clazz.getAnnotation(DefaultPickler.class);
-                final Class<?> picklerClazz = defPickAnn.pickler();
-                register(clazz, (Class<? extends Pickler<T,PF>>)picklerClazz);
-                return object_p(clazz);
-            } else {
-                throw new PicklerException("No pickler registered for class " + clazz);
+    public <T, S extends T> Pickler<Class<S>, PF> class_p(Class<T> clazz) {
+        return new Pickler<Class<S>, PF>() {
+
+            @Override
+            public PF pickle(Class<S> clazz, PF target) throws IOException {
+                return string_p().pickle(clazz.getName(), target);
             }
-        }
-        return result;
+
+            @Override
+            public Class<S> unpickle(PF source) throws IOException {
+                final String name = string_p().unpickle(source);
+                try {
+                    return (Class<S>)Class.forName(name);
+                } catch (ClassNotFoundException ex) {
+                    throw new IOException("Can not create class from name '" + name + "'", ex);
+                }
+            }
+        };
     }
 
     @Override
