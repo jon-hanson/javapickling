@@ -154,7 +154,7 @@ public interface PicklerCore<PF> {
     Pickler<Object, PF> d_object_p();
 
     /**
-     * Provide a Pickler for objects where the static type is unknown.
+     * Provide a Pickler for objects where the static type unknown but is a subclass of T.
      * @return a Pickler for weakly-typed objects.
      */
     <T, S extends T> Pickler<S, PF> d_object_p(final Class<T> clazz);
@@ -166,7 +166,22 @@ public interface PicklerCore<PF> {
      */
     MapPickler<PF> object_map();
 
+    /**
+     * Create a field handler.
+     * @param name the name of the field.
+     * @param pickler the pickler for the field value.
+     * @param <T>
+     * @return
+     */
     <T> Field<T, PF> field(String name, Pickler<T, PF> pickler);
+
+    /**
+     * Create a field handler for a nullable field.
+     * @param name the name of the field.
+     * @param pickler the pickler for the field value.
+     * @param <T>
+     * @return
+     */
     <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler);
 
     /**

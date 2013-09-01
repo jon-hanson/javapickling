@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.TypeVariable;
 import java.util.Map;
 
 /**
@@ -148,9 +149,14 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     /**
-     * A registry of picklers by class name.
+     * A cache of picklers by class name.
      */
-    private final Map<String, Pickler<?, PF>> picklerRegistry = Maps.newTreeMap();
+    protected final Map<String, Class<Pickler<?, PF>>> picklerClassRegistry = Maps.newTreeMap();
+
+    /**
+     * A cache of picklers by class name.
+     */
+    protected final Map<String, Pickler<?, PF>> picklerCache = Maps.newTreeMap();
 
     public PicklerCoreBase() {
         register(Boolean.class, boolean_p());
@@ -162,7 +168,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         register(Long.class, long_p());
         register(Float.class, float_p());
         register(Double.class, double_p());
-        register(Object.class, d_object_p());
     }
 
     /**
@@ -172,7 +177,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      * @param <T> value type.
      */
     protected <T> void register(Class<T> valueClass, Pickler<T, PF> pickler) {
-        picklerRegistry.put(valueClass.getName(), pickler);
+        picklerCache.put(valueClass.getName(), pickler);
     }
 
     /**
@@ -183,15 +188,119 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      * @param <P> pickler type.
      */
     public <T, P extends Pickler<T, PF>> void register(Class<T> valueClass, Class<P> picklerClass) {
+        register(valueClass, picklerClass, false);
+    }
+
+    /**
+     * Register a Pickler by class, for the specified value Class type.
+     * @param valueClass value class.
+     * @param picklerClass class for the Pickler.
+     * @param <T> value type.
+     * @param <P> pickler type.
+     * @param lazy create pickler instance from class on demand.
+     */
+    public <T, P extends Pickler<T, PF>> void register(Class<T> valueClass, Class<P> picklerClass, boolean lazy) {
+
+        final TypeVariable<Class<P>>[] tps = picklerClass.getTypeParameters();
+        if (tps.length > 0) {
+            if (!tps[0].getName().equals("PF") || tps.length > 1) {
+                registerGeneric(valueClass, picklerClass);
+                return;
+            }
+        }
+
+        picklerClassRegistry.put(valueClass.getName(), (Class<Pickler<?, PF>>)picklerClass);
+        if (!lazy) {
+            getPickler(valueClass);
+        }
+    }
+
+    interface GenericPicklerCtor<T, PF> {
+        Pickler<T, PF> create(Pickler<?, PF>[] picklerArgs);
+    }
+
+    protected final Map<String, GenericPicklerCtor<?, PF>> genericPicklerClassRegistry = Maps.newTreeMap();
+
+    protected <T, P extends Pickler<T, PF>> void registerGeneric(final Class<T> valueClass, final Class<P> picklerClass) {
+
+        final TypeVariable<Class<T>>[] valueTps = valueClass.getTypeParameters();
+        final TypeVariable<Class<P>>[] picklerTps = picklerClass.getTypeParameters();
+
+        final int picklerCount;
+        if (picklerTps[0].getName().equals("PF")) {
+            picklerCount = picklerTps.length - 1;
+        } else {
+            picklerCount = picklerTps.length;
+        }
+
+        if (valueTps.length < picklerCount) {
+            throw new PicklerException("Value class " + valueClass.getName() +
+                    "expected to have " + picklerCount + " type parameters");
+        }
+
+        final Constructor<?>[] ctors = picklerClass.getConstructors();
+        for (final Constructor<?> ctor : ctors) {
+            if (ctor.getParameterTypes().length == picklerCount + 1) {
+                genericPicklerClassRegistry.put(valueClass.getName(), new GenericPicklerCtor<T, PF>() {
+
+                    @Override
+                    public Pickler<T, PF> create(Pickler<?, PF>[] picklerArgs) {
+                        if (picklerArgs.length != picklerCount) {
+                            throw new PicklerException("The constructor for " + picklerClass.getName() + " expects " + picklerCount + " pickler arguments");
+                        }
+
+                        final Class<?>[] ctorParamTypes = ctor.getParameterTypes();
+                        final Object[] args = new Object[picklerCount + 1];
+                        args[0] = ctorParamTypes[0].cast(PicklerCoreBase.this);
+                        for (int i = 0; i < picklerArgs.length; ++i) {
+                            args[i + 1] = ctorParamTypes[i + 1].cast(picklerArgs[i]);
+                        }
+
+                        try {
+                            return (Pickler<T, PF>)ctor.newInstance(args);
+                        } catch (InvocationTargetException ex) {
+                            throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
+                        } catch (InstantiationException ex) {
+                            throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
+                        } catch (IllegalAccessException ex) {
+                            throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    protected <T, P extends Pickler<T, PF>> P getPickler(Class<T> valueClass) {
+
+        final String key = valueClass.getName();
+
+        P pickler = (P)picklerCache.get(key);
+        if (pickler != null)
+            return pickler;
+
+        Class<P> picklerClass = (Class<P>)picklerClassRegistry.get(valueClass.getName());
+        if (picklerClass == null) {
+            if (valueClass.isAnnotationPresent(DefaultPickler.class)) {
+                final DefaultPickler defPickAnn = valueClass.getAnnotation(DefaultPickler.class);
+                picklerClass = (Class<P>)defPickAnn.value();
+                register(valueClass, picklerClass, true);
+            } else {
+                throw new PicklerException("No Pickler class registered for " + valueClass.getName());
+            }
+        }
+
         try {
             // Acquire a picklerClass constructor which takes a PicklerCore.
             final Constructor<P> ctor = picklerClass.getConstructor(PicklerCore.class);
 
             // Invoke the constructor to get a new instance of the Pickler.
-            final Pickler<T, PF> pickler = ctor.newInstance(this);
+            pickler = ctor.newInstance(this);
 
             // Register the Pickler.
             register(valueClass, pickler);
+
+            return pickler;
         } catch (NoSuchMethodException ex) {
             throw new PicklerException(
                     "Pickler class " + picklerClass.getName() +
@@ -205,24 +314,33 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         }
     }
 
-    @Override
-    public <T> Pickler<T, PF> object_p(Class<T> clazz) {
-        final Pickler<T, PF> result = (Pickler<T, PF>)picklerRegistry.get(clazz.getName());
-        if (result == null) {
-            if (clazz.isAnnotationPresent(DefaultPickler.class)) {
-                final DefaultPickler defPickAnn = clazz.getAnnotation(DefaultPickler.class);
-                final Class<?> picklerClazz = defPickAnn.pickler();
-                register(clazz, (Class<? extends Pickler<T,PF>>)picklerClazz);
-                return object_p(clazz);
-            } else {
-                throw new PicklerException("No pickler registered for class " + clazz);
+    protected <T, P extends Pickler<T, PF>> Pickler<T, PF> getGenericPickler(final Class<T> valueClass, Pickler<?, PF>... picklers) {
+
+        GenericPicklerCtor<?, PF> picklerCtor = genericPicklerClassRegistry.get(valueClass.getName());
+        if (picklerCtor == null) {
+            if (valueClass.isAnnotationPresent(DefaultPickler.class)) {
+                final DefaultPickler defPickAnn = valueClass.getAnnotation(DefaultPickler.class);
+                final Class<P> picklerClass = (Class<P>)defPickAnn.value();
+                register(valueClass, picklerClass, true);
+                picklerCtor = genericPicklerClassRegistry.get(valueClass.getName());
             }
         }
-        return result;
+
+        if (picklerCtor == null) {
+            throw new PicklerException("No Generic Pickler registered for " + valueClass.getName());
+        }
+
+        return (P)picklerCtor.create(picklers);
+    }
+
+    @Override
+    public <T> Pickler<T, PF> object_p(Class<T> clazz) {
+        return getPickler(clazz);
     }
 
     @Override
     public <T> Pickler<Class<T>, PF> class_p() {
+
         return new Pickler<Class<T>, PF>() {
 
             @Override
@@ -244,6 +362,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
     @Override
     public <T, S extends T> Pickler<Class<S>, PF> class_p(Class<T> clazz) {
+
         return new Pickler<Class<S>, PF>() {
 
             @Override
@@ -261,6 +380,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
                 }
             }
         };
+    }
+
+    @Override
+    public <T, S extends T> Pickler<S, PF> generic_p(final Class<T> clazz, Pickler<?, PF>... picklers) {
+        return (Pickler<S, PF>)getGenericPickler(clazz, picklers);
     }
 
     @Override
@@ -284,6 +408,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     public <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler) {
+
         return new Pickler<T, PF>() {
 
             @Override
