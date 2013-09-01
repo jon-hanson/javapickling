@@ -7,13 +7,11 @@ import java.io.IOException;
 public class SimpleClass {
     public static final class Pickler<PF> extends PicklerBase<SimpleClass, PF> {
 
-        private final Field<String, PF> nameF;
-        private final Field<Integer, PF> idF;
+        private final Field<String, PF> nameF = field("name", string_p());
+        private final Field<Integer, PF> idF = field("id", integer_p());
 
         protected Pickler(PicklerCore<PF> core) {
             super(core);
-            nameF = field("name", string_p());
-            idF = field("id", integer_p());
         }
 
         @Override
@@ -32,6 +30,7 @@ public class SimpleClass {
             );
         }
     }
+
     public final String name;
     public final int id;
 

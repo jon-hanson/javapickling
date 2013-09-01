@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DefaultPickler {
-    Class<?> pickler();
+    Class<? extends Pickler> value();
 }

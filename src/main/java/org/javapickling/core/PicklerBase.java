@@ -115,6 +115,11 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
+    public <T, S extends T> Pickler<S, PF> generic_p(final Class<T> clazz, Pickler<?, PF>... picklers) {
+        return core.generic_p(clazz, picklers);
+    }
+
+    @Override
     public Pickler<Object, PF> d_object_p() {
         return core.d_object_p();
     }

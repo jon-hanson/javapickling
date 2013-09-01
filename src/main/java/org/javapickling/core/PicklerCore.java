@@ -139,6 +139,15 @@ public interface PicklerCore<PF> {
     <T> Pickler<T, PF> object_p(final Class<T> clazz);
 
     /**
+     * Provide a Pickler corresponding to the specified Generic Class.
+     * @param clazz class specifying the required Pickler type.
+     * @param picklers a list of picklers corresponding to the value type parameters to T.
+     * @param <T>
+     * @return a Pickler for the specified Class.
+     */
+    <T, S extends T> Pickler<S, PF> generic_p(final Class<T> clazz, Pickler<?, PF>... picklers);
+
+    /**
      * Provide a Pickler for objects where the static type is unknown.
      * @return a Pickler for weakly-typed objects.
      */

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-@DefaultPickler(pickler=ComplexClass.ComplexClassPickler.class)
+@DefaultPickler(ComplexClass.ComplexClassPickler.class)
 public class ComplexClass implements Serializable {
 
     enum Colour {
@@ -20,7 +20,7 @@ public class ComplexClass implements Serializable {
         boolean equals(Object rhs);
     }
 
-    @DefaultPickler(pickler=IdWrapperPickler.class)
+    @DefaultPickler(IdWrapperPickler.class)
     public static class IdWrapper implements Interface, Serializable {
         public final String id;
 
@@ -29,10 +29,10 @@ public class ComplexClass implements Serializable {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            final IdWrapper rhs = (IdWrapper)o;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            final IdWrapper rhs = (IdWrapper)obj;
             return id.equals(rhs.id);
         }
     }
@@ -54,7 +54,7 @@ public class ComplexClass implements Serializable {
         }
     }
 
-    @DefaultPickler(pickler=Generic.class)
+    @DefaultPickler(GenericPickler.class)
     public static class Generic<T extends Interface> implements Serializable {
 
         public final T value;
@@ -64,10 +64,10 @@ public class ComplexClass implements Serializable {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            final Generic<T> rhs = (Generic<T>)o;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            final Generic<T> rhs = (Generic<T>)obj;
             return value.equals(rhs.value);
         }
     }
@@ -76,7 +76,7 @@ public class ComplexClass implements Serializable {
 
         private final Field<T, PF> valueF;
 
-        protected GenericPickler(PicklerCore<PF> core, Pickler<T, PF> valuePickler) {
+        public GenericPickler(PicklerCore<PF> core, Pickler<T, PF> valuePickler) {
             super(core);
             valueF = field("value", valuePickler);
         }
@@ -97,6 +97,14 @@ public class ComplexClass implements Serializable {
 
     public static class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
+        private Pickler<Generic<IdWrapper>, PF> genIdWrapperPickler() {
+            return generic_p(Generic.class, object_p(IdWrapper.class));
+        }
+
+        private Pickler<Generic<Interface>, PF> genInterfacePickler() {
+            return generic_p(Generic.class, d_object_p());
+        }
+
         final Field<Boolean, PF>                booleanF =      field("bool",       boolean_p());
         final Field<Byte, PF>                   byteF =         field("byte",       byte_p());
         final Field<Character, PF>              charF =         field("char",       char_p());
@@ -114,8 +122,9 @@ public class ComplexClass implements Serializable {
         final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), TreeSet.class));
         final Field<List<String>, PF>           listStrF =      field("listStr",    list_p(string_p(), ArrayList.class));
         final Field<List<Object>, PF>           listObjF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
-        final Field<Generic<IdWrapper>, PF>     genericF =      field("generic",    new GenericPickler<PF, IdWrapper>(this, new IdWrapperPickler(this)));
-        final Field<Generic<Interface>, PF>     generic2F =     field("generic2",    new GenericPickler<PF, Interface>(this, d_object_p(Interface.class)));
+
+        final Field<Generic<IdWrapper>, PF>     genericF =      field("generic",    genIdWrapperPickler());
+        final Field<Generic<Interface>, PF>     generic2F =     field("generic2",   genInterfacePickler());
 
         public ComplexClassPickler(PicklerCore<PF> core) {
             super(core);

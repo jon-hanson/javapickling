@@ -13,6 +13,29 @@ public class JsonPicklerTest {
 
     private static final JsonPicklerCore jsonPickler = new JsonPicklerCore();
 
+    class Pj extends PicklerBase<ComplexClass, JsonNode> {
+
+        public Pj(PicklerCore<JsonNode> core) {
+            super(core);
+        }
+
+        @Override
+        public JsonNode pickle(ComplexClass complexClass, JsonNode target) throws IOException {
+            // TODO:
+            return null;
+        }
+
+        @Override
+        public ComplexClass unpickle(JsonNode source) throws IOException {
+            // TODO:
+            return null;
+        }
+    }
+
+    static {
+        //jsonPickler.register(ComplexClass.Generic.class, ComplexClass.GenericPickler.class);
+    }
+
     @Test
     public void testPickle() throws IOException, ClassNotFoundException {
 
