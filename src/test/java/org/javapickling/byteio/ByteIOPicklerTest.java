@@ -1,9 +1,9 @@
 package org.javapickling.byteio;
 
 import org.javapickling.common.ComplexClass;
+import org.javapickling.common.RoundTrip;
 import org.junit.Assert;
 import org.javapickling.core.Pickler;
-import org.javapickling.example.Utils;
 import org.junit.Test;
 
 import java.io.*;
@@ -17,15 +17,15 @@ public class ByteIOPicklerTest {
 
         final ComplexClass simple = ComplexClass.createInstance(true);
 
-        final org.javapickling.common.Utils.RoundTrip byteIOTimeMs = roundTripViaByteIO(simple);
+        final RoundTrip byteIOTimeMs = roundTripViaByteIO(simple);
         System.out.println(byteIOTimeMs);
 
-        Utils.roundTripViaJavaSer(simple);
-        final org.javapickling.common.Utils.RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(simple);
+        org.javapickling.common.Utils.roundTripViaJavaSer(simple);
+        final RoundTrip javaSerTimeMs = org.javapickling.common.Utils.roundTripViaJavaSer(simple);
         System.out.println(javaSerTimeMs);
     }
 
-    private static org.javapickling.common.Utils.RoundTrip roundTripViaByteIO(ComplexClass simple) throws IOException {
+    private static RoundTrip roundTripViaByteIO(ComplexClass simple) throws IOException {
 
         final Pickler<ComplexClass, ByteIO> pickler = byteIOPickler.object_p(ComplexClass.class);
 
@@ -48,6 +48,6 @@ public class ByteIOPicklerTest {
 
         Assert.assertEquals(simple, simple2);
 
-        return new org.javapickling.common.Utils.RoundTrip("ByteIOPickler", endTime1 - startTime1, endTime2 - startTime2, size);
+        return new RoundTrip("ByteIOPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }
 }

@@ -1,28 +1,27 @@
 package org.javapickling.common;
 
+import java.io.*;
+
 public class Utils {
-    public static class RoundTrip {
-        public final String name;
-        public final long pickleTimeNs;
-        public final long unpickleTimeNs;
-        public final int size;
+    public static <T> RoundTrip roundTripViaJavaSer(T value) throws IOException, ClassNotFoundException {
 
-        public RoundTrip(String name, long pickleTimeNs, long unpickleTimeNs, int size) {
-            this.name = name;
-            this.pickleTimeNs = pickleTimeNs;
-            this.unpickleTimeNs = unpickleTimeNs;
-            this.size = size;
-        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(baos);
 
-        @Override
-        public String toString() {
-            final long pickleTime = pickleTimeNs / 1000;
-            final long unpickleTime = unpickleTimeNs / 1000;
-            final long total = (pickleTimeNs + unpickleTimeNs) / 1000;
-            return "Round-trip via " + name + " serialisation took " +
-                    (pickleTime / 1000.0) + " + " +
-                    (unpickleTime / 1000.0) + " = " +
-                    (total / 1000.0) + "ms. Pickled size was " + size + " bytes.";
-        }
+        final long startTime1 = System.nanoTime();
+        oos.writeObject(value);
+        final long endTime1 = System.nanoTime();
+
+        final byte[] ba = baos.toByteArray();
+        final int size = ba.length;
+
+        final ByteArrayInputStream bais = new ByteArrayInputStream(ba);
+        final ObjectInputStream ois = new ObjectInputStream(bais);
+
+        final long startTime2 = System.nanoTime();
+        final T value2 = (T)ois.readObject();
+        final long endTime2 = System.nanoTime();
+
+        return new RoundTrip("JavaSer", endTime1 - startTime1, endTime2 - startTime2, size);
     }
 }

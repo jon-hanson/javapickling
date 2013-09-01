@@ -39,3 +39,4 @@ public class SimpleClass {
         this.id = id;
     }
 }
+

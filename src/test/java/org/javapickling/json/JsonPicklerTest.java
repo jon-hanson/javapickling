@@ -2,9 +2,9 @@ package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.javapickling.common.ComplexClass;
+import org.javapickling.common.RoundTrip;
 import org.junit.Assert;
 import org.javapickling.core.*;
-import org.javapickling.example.Utils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -41,15 +41,15 @@ public class JsonPicklerTest {
 
         final ComplexClass simple = ComplexClass.createInstance(true);
 
-        final org.javapickling.common.Utils.RoundTrip jsonTimeMs = roundTripViaJson(simple);
+        final RoundTrip jsonTimeMs = roundTripViaJson(simple);
         System.out.println(jsonTimeMs);
 
-        Utils.roundTripViaJavaSer(simple);
-        final org.javapickling.common.Utils.RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(simple);
+        org.javapickling.common.Utils.roundTripViaJavaSer(simple);
+        final RoundTrip javaSerTimeMs = org.javapickling.common.Utils.roundTripViaJavaSer(simple);
         System.out.println(javaSerTimeMs);
     }
 
-    private static org.javapickling.common.Utils.RoundTrip roundTripViaJson(ComplexClass simple) throws IOException {
+    private static RoundTrip roundTripViaJson(ComplexClass simple) throws IOException {
 
         final Pickler<ComplexClass, JsonNode> pickler = jsonPickler.object_p(ComplexClass.class);
 
@@ -67,6 +67,6 @@ public class JsonPicklerTest {
 
         Assert.assertEquals(simple, simple2);
 
-        return new org.javapickling.common.Utils.RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
+        return new RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }
 }

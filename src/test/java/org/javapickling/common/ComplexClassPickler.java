@@ -42,7 +42,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
     @Override
     public PF pickle(ComplexClass sc, PF target) throws IOException {
-        final FieldPickler<PF> mp = core.object_map().pickler(target);
+        final FieldPickler<PF> mp = object_map().pickler(target);
         mp.field(booleanF,      sc.booleanF);
         mp.field(byteF,         sc.byteF);
         mp.field(charF,         sc.charF);
@@ -67,7 +67,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
     @Override
     public ComplexClass unpickle(PF source) throws IOException {
-        final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
+        final FieldUnpickler<PF> mu = object_map().unpickler(source);
         return new ComplexClass(
                 mu.field(booleanF),
                 mu.field(byteF),
