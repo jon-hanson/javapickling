@@ -5,11 +5,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.javapickling.core.*;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-@DefaultPickler(ComplexClass.ComplexClassPickler.class)
+@DefaultPickler(ComplexClassPickler.class)
 public class ComplexClass implements Serializable {
 
     enum Colour {
@@ -20,7 +19,7 @@ public class ComplexClass implements Serializable {
         boolean equals(Object rhs);
     }
 
-    @DefaultPickler(IdWrapperPickler.class)
+    @DefaultPickler(ComplexClassPickler.IdWrapperPickler.class)
     public static class IdWrapper implements Interface, Serializable {
         public final String id;
 
@@ -37,24 +36,7 @@ public class ComplexClass implements Serializable {
         }
     }
 
-    public static class IdWrapperPickler<PF> extends PicklerBase<IdWrapper, PF> {
-
-        public IdWrapperPickler(PicklerCore core) {
-            super(core);
-        }
-
-        @Override
-        public PF pickle(IdWrapper idw, PF target) throws IOException {
-            return string_p().pickle(idw.id, target);
-        }
-
-        @Override
-        public IdWrapper unpickle(PF source) throws IOException {
-            return new IdWrapper(string_p().unpickle(source));
-        }
-    }
-
-    @DefaultPickler(GenericPickler.class)
+    @DefaultPickler(ComplexClassPickler.GenericPickler.class)
     public static class Generic<T extends Interface> implements Serializable {
 
         public final T value;
@@ -69,116 +51,6 @@ public class ComplexClass implements Serializable {
             if (obj == null || getClass() != obj.getClass()) return false;
             final Generic<T> rhs = (Generic<T>)obj;
             return value.equals(rhs.value);
-        }
-    }
-
-    public static class GenericPickler<PF, T extends Interface> extends PicklerBase<Generic<T>, PF> {
-
-        private final Field<T, PF> valueF;
-
-        public GenericPickler(PicklerCore<PF> core, Pickler<T, PF> valuePickler) {
-            super(core);
-            valueF = field("value", valuePickler);
-        }
-
-        @Override
-        public PF pickle(Generic<T> generic, PF target) throws IOException {
-            final FieldPickler<PF> mp = core.object_map().pickler(target);
-            mp.field(valueF, generic.value);
-            return mp.pickle(target);
-        }
-
-        @Override
-        public Generic<T> unpickle(PF source) throws IOException {
-            final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
-            return new Generic<T>(mu.field(valueF));
-        }
-    }
-
-    public static class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
-
-        private Pickler<Generic<IdWrapper>, PF> genIdWrapperPickler() {
-            return generic_p(Generic.class, object_p(IdWrapper.class));
-        }
-
-        private Pickler<Generic<Interface>, PF> genInterfacePickler() {
-            return generic_p(Generic.class, d_object_p());
-        }
-
-        final Field<Boolean, PF>                booleanF =      field("bool",       boolean_p());
-        final Field<Byte, PF>                   byteF =         field("byte",       byte_p());
-        final Field<Character, PF>              charF =         field("char",       char_p());
-        final Field<Short, PF>                  shortF =        field("short",      short_p());
-        final Field<Long, PF>                   longF =         field("long",       long_p());
-        final Field<Integer, PF>                intF =          field("int",        integer_p());
-        final Field<Float, PF>                  floatF =        field("float",      float_p());
-        final Field<Double, PF>                 doubleF =       field("double",     double_p());
-        final Field<Colour, PF>                 enumF =         field("enum",       enum_p(Colour.class));
-        final Field<String, PF>                 stringF =       field("string",     string_p());
-        final Field<Map<String, Double>, PF>    strDblMapF =    field("strDblMap",  map_p(double_p(), TreeMap.class));
-        final Field<Map<Integer, Colour>, PF>   intEnumMapF =   field("intEnumMap", map_p(integer_p(), enum_p(Colour.class), TreeMap.class));
-        final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMap",  map_p(d_object_p(), d_object_p(), TreeMap.class));
-        final Field<Set<String>, PF>            strSetF =       field("strSet",     set_p(string_p(), TreeSet.class));
-        final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), TreeSet.class));
-        final Field<List<String>, PF>           listStrF =      field("listStr",    list_p(string_p(), ArrayList.class));
-        final Field<List<Object>, PF>           listObjF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
-
-        final Field<Generic<IdWrapper>, PF>     genericF =      field("generic",    genIdWrapperPickler());
-        final Field<Generic<Interface>, PF>     generic2F =     field("generic2",   genInterfacePickler());
-
-        public ComplexClassPickler(PicklerCore<PF> core) {
-            super(core);
-        }
-
-        @Override
-        public PF pickle(ComplexClass sc, PF target) throws IOException {
-            final FieldPickler<PF> mp = core.object_map().pickler(target);
-            mp.field(booleanF,      sc.booleanF);
-            mp.field(byteF,         sc.byteF);
-            mp.field(charF,         sc.charF);
-            mp.field(shortF,        sc.shortF);
-            mp.field(longF,         sc.longF);
-            mp.field(intF,          sc.intF);
-            mp.field(floatF,        sc.floatF);
-            mp.field(doubleF,       sc.doubleF);
-            mp.field(enumF,         sc.enumF);
-            mp.field(stringF,       sc.stringF);
-            mp.field(strDblMapF,    sc.strDblMapF);
-            mp.field(intEnumMapF,   sc.intEnumMapF);
-            mp.field(objObjMapF,    sc.objObjMapF);
-            mp.field(strSetF,       sc.strSetF);
-            mp.field(objSetF,       sc.objSetF);
-            mp.field(listStrF,      sc.listStrF);
-            mp.field(listObjF,      sc.listObjF);
-            mp.field(genericF,      sc.genericF);
-            mp.field(generic2F,      sc.generic2F);
-            return mp.pickle(target);
-        }
-
-        @Override
-        public ComplexClass unpickle(PF source) throws IOException {
-            final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
-            return new ComplexClass(
-                    mu.field(booleanF),
-                    mu.field(byteF),
-                    mu.field(charF),
-                    mu.field(shortF),
-                    mu.field(longF),
-                    mu.field(intF),
-                    mu.field(floatF),
-                    mu.field(doubleF),
-                    mu.field(enumF),
-                    mu.field(stringF),
-                    mu.field(strDblMapF),
-                    mu.field(intEnumMapF),
-                    mu.field(objObjMapF),
-                    mu.field(strSetF),
-                    mu.field(objSetF),
-                    mu.field(listStrF),
-                    mu.field(listObjF),
-                    mu.field(genericF),
-                    mu.field(generic2F)
-            );
         }
     }
 
