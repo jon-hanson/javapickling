@@ -11,12 +11,13 @@ The custom picklers only need be defined once - the same pickler will be used re
 
 The design supports pickling into multiple pickled formats - JSON and byte[] implementations are provided.
 
-See ByteIOPicklerTest.java and JsonPicklerTest.java for example usage, however once set up this illustrates the API usage:
+See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
+and [JsonPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/json/JsonPicklerTest.java) for example usage, however once set up this illustrates the API usage:
 
     void test(House house) {
 
         // Create a pickler.
-        Pickler<House, JsonNode> pickler = jsonPickler.object(House.class);
+        Pickler<House, JsonNode> pickler = jsonPickler.object_p(House.class);
 
         // Pickle a sample House object into a JsonNode.
         JsonNode node = pickler.pickle(house, null);
@@ -32,30 +33,33 @@ See ByteIOPicklerTest.java and JsonPicklerTest.java for example usage, however o
 1. Either register your Pickler class with the `PicklerCore` implementation you're about to use, or use the `DefaultPickler` annotation to specify your Pickler.
 1. Call `PicklerCore.pickle(obj, target)` to pickle your class into the target, and `obj = PicklerCore.unpickler(source)` to reconstitute a class from a source.
 
-## Documentation
+## Overview
 
 The framework is based around two interfaces, described in more detail in the following sections.
-The `Pickler` interface allows the pickling of types to be expressed independently of a specific target format.
-The `PicklerCore` interface provides a means for pickling into a specific format to be expressed as a set of `Pickler`s for the base types.
+The `Pickler` interface allows the pickling of types to be expressed, independently of a specific target format.
+The `PicklerCore` interface provides a way for pickling into a specific format to be expressed as a set of `Pickler`s for the base types.
+
+Since this is based on a combinator framework, picklers are composable.
+In particular, a pickler for a class will be composed of picklers corresponding to the field types of that class.
 
 ### Pickler
 
-[Source code](https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java)
+[Source code](http://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java)
 
     public interface Pickler<T, PF> {
         PF pickle(T t, PF target) throws IOException;
         T unpickle(PF source) throws IOException;
     }
 
-Classes which provide a pickling implementation for a class T implement `Pickler<T, PF>`.
-The `PF` type parameter represents the target type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
+A class which provides a pickling implementation for a class T implements `Pickler<T, PF>`.
+The `PF` type parameter represents the target format type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
 
 Pickler implementations generally sub-class PicklerBase as this provides an implicit means of referncing the pickler methods in PicklerCore, such as string\_p() and integer\_p().
 This means picklers can be expressed more concisely.
 
 ### PicklerCore
 
-[Source code](https://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java)
+[Source code](http://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java)
 
 A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`, where the PF type parameter specifies the target format. For example,
 
@@ -76,6 +80,7 @@ E.g.
     @DefaultPickler(MyTypePickler.class)
     public class MyType {
         public MyType(String s) {...}
+        @Override public String toString() {...}
     }
     
     public class MyTypePickler<PF> extends PicklerBase<MyType, PF> {
@@ -149,7 +154,7 @@ The library was born out the need for a Java serialisation framework that satisf
 1. Must be Java-based and able to serialise any Java type, including Collections, Enums, and all Generic types.
 1. Multiple target formats must be supportable, with byte arrays and JSON being the inital set of target formats.
 1. Boilerplate serialisation code for custom classes is acceptable but should be minimal, and should not have to be repeated for each target format.
-1. Serialisers should be composable - it should be possible to express serialisers for classes as being composed of the serislisers for the constituent fields.
+1. Serialisers should be composable - it should be possible to express serialisers for classes as being composed of the serialisers for the constituent fields.
 1. Reflection use should be minimised.
 1. Serialisation should be driven by the Java types - static type information should be used when possible. Java code generation from IDL or similar is not allowed. Everything should be as strongly-typed as possible.
 1. Performance should be reasonable - on a par with Java's built-in Serialisation (excluding Java Serialisation's initial Reflection-based start-up cost).
