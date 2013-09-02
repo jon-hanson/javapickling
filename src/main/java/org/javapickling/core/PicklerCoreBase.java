@@ -3,6 +3,7 @@ package org.javapickling.core;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.TypeVariable;
@@ -239,8 +240,10 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         final TypeVariable<Class<T>>[] valueTps = valueClass.getTypeParameters();
         final TypeVariable<Class<P>>[] picklerTps = picklerClass.getTypeParameters();
 
+
         final int picklerCount;
-        if (picklerTps[0].getName().equals("PF")) {
+        final boolean firstParamIsPF = picklerTps[0].getName().equals("PF");
+        if (firstParamIsPF) {
             picklerCount = picklerTps.length - 1;
         } else {
             picklerCount = picklerTps.length;
@@ -262,25 +265,42 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
                             throw new PicklerException("The constructor for " + picklerClass.getName() + " expects " + picklerCount + " pickler arguments");
                         }
 
-                        final Class<?>[] ctorParamTypes = ctor.getParameterTypes();
-                        final Object[] args = new Object[picklerCount + 1];
-                        args[0] = ctorParamTypes[0].cast(PicklerCoreBase.this);
-                        for (int i = 0; i < picklerArgs.length; ++i) {
-                            args[i + 1] = ctorParamTypes[i + 1].cast(picklerArgs[i]);
+                        final Object[] args = new Object[picklerCount];
+                        for (int i = 0; i < picklerCount; ++i) {
+                            args[i] = d_object_p();
                         }
 
-                        try {
-                            return (Pickler<T, PF>)ctor.newInstance(args);
-                        } catch (InvocationTargetException ex) {
-                            throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
-                        } catch (InstantiationException ex) {
-                            throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
-                        } catch (IllegalAccessException ex) {
-                            throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
-                        }
+                        register(valueClass, (Pickler<T,PF>)createPickler(picklerClass.getName(), ctor, args));
+
+                        return createPickler(picklerClass.getName(), ctor, picklerArgs);
                     }
                 });
+
+
+                break;
             }
+        }
+    }
+
+    private <T> Pickler<T, PF> createPickler(String name, Constructor ctor, Object[] args) {
+
+        final int ctorParamCount = ctor.getParameterTypes().length;
+        final Class<?>[] ctorParamTypes = ctor.getParameterTypes();
+
+        final Object[] ctorArgs = new Object[ctorParamCount];
+        ctorArgs[0] = ctorParamTypes[0].cast(this);
+        for (int i = 1; i < ctorParamCount; ++i) {
+            ctorArgs[i] = ctorParamTypes[i].cast(args[i - 1]);
+        }
+
+        try {
+            return (Pickler<T, PF>)ctor.newInstance(ctorArgs);
+        } catch (InvocationTargetException ex) {
+            throw new PicklerException("Failed to call constructor for Pickler class " + name, ex);
+        } catch (InstantiationException ex) {
+            throw new PicklerException("Failed to call constructor for Pickler class " + name, ex);
+        } catch (IllegalAccessException ex) {
+            throw new PicklerException("Failed to call constructor for Pickler class " + name, ex);
         }
     }
 
