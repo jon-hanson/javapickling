@@ -209,10 +209,23 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
             }
         }
 
-        picklerClassRegistry.put(valueClass.getName(), (Class<Pickler<?, PF>>)picklerClass);
+        registerPicklerClass(valueClass, picklerClass);
+
         if (!lazy) {
             getPickler(valueClass);
         }
+    }
+
+    private <P> void registerPicklerClass(Class<?> valueClass, Class<P> picklerClass) {
+        picklerClassRegistry.put(valueClass.getName(), this.<P, Pickler<?, PF>>castPicklerClass(picklerClass));
+    }
+
+    private <T> Class<Pickler<T, PF>> getPicklerClass(Class<T> valueClass) {
+        return castPicklerClass(picklerClassRegistry.get(valueClass.getName()));
+    }
+
+    private <S, T> Class<T> castPicklerClass(Class<S> picklerClass) {
+        return (Class<T>)picklerClass;
     }
 
     interface GenericPicklerCtor<T, PF> {
@@ -279,7 +292,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         if (pickler != null)
             return pickler;
 
-        Class<P> picklerClass = (Class<P>)picklerClassRegistry.get(valueClass.getName());
+        Class<P> picklerClass = (Class<P>) getPicklerClass(valueClass);
         if (picklerClass == null) {
             if (valueClass.isAnnotationPresent(DefaultPickler.class)) {
                 final DefaultPickler defPickAnn = valueClass.getAnnotation(DefaultPickler.class);
@@ -321,7 +334,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
             if (valueClass.isAnnotationPresent(DefaultPickler.class)) {
                 final DefaultPickler defPickAnn = valueClass.getAnnotation(DefaultPickler.class);
                 final Class<P> picklerClass = (Class<P>)defPickAnn.value();
-                register(valueClass, picklerClass, true);
+                register(valueClass, (Class<Pickler<T,PF>>) picklerClass, true);
                 picklerCtor = genericPicklerClassRegistry.get(valueClass.getName());
             }
         }
