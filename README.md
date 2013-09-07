@@ -1,12 +1,15 @@
 javapickling
 ============
 
-**Java Pickling** is a Java framework for pickling values into target pickled formats and vice versa (i.e. unpickling).
+**Java Pickling** is a Java framework for pickling Java object and values into target pickled formats,
+and to unpickle the results back into the objects and values.
 "Pickling" essentially means serialisation.
 It was inspired by the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), and by the [Scala Pickling project](https://github.com/scala/pickling).
 
-The pickling is driven by the static types of values, however it will also handle objects where the static type is unknown.
-At present it does not provide automatic of pickling of custom classes, ergo pickling of those types must be implemented by the user.
+The pickling is driven by the static types of values,
+however it will also handle objects where the static type is unknown.
+At present it does not provide automatic of pickling of custom classes,
+ergo pickling of those types must be implemented by the user.
 The custom picklers only need be defined once - the same pickler will be used regardless of the pickled format.
 
 The design supports pickling into multiple pickled formats - JSON and byte[] implementations are provided.
