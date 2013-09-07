@@ -1,26 +1,25 @@
 package org.javapickling.core;
 
-import java.io.IOException;
-
 public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
 
-    private final String TYPE_NAME = "type";
-    private final String CLASS_NAME = "class";
-    private final String VALUE_NAME = "value";
+    private static final String VALUE_NAME = "value";
+
+    private Field<String, PF> type = field("type", string_p());
+    private Field<String, PF> clazz = field("class", string_p());
 
     public DynamicObjectPickler(PicklerCore<PF> core) {
         super(core);
     }
 
     @Override
-    public PF pickle(T obj, PF target) throws IOException {
+    public PF pickle(T obj, PF target) throws Exception {
 
         final MetaType metaType = MetaType.ofObject(obj);
 
         final FieldPickler<PF> mp = core.object_map().pickler(target);
-        mp.string_f(TYPE_NAME, metaType.name());
+        mp.field(type, metaType.name());
         if (metaType.type == MetaType.Type.ENUM || metaType.type == MetaType.Type.OBJECT) {
-            mp.string_f(CLASS_NAME, metaType.clazz.getName());
+            mp.field(clazz, metaType.clazz.getName());
         }
 
         if (metaType.type != MetaType.Type.NULL) {
@@ -31,15 +30,15 @@ public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
     }
 
     @Override
-    public T unpickle(PF source) throws IOException {
+    public T unpickle(PF source) throws Exception {
 
         final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
 
-        final MetaType metaType = MetaType.ofName(mu.string_f(TYPE_NAME));
+        final MetaType metaType = MetaType.ofName(mu.field(type));
 
         if (metaType.type == MetaType.Type.ENUM || metaType.type == MetaType.Type.OBJECT) {
             try {
-                metaType.clazz = Class.forName(mu.string_f(CLASS_NAME));
+                metaType.clazz = Class.forName(mu.field(clazz));
             } catch (ClassNotFoundException ex) {
                 throw new PicklerException("Can not construct class", ex);
             }

@@ -7,37 +7,12 @@ import org.junit.Assert;
 import org.javapickling.core.*;
 import org.junit.Test;
 
-import java.io.IOException;
-
 public class JsonPicklerTest {
 
     private static final JsonPicklerCore jsonPickler = new JsonPicklerCore();
 
-    class Pj extends PicklerBase<ComplexClass, JsonNode> {
-
-        public Pj(PicklerCore<JsonNode> core) {
-            super(core);
-        }
-
-        @Override
-        public JsonNode pickle(ComplexClass complexClass, JsonNode target) throws IOException {
-            // TODO:
-            return null;
-        }
-
-        @Override
-        public ComplexClass unpickle(JsonNode source) throws IOException {
-            // TODO:
-            return null;
-        }
-    }
-
-    static {
-        //jsonPickler.register(ComplexClass.Generic.class, ComplexClass.GenericPickler.class);
-    }
-
     @Test
-    public void testPickle() throws IOException, ClassNotFoundException {
+    public void testPickle() throws Exception {
 
         final ComplexClass simple = ComplexClass.createInstance(true);
 
@@ -49,12 +24,12 @@ public class JsonPicklerTest {
         System.out.println(javaSerTimeMs);
     }
 
-    private static RoundTrip roundTripViaJson(ComplexClass simple) throws IOException {
+    private static RoundTrip roundTripViaJson(ComplexClass complex) throws Exception {
 
         final Pickler<ComplexClass, JsonNode> pickler = jsonPickler.object_p(ComplexClass.class);
 
         final long startTime1 = System.nanoTime();
-        final JsonNode node = pickler.pickle(simple, null);
+        final JsonNode node = pickler.pickle(complex, null);
         final long endTime1 = System.nanoTime();
 
         System.out.println("JSON=");
@@ -62,10 +37,10 @@ public class JsonPicklerTest {
         final int size = node.toString().getBytes().length;
 
         final long startTime2 = System.nanoTime();
-        final ComplexClass simple2 = pickler.unpickle(node);
+        final ComplexClass complex2 = pickler.unpickle(node);
         final long endTime2 = System.nanoTime();
 
-        Assert.assertEquals(simple, simple2);
+        Assert.assertEquals(complex, complex2);
 
         return new RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }

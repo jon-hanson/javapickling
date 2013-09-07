@@ -3,7 +3,6 @@ package org.javapickling.core;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.TypeVariable;
@@ -35,56 +34,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         public FieldPicklerBase(PF target) {
             this.target = target;
         }
-
-        @Override
-        public void boolean_f(String name, Boolean value) throws IOException {
-            field(name, value, PicklerCoreBase.this.boolean_p());
-        }
-
-        @Override
-        public void byte_f(String name, Byte value) throws IOException {
-            field(name, value, PicklerCoreBase.this.byte_p());
-        }
-
-        @Override
-        public void char_f(String name, Character value) throws IOException {
-            field(name, value, PicklerCoreBase.this.char_p());
-        }
-
-        @Override
-        public void short_f(String name, Short value) throws IOException {
-            field(name, value, PicklerCoreBase.this.short_p());
-        }
-
-        @Override
-        public void long_f(String name, Long value) throws IOException {
-            field(name, value, PicklerCoreBase.this.long_p());
-        }
-
-        @Override
-        public void integer_f(String name, Integer value) throws IOException {
-            field(name, value, PicklerCoreBase.this.integer_p());
-        }
-
-        @Override
-        public void float_f(String name, Float value) throws IOException {
-            field(name, value, PicklerCoreBase.this.float_p());
-        }
-
-        @Override
-        public void double_f(String name, Double value) throws IOException {
-            field(name, value, PicklerCoreBase.this.double_p());
-        }
-
-        @Override
-        public <T extends Enum<T>> void enum_f(String name, T value, Class<T> clazz) throws IOException {
-            field(name, value, PicklerCoreBase.this.enum_p(clazz));
-        }
-
-        @Override
-        public void string_f(String name, String value) throws IOException {
-            field(name, value, PicklerCoreBase.this.string_p());
-        }
     }
 
     /**
@@ -96,56 +45,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
         public FieldUnpicklerBase(PF source) {
             this.source = source;
-        }
-
-        @Override
-        public Boolean boolean_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.boolean_p());
-        }
-
-        @Override
-        public Byte byte_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.byte_p());
-        }
-
-        @Override
-        public Character char_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.char_p());
-        }
-
-        @Override
-        public Short short_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.short_p());
-        }
-
-        @Override
-        public Long long_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.long_p());
-        }
-
-        @Override
-        public Integer integer_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.integer_p());
-        }
-
-        @Override
-        public Float float_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.float_p());
-        }
-
-        @Override
-        public Double double_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.double_p());
-        }
-
-        @Override
-        public <T extends Enum<T>> T enum_f(String name, Class<T> clazz) throws IOException {
-            return field(name, PicklerCoreBase.this.enum_p(clazz));
-        }
-
-        @Override
-        public String string_f(String name) throws IOException {
-            return field(name, PicklerCoreBase.this.string_p());
         }
     }
 
@@ -377,12 +276,12 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         return new Pickler<Class<T>, PF>() {
 
             @Override
-            public PF pickle(Class<T> clazz, PF target) throws IOException {
+            public PF pickle(Class<T> clazz, PF target) throws Exception {
                 return string_p().pickle(clazz.getName(), target);
             }
 
             @Override
-            public Class<T> unpickle(PF source) throws IOException {
+            public Class<T> unpickle(PF source) throws Exception {
                 final String name = string_p().unpickle(source);
                 try {
                     return (Class<T>)Class.forName(name);
@@ -399,12 +298,12 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         return new Pickler<Class<S>, PF>() {
 
             @Override
-            public PF pickle(Class<S> clazz, PF target) throws IOException {
+            public PF pickle(Class<S> clazz, PF target) throws Exception {
                 return string_p().pickle(clazz.getName(), target);
             }
 
             @Override
-            public Class<S> unpickle(PF source) throws IOException {
+            public Class<S> unpickle(PF source) throws Exception {
                 final String name = string_p().unpickle(source);
                 try {
                     return (Class<S>)Class.forName(name);
@@ -445,7 +344,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         return new Pickler<T, PF>() {
 
             @Override
-            public PF pickle(T t, PF target) throws IOException {
+            public PF pickle(T t, PF target) throws Exception {
                 final PF target2 = boolean_p().pickle(t != null, target);
                 if (t != null) {
                     return pickler.pickle(t, target2);
@@ -455,7 +354,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
             }
 
             @Override
-            public T unpickle(PF source) throws IOException {
+            public T unpickle(PF source) throws Exception {
                 if (boolean_p().unpickle(source)) {
                     return pickler.unpickle(source);
                 } else {

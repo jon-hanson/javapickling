@@ -13,7 +13,7 @@ public class ByteIOPicklerTest {
     private static final ByteIOPicklerCore byteIOPickler = new ByteIOPicklerCore();
 
     @Test
-    public void testPickle() throws IOException, ClassNotFoundException {
+    public void testPickle() throws Exception {
 
         final ComplexClass simple = ComplexClass.createInstance(true);
 
@@ -25,7 +25,7 @@ public class ByteIOPicklerTest {
         System.out.println(javaSerTimeMs);
     }
 
-    private static RoundTrip roundTripViaByteIO(ComplexClass simple) throws IOException {
+    private static RoundTrip roundTripViaByteIO(ComplexClass complex) throws Exception {
 
         final Pickler<ComplexClass, ByteIO> pickler = byteIOPickler.object_p(ComplexClass.class);
 
@@ -33,7 +33,7 @@ public class ByteIOPicklerTest {
         final ByteIO byteOutput = new ByteIO(new DataOutputStream(baos));
 
         final long startTime1 = System.nanoTime();
-        pickler.pickle(simple, byteOutput);
+        pickler.pickle(complex, byteOutput);
         final long endTime1 = System.nanoTime();
 
         final byte[] ba = baos.toByteArray();
@@ -43,10 +43,10 @@ public class ByteIOPicklerTest {
         final ByteIO byteInput = new ByteIO(new DataInputStream(bais));
 
         final long startTime2 = System.nanoTime();
-        final ComplexClass simple2 = pickler.unpickle(byteInput);
+        final ComplexClass complex2 = pickler.unpickle(byteInput);
         final long endTime2 = System.nanoTime();
 
-        Assert.assertEquals(simple, simple2);
+        Assert.assertEquals(complex, complex2);
 
         return new RoundTrip("ByteIOPickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }

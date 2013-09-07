@@ -2,7 +2,6 @@ package org.javapickling.common;
 
 import org.javapickling.core.*;
 
-import java.io.IOException;
 import java.util.*;
 
 public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
@@ -41,7 +40,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
     }
 
     @Override
-    public PF pickle(ComplexClass sc, PF target) throws IOException {
+    public PF pickle(ComplexClass sc, PF target) throws Exception {
         final FieldPickler<PF> mp = object_map().pickler(target);
         mp.field(booleanF,      sc.booleanF);
         mp.field(byteF,         sc.byteF);
@@ -66,7 +65,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
     }
 
     @Override
-    public ComplexClass unpickle(PF source) throws IOException {
+    public ComplexClass unpickle(PF source) throws Exception {
         final FieldUnpickler<PF> mu = object_map().unpickler(source);
         return new ComplexClass(
                 mu.field(booleanF),
@@ -98,12 +97,12 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
         }
 
         @Override
-        public PF pickle(ComplexClass.IdWrapper idw, PF target) throws IOException {
+        public PF pickle(ComplexClass.IdWrapper idw, PF target) throws Exception {
             return string_p().pickle(idw.id, target);
         }
 
         @Override
-        public ComplexClass.IdWrapper unpickle(PF source) throws IOException {
+        public ComplexClass.IdWrapper unpickle(PF source) throws Exception {
             return new ComplexClass.IdWrapper(string_p().unpickle(source));
         }
     }
@@ -118,14 +117,14 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
         }
 
         @Override
-        public PF pickle(ComplexClass.Generic<T> generic, PF target) throws IOException {
+        public PF pickle(ComplexClass.Generic<T> generic, PF target) throws Exception {
             final FieldPickler<PF> mp = core.object_map().pickler(target);
             mp.field(valueF, generic.value);
             return mp.pickle(target);
         }
 
         @Override
-        public ComplexClass.Generic<T> unpickle(PF source) throws IOException {
+        public ComplexClass.Generic<T> unpickle(PF source) throws Exception {
             final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
             return new ComplexClass.Generic<T>(mu.field(valueF));
         }

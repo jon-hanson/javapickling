@@ -2,7 +2,6 @@ package org.javapickling.byteio;
 
 import org.javapickling.core.*;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -11,12 +10,12 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Object, ByteIO> nullP = new Pickler<Object, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Object obj, ByteIO target) throws IOException {
+        public ByteIO pickle(Object obj, ByteIO target) throws Exception {
             return target;
         }
 
         @Override
-        public Object unpickle(ByteIO source) throws IOException {
+        public Object unpickle(ByteIO source) throws Exception {
             return null;
         }
     };
@@ -24,13 +23,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Boolean, ByteIO> boolP = new Pickler<Boolean, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Boolean b, ByteIO target) throws IOException {
+        public ByteIO pickle(Boolean b, ByteIO target) throws Exception {
             target.output.writeBoolean(b);
             return target;
         }
 
         @Override
-        public Boolean unpickle(ByteIO source) throws IOException {
+        public Boolean unpickle(ByteIO source) throws Exception {
             return source.input.readBoolean();
         }
     };
@@ -38,13 +37,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Byte, ByteIO> byteP = new Pickler<Byte, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Byte b, ByteIO target) throws IOException {
+        public ByteIO pickle(Byte b, ByteIO target) throws Exception {
             target.output.writeByte(b);
             return target;
         }
 
         @Override
-        public Byte unpickle(ByteIO source) throws IOException {
+        public Byte unpickle(ByteIO source) throws Exception {
             return source.input.readByte();
         }
     };
@@ -52,13 +51,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Character, ByteIO> charP = new Pickler<Character, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Character c, ByteIO target) throws IOException {
+        public ByteIO pickle(Character c, ByteIO target) throws Exception {
             target.output.writeChar(c);
             return target;
         }
 
         @Override
-        public Character unpickle(ByteIO source) throws IOException {
+        public Character unpickle(ByteIO source) throws Exception {
             return source.input.readChar();
         }
     };
@@ -66,13 +65,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<String, ByteIO> stringP = new Pickler<String, ByteIO>() {
 
         @Override
-        public ByteIO pickle(String s, ByteIO target) throws IOException {
+        public ByteIO pickle(String s, ByteIO target) throws Exception {
             target.writeString(s);
             return target;
         }
 
         @Override
-        public String unpickle(ByteIO source) throws IOException {
+        public String unpickle(ByteIO source) throws Exception {
             return source.readString();
         }
     };
@@ -80,13 +79,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Integer, ByteIO> integerP = new Pickler<Integer, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Integer i, ByteIO target) throws IOException {
+        public ByteIO pickle(Integer i, ByteIO target) throws Exception {
             target.output.writeInt(i);
             return target;
         }
 
         @Override
-        public Integer unpickle(ByteIO source) throws IOException {
+        public Integer unpickle(ByteIO source) throws Exception {
             return source.input.readInt();
         }
     };
@@ -94,13 +93,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Short, ByteIO> shortP = new Pickler<Short, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Short s, ByteIO target) throws IOException {
+        public ByteIO pickle(Short s, ByteIO target) throws Exception {
             target.output.writeShort(s);
             return target;
         }
 
         @Override
-        public Short unpickle(ByteIO source) throws IOException {
+        public Short unpickle(ByteIO source) throws Exception {
             return source.input.readShort();
         }
     };
@@ -108,13 +107,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Long, ByteIO> longP = new Pickler<Long, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Long l, ByteIO target) throws IOException {
+        public ByteIO pickle(Long l, ByteIO target) throws Exception {
             target.output.writeLong(l);
             return target;
         }
 
         @Override
-        public Long unpickle(ByteIO source) throws IOException {
+        public Long unpickle(ByteIO source) throws Exception {
             return source.input.readLong();
         }
     };
@@ -122,13 +121,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Float, ByteIO> floatP = new Pickler<Float, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Float f, ByteIO target) throws IOException {
+        public ByteIO pickle(Float f, ByteIO target) throws Exception {
             target.output.writeFloat(f);
             return target;
         }
 
         @Override
-        public Float unpickle(ByteIO source) throws IOException {
+        public Float unpickle(ByteIO source) throws Exception {
             return source.input.readFloat();
         }
     };
@@ -136,13 +135,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     protected final Pickler<Double, ByteIO> doubleP = new Pickler<Double, ByteIO>() {
 
         @Override
-        public ByteIO pickle(Double d, ByteIO target) throws IOException {
+        public ByteIO pickle(Double d, ByteIO target) throws Exception {
             target.output.writeDouble(d);
             return target;
         }
 
         @Override
-        public Double unpickle(ByteIO source) throws IOException {
+        public Double unpickle(ByteIO source) throws Exception {
             return source.input.readDouble();
         }
     };
@@ -155,17 +154,17 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             return new FieldPicklerBase(target) {
 
                 @Override
-                public <T> void field(final String name, final T value, final Pickler<T, ByteIO> pickler) throws IOException {
+                public <T> void field(final String name, final T value, final Pickler<T, ByteIO> pickler) throws Exception {
                     pickler.pickle(value, target);
                 }
 
                 @Override
-                public <T> void field(Field<T, ByteIO> field, T value) throws IOException {
+                public <T> void field(Field<T, ByteIO> field, T value) throws Exception {
                     field.pickler.pickle(value, target);
                 }
 
                 @Override
-                public ByteIO pickle(ByteIO target) throws IOException {
+                public ByteIO pickle(ByteIO target) throws Exception {
                     return target;
                 }
             };
@@ -177,12 +176,12 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             return new FieldUnpicklerBase(source) {
 
                 @Override
-                public <T> T field(String name, Pickler<T, ByteIO> pickler) throws IOException {
+                public <T> T field(String name, Pickler<T, ByteIO> pickler) throws Exception {
                     return pickler.unpickle(source);
                 }
 
                 @Override
-                public <T> T field(Field<T, ByteIO> field) throws IOException {
+                public <T> T field(Field<T, ByteIO> field) throws Exception {
                     return field.pickler.unpickle(source);
                 }
             };
@@ -245,13 +244,13 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         return new Pickler<T, ByteIO>() {
 
             @Override
-            public ByteIO pickle(T t, ByteIO target) throws IOException {
+            public ByteIO pickle(T t, ByteIO target) throws Exception {
                 target.writeString(t.name());
                 return target;
             }
 
             @Override
-            public T unpickle(ByteIO source) throws IOException {
+            public T unpickle(ByteIO source) throws Exception {
                 return T.valueOf(enumClass, source.readString());
             }
         };
@@ -263,7 +262,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         return new Pickler<T[], ByteIO>() {
 
             @Override
-            public ByteIO pickle(T[] arr, ByteIO target) throws IOException {
+            public ByteIO pickle(T[] arr, ByteIO target) throws Exception {
 
                 target.output.writeInt(arr.length);
 
@@ -275,7 +274,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             }
 
             @Override
-            public T[] unpickle(ByteIO source) throws IOException {
+            public T[] unpickle(ByteIO source) throws Exception {
 
                 int size = source.input.readInt();
                 final T[] result = (T[])Array.newInstance(elemClass, size);
@@ -297,7 +296,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         return new Pickler<List<T>, ByteIO>() {
 
             @Override
-            public ByteIO pickle(List<T> list, ByteIO target) throws IOException {
+            public ByteIO pickle(List<T> list, ByteIO target) throws Exception {
 
                 target.output.writeInt(list.size());
 
@@ -309,7 +308,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             }
 
             @Override
-            public List<T> unpickle(ByteIO source) throws IOException {
+            public List<T> unpickle(ByteIO source) throws Exception {
 
                 int size = source.input.readInt();
                 final List<T> result = newInstance(listClass);
@@ -331,7 +330,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         return new Pickler<Map<String, T>, ByteIO>() {
 
             @Override
-            public ByteIO pickle(Map<String, T> map, ByteIO target) throws IOException {
+            public ByteIO pickle(Map<String, T> map, ByteIO target) throws Exception {
 
                 target.output.writeInt(map.size());
 
@@ -344,7 +343,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             }
 
             @Override
-            public Map<String, T> unpickle(ByteIO source) throws IOException {
+            public Map<String, T> unpickle(ByteIO source) throws Exception {
 
                 final int size = source.input.readInt();
 
@@ -369,7 +368,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         return new Pickler<Map<K, V>, ByteIO>() {
 
             @Override
-            public ByteIO pickle(Map<K, V> map, ByteIO target) throws IOException {
+            public ByteIO pickle(Map<K, V> map, ByteIO target) throws Exception {
 
                 target.output.writeInt(map.size());
 
@@ -382,7 +381,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             }
 
             @Override
-            public Map<K, V> unpickle(ByteIO source) throws IOException {
+            public Map<K, V> unpickle(ByteIO source) throws Exception {
 
                 final Map<K, V> result = newInstance(mapClass);
 
@@ -406,7 +405,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         return new Pickler<Set<T>, ByteIO>() {
 
             @Override
-            public ByteIO pickle(Set<T> set, ByteIO target) throws IOException {
+            public ByteIO pickle(Set<T> set, ByteIO target) throws Exception {
 
                 target.output.writeInt(set.size());
 
@@ -418,7 +417,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             }
 
             @Override
-            public Set<T> unpickle(ByteIO source) throws IOException {
+            public Set<T> unpickle(ByteIO source) throws Exception {
 
                 final Set<T> result = newInstance(setClass);
 
