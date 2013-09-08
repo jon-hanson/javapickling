@@ -34,6 +34,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         public FieldPicklerBase(PF target) {
             this.target = target;
         }
+
+        @Override
+        public <T> void field(Field<T, PF> field, T value) throws Exception {
+            field(field.name, value, field.pickler);
+        }
     }
 
     /**
@@ -45,6 +50,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
         public FieldUnpicklerBase(PF source) {
             this.source = source;
+        }
+
+        @Override
+        public <T> T field(Field<T, PF> field) throws Exception {
+            return field(field.name, field.pickler);
         }
     }
 
@@ -150,7 +160,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
         if (valueTps.length < picklerCount) {
             throw new PicklerException("Value class " + valueClass.getName() +
-                    "expected to have " + picklerCount + " type parameters");
+                    "expected to have " + picklerCount + " typeKind parameters");
         }
 
         final Constructor<?>[] ctors = picklerClass.getConstructors();

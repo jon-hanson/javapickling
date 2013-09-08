@@ -9,15 +9,18 @@ import org.javapickling.core.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
-public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
+/**
+ * PicklerCore implementation which pickles objects to JsonNodes.
+ */
+public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
     private final JsonNodeFactory nodeFactory;
 
-    public JsonPicklerCore() {
+    public JsonNodePicklerCore() {
         this(JsonNodeFactory.instance);
     }
 
-    public JsonPicklerCore(JsonNodeFactory nodeFactory) {
+    public JsonNodePicklerCore(JsonNodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
 
@@ -127,8 +130,8 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
     protected final Pickler<Float, JsonNode> floatP = new Pickler<Float, JsonNode>() {
 
         @Override
-        public JsonNode pickle(Float d, JsonNode target) throws Exception {
-            return nodeFactory.numberNode(d);
+        public JsonNode pickle(Float f, JsonNode target) throws Exception {
+            return nodeFactory.numberNode(f);
         }
 
         @Override
@@ -165,11 +168,6 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
                 }
 
                 @Override
-                public <T> void field(Field<T, JsonNode> field, T value) throws Exception {
-                    objectNode.put(field.name, field.pickler.pickle(value, target));
-                }
-
-                @Override
                 public JsonNode pickle(JsonNode source) {
                     return objectNode;
                 }
@@ -186,10 +184,6 @@ public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
                     return pickler.unpickle(source.get(name));
                 }
 
-                @Override
-                public <T> T field(Field<T, JsonNode> field) throws Exception {
-                    return field.pickler.unpickle(source.get(field.name));
-                }
             };
         }
     };

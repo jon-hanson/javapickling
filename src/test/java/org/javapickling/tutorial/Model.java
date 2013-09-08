@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.javapickling.core.DefaultPickler;
 import org.javapickling.core.Pickler;
-import org.javapickling.json.JsonPicklerCore;
+import org.javapickling.json.JsonNodePicklerCore;
 
 import java.util.Date;
 import java.util.Map;
@@ -119,7 +119,7 @@ public abstract class Model {
 
     public static void main(String[] args) {
         try {
-            final JsonPicklerCore jsonPickleCore = new JsonPicklerCore();
+            final JsonNodePicklerCore jsonPickleCore = new JsonNodePicklerCore();
             jsonPickleCore.register(Date.class, Picklers.DatePickler.class);
 
             final Pickler<Team, JsonNode> teamPickler = jsonPickleCore.object_p(Team.class);

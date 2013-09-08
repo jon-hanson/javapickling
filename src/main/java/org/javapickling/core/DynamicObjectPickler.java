@@ -1,10 +1,16 @@
 package org.javapickling.core;
 
+/**
+ * A pickler for objects where the static type is unknown.
+ * In this case the pickler must encode the objects type along with the value.
+ * @param <PF>
+ * @param <T>
+ */
 public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
 
     private static final String VALUE_NAME = "value";
 
-    private Field<String, PF> type = field("type", string_p());
+    private Field<String, PF> type = field("typeKind", string_p());
     private Field<String, PF> clazz = field("class", string_p());
 
     public DynamicObjectPickler(PicklerCore<PF> core) {
@@ -18,11 +24,11 @@ public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
 
         final FieldPickler<PF> mp = core.object_map().pickler(target);
         mp.field(type, metaType.name());
-        if (metaType.type == MetaType.Type.ENUM || metaType.type == MetaType.Type.OBJECT) {
+        if (metaType.typeKind == MetaType.TypeKind.ENUM || metaType.typeKind == MetaType.TypeKind.OBJECT) {
             mp.field(clazz, metaType.clazz.getName());
         }
 
-        if (metaType.type != MetaType.Type.NULL) {
+        if (metaType.typeKind != MetaType.TypeKind.NULL) {
             mp.field(VALUE_NAME, obj, metaType.pickler(core));
         }
 
@@ -36,7 +42,7 @@ public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
 
         final MetaType metaType = MetaType.ofName(mu.field(type));
 
-        if (metaType.type == MetaType.Type.ENUM || metaType.type == MetaType.Type.OBJECT) {
+        if (metaType.typeKind == MetaType.TypeKind.ENUM || metaType.typeKind == MetaType.TypeKind.OBJECT) {
             try {
                 metaType.clazz = Class.forName(mu.field(clazz));
             } catch (ClassNotFoundException ex) {
@@ -44,7 +50,7 @@ public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
             }
         }
 
-        if (metaType.type != MetaType.Type.NULL) {
+        if (metaType.typeKind != MetaType.TypeKind.NULL) {
             return (T)mu.field(VALUE_NAME, metaType.pickler(core));
         } else {
             return null;

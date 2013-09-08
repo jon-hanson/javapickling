@@ -5,6 +5,9 @@ import org.javapickling.core.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
+/**
+ * PicklerCore implementation which pickles objects to byte[] data, via the ByteIO wrapper.
+ */
 public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
     protected final Pickler<Object, ByteIO> nullP = new Pickler<Object, ByteIO>() {

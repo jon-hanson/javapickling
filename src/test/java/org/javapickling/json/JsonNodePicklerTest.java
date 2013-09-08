@@ -7,9 +7,9 @@ import org.junit.Assert;
 import org.javapickling.core.*;
 import org.junit.Test;
 
-public class JsonPicklerTest {
+public class JsonNodePicklerTest {
 
-    private static final JsonPicklerCore jsonPickler = new JsonPicklerCore();
+    private static final JsonNodePicklerCore jsonPickler = new JsonNodePicklerCore();
 
     @Test
     public void testPickle() throws Exception {
@@ -42,6 +42,6 @@ public class JsonPicklerTest {
 
         Assert.assertEquals(complex, complex2);
 
-        return new RoundTrip("JsonPickler", endTime1 - startTime1, endTime2 - startTime2, size);
+        return new RoundTrip("JsonNodePickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }
 }
