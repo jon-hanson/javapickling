@@ -4,7 +4,7 @@ javapickling
 **Java Pickling** is a Java framework for pickling Java object and values into target pickled formats,
 and unpickling the results back into the original objects and values.
 "Pickling" essentially means serialisation.
-It was inspired by the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), and by the [Scala Pickling project](https://github.com/scala/pickling).
+The approach and design was inspired by the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), and by the [Scala Pickling project](https://github.com/scala/pickling).
 
 The pickling is driven by the static types of values,
 however it will also handle objects where the static type is unknown.
@@ -15,7 +15,7 @@ The custom picklers only need be defined once - the same pickler will be used re
 The design supports pickling into multiple pickled formats - JSON, XML and byte[] implementations are provided.
 
 See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
-and [JsonPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/json/JsonPicklerTest.java) for example usage,
+and [JsonNodePicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/json/JsonNodePicklerTest.java) for example usage,
 however once a PicklerCore set up this illustrates the API usage:
 
     void test(House house) {
@@ -147,7 +147,7 @@ A couple of things to note:
 
 ## Tutorial
 
-TBD...
+In progress...
 
 ## History
 
