@@ -5,17 +5,8 @@ import org.javapickling.common.RoundTrip;
 import org.javapickling.core.Pickler;
 import org.junit.Assert;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-import java.io.Writer;
 
 public class XmlNodePicklerTest {
 
@@ -45,9 +36,9 @@ public class XmlNodePicklerTest {
         final long endTime1 = System.nanoTime();
 
         System.out.println("XML=");
-        prettyPrint(xmlPickler.doc);
+        System.out.println(XmlNodePicklerCore.nodeToString(xmlPickler.doc, true));
 
-        final int size = node.toString().getBytes().length;
+        final int size = -1;
 
         final long startTime2 = System.nanoTime();
         final ComplexClass complex2 = pickler.unpickle(node);
@@ -56,15 +47,5 @@ public class XmlNodePicklerTest {
         Assert.assertEquals(complex, complex2);
 
         return new RoundTrip("XmlNodePickler", endTime1 - startTime1, endTime2 - startTime2, size);
-    }
-
-    private static void prettyPrint(Document xml) throws Exception {
-
-        final Transformer tf = TransformerFactory.newInstance().newTransformer();
-        tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        tf.setOutputProperty(OutputKeys.INDENT, "yes");
-        final Writer out = new StringWriter();
-        tf.transform(new DOMSource(xml), new StreamResult(out));
-        System.out.println(out);
     }
 }
