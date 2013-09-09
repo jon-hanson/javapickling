@@ -2,9 +2,9 @@ javapickling
 ============
 
 **Java Pickling** is a Java framework for pickling Java object and values into target pickled formats,
-and to unpickle the results back into the objects and values.
+and unpickling the results back into the original objects and values.
 "Pickling" essentially means serialisation.
-It was inspired by the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), and by the [Scala Pickling project](https://github.com/scala/pickling).
+The approach and design were inspired by the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), and by the [Scala Pickling project](https://github.com/scala/pickling).
 
 The pickling is driven by the static types of values,
 however it will also handle objects where the static type is unknown.
@@ -12,10 +12,11 @@ At present it does not provide automatic of pickling of custom classes,
 ergo pickling of those types must be implemented by the user.
 The custom picklers only need be defined once - the same pickler will be used regardless of the pickled format.
 
-The design supports pickling into multiple pickled formats - JSON and byte[] implementations are provided.
+The design supports pickling into multiple pickled formats - JSON, XML and byte[] implementations are provided.
 
 See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
-and [JsonPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/json/JsonPicklerTest.java) for example usage, however once set up this illustrates the API usage:
+and [JsonNodePicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/json/JsonNodePicklerTest.java) for example usage,
+however once a PicklerCore set up this illustrates the API usage:
 
     void test(House house) {
 
@@ -146,7 +147,7 @@ A couple of things to note:
 
 ## Tutorial
 
-TBD...
+In progress...
 
 ## History
 
@@ -162,6 +163,12 @@ The library was born out the need for a Java serialisation framework that satisf
 1. Serialisation should be driven by the Java types - static type information should be used when possible. Java code generation from IDL or similar is not allowed. Everything should be as strongly-typed as possible.
 1. Performance should be reasonable - on a par with Java's built-in Serialisation (excluding Java Serialisation's initial Reflection-based start-up cost).
 
-This seemed to rule out most, if not all, of the existing frameworks and libraries. I was already familiar with Parser Combinator style frameworks, having previously written a simple one in F#, and wanted something similar for serialisers.
+This seemed to rule out most, if not all, of the existing frameworks and libraries.
+I was already familiar with Parser Combinator style frameworks, having previously written a simple one in F#, and wanted something similar for serialisers.
 
-Around about this time the paper on the [Scala Pickling project](https://github.com/scala/pickling) came out. This looked very interesting. Unfortunately, being Scala-based ruled it out, having failed to convince my colleagues to adopt Scala. Also the paper and the website documentation was light on implementation details, but it did lead me to the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf), which, although aimed at functional languages, had some interesting ideas which at first glance might translate to Java. One weekend of coding later I had a working implementation.
+Around about this time the paper on the [Scala Pickling project](https://github.com/scala/pickling) came out.
+This looked very interesting, uUnfortunately, being Scala-based ruled it out.
+Also the paper and the website documentation was light on implementation details,
+but it did lead me to the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf),
+which, although aimed at functional languages, had some interesting ideas which at first glance might translate to Java.
+One weekend of coding later I had a working implementation.
