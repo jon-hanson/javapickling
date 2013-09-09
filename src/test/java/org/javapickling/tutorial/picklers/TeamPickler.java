@@ -12,7 +12,6 @@ import java.util.TreeSet;
 
 public class TeamPickler<PF> extends PicklerBase<Team, PF> {
 
-    private final Field<Team.Role, PF> role = field("role", enum_p(Team.Role.class));
     private final Pickler<Optional<Person>, PF> optPersonPickler = generic_p(Optional.class, object_p(Person.class));
     private final Field<Optional<Person>, PF> leader = field("leader", optPersonPickler);
     private final Field<Map<Team.Role, Set<Person>>, PF> members =

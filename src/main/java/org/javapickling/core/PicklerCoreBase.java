@@ -115,7 +115,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         if (tps.length > 0) {
             if (!tps[0].getName().equals("PF") || tps.length > 1) {
                 registerGeneric(valueClass, picklerClass);
-                return;
             }
         }
 
@@ -149,7 +148,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         final TypeVariable<Class<T>>[] valueTps = valueClass.getTypeParameters();
         final TypeVariable<Class<P>>[] picklerTps = picklerClass.getTypeParameters();
 
-
         final int picklerCount;
         final boolean firstParamIsPF = picklerTps[0].getName().equals("PF");
         if (firstParamIsPF) {
@@ -160,12 +158,13 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
         if (valueTps.length < picklerCount) {
             throw new PicklerException("Value class " + valueClass.getName() +
-                    "expected to have " + picklerCount + " typeKind parameters");
+                    "expected to have " + picklerCount + " type parameters");
         }
 
         final Constructor<?>[] ctors = picklerClass.getConstructors();
         for (final Constructor<?> ctor : ctors) {
             if (ctor.getParameterTypes().length == picklerCount + 1) {
+                // Register a generic pickler constructor.
                 genericPicklerClassRegistry.put(valueClass.getName(), new GenericPicklerCtor<T, PF>() {
 
                     @Override
@@ -174,17 +173,17 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
                             throw new PicklerException("The constructor for " + picklerClass.getName() + " expects " + picklerCount + " pickler arguments");
                         }
 
-                        final Object[] args = new Object[picklerCount];
-                        for (int i = 0; i < picklerCount; ++i) {
-                            args[i] = d_object_p();
-                        }
-
-                        register(valueClass, (Pickler<T,PF>)createPickler(picklerClass.getName(), ctor, args));
-
                         return createPickler(picklerClass.getName(), ctor, picklerArgs);
                     }
                 });
 
+                // Register a generic pickler which pickles it arguments dynamically.
+                final Object[] args = new Object[picklerCount];
+                for (int i = 0; i < picklerCount; ++i) {
+                    args[i] = d_object_p();
+                }
+
+                register(valueClass, (Pickler<T,PF>)createPickler(picklerClass.getName(), ctor, args));
 
                 break;
             }

@@ -10,7 +10,7 @@ public class DynamicObjectPickler<PF, T> extends PicklerBase<T, PF> {
 
     private static final String VALUE_NAME = "value";
 
-    private Field<String, PF> type = field("typeKind", string_p());
+    private Field<String, PF> type = field("type", string_p());
     private Field<String, PF> clazz = field("class", string_p());
 
     public DynamicObjectPickler(PicklerCore<PF> core) {

@@ -9,6 +9,7 @@ import java.util.Set;
 @DefaultPickler(TeamPickler.class)
 public class Team {
     public enum Role {ANALYST, DEVELOPER, TESTER};
+
     public final Optional<Person> leader;
     public final Map<Role, Set<Person>> members;
 
