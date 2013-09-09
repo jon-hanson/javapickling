@@ -58,7 +58,7 @@ In particular, a pickler for a class will be composed of picklers corresponding 
 A class which provides a pickling implementation for a class T implements `Pickler<T, PF>`.
 The `PF` type parameter represents the target format type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
 
-Pickler implementations generally sub-class PicklerBase as this provides an implicit means of referncing the pickler methods in PicklerCore, such as string\_p() and integer\_p().
+Pickler implementations generally sub-class PicklerBase as this provides an implicit means of referencing the pickler methods in PicklerCore, such as string\_p() and integer\_p().
 This means picklers can be expressed more concisely.
 
 ### PicklerCore
