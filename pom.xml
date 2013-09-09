@@ -4,31 +4,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+	<packaging>pom</packaging>
     <groupId>org.javapickling</groupId>
-    <artifactId>java-pickling</artifactId>
+    <artifactId>javapickling</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>14.0.1</version>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <modules>
+        <module>javapickling-core</module>
+        <module>javapickling-json</module>
+    </modules>
 
     <build>
         <plugins>
@@ -54,4 +52,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
