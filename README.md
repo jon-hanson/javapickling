@@ -14,8 +14,8 @@ The custom picklers only need be defined once - the same pickler will be used re
 
 The design supports pickling into multiple pickled formats - JSON, XML and byte[] implementations are provided.
 
-See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
-and [JsonNodePicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/src/test/java/org/javapickling/json/JsonNodePicklerTest.java) for example usage,
+See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
+and [JsonNodePicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/javapickling-json/src/test/java/org/javapickling/json/JsonNodePicklerTest.java) for example usage,
 however once a PicklerCore set up this illustrates the API usage:
 
     void test(House house) {
@@ -48,7 +48,7 @@ In particular, a pickler for a class will be composed of picklers corresponding 
 
 ### Pickler
 
-[Source code](http://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/Pickler.java)
+[Source code](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/main/java/org/javapickling/core/Pickler.java)
 
     public interface Pickler<T, PF> {
         PF pickle(T t, PF target) throws IOException;
@@ -63,7 +63,7 @@ This means picklers can be expressed more concisely.
 
 ### PicklerCore
 
-[Source code](http://github.com/jon-hanson/javapickling/blob/master/src/main/java/org/javapickling/core/PicklerCore.java)
+[Source code](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/main/java/org/javapickling/core/PicklerCore.java)
 
 A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`, where the PF type parameter specifies the target format. For example,
 
