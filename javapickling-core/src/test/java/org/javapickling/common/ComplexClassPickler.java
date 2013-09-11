@@ -28,9 +28,9 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
     final Field<Map<Integer, ComplexClass.Colour>, PF>   intEnumMapF =   field("intEnumMap", map_p(integer_p(), enum_p(ComplexClass.Colour.class), TreeMap.class));
     final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMap",  map_p(d_object_p(), d_object_p(), TreeMap.class));
     final Field<Set<String>, PF>            strSetF =       field("strSet",     set_p(string_p(), TreeSet.class));
-    final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), TreeSet.class));
-    final Field<List<String>, PF>           listStrF =      field("listStr",    list_p(string_p(), ArrayList.class));
-    final Field<List<Object>, PF>           listObjF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
+    final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), HashSet.class));
+    final Field<List<String>, PF>           strListF =      field("listStr",    list_p(string_p(), ArrayList.class));
+    final Field<List<Object>, PF>           objListF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
 
     final Field<ComplexClass.Generic<ComplexClass.IdWrapper>, PF>     genericF =      field("generic",    genIdWrapperPickler());
     final Field<ComplexClass.Generic<ComplexClass.Interface>, PF>     generic2F =     field("generic2",   genInterfacePickler());
@@ -57,8 +57,8 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
         mp.field(objObjMapF,    sc.objObjMapF);
         mp.field(strSetF,       sc.strSetF);
         mp.field(objSetF,       sc.objSetF);
-        mp.field(listStrF,      sc.listStrF);
-        mp.field(listObjF,      sc.listObjF);
+        mp.field(strListF,      sc.strListF);
+        mp.field(objListF,      sc.objListF);
         mp.field(genericF,      sc.genericF);
         mp.field(generic2F,      sc.generic2F);
         return mp.pickle(target);
@@ -83,8 +83,8 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
                 mu.field(objObjMapF),
                 mu.field(strSetF),
                 mu.field(objSetF),
-                mu.field(listStrF),
-                mu.field(listObjF),
+                mu.field(strListF),
+                mu.field(objListF),
                 mu.field(genericF),
                 mu.field(generic2F)
         );

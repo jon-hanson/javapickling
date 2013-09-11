@@ -80,12 +80,18 @@ public class ComplexClass implements Serializable {
             final Set<String> strSetF = Sets.newTreeSet();
             strSetF.add("a12");
             strSetF.add("b23");
-            final Set<Object> strObjF = new TreeSet<Object>();
-            strObjF.add(33);
-            strObjF.add(44);
+            final Set<Object> objStrF = new HashSet<Object>();
+            objStrF.add(-1.23);
+            objStrF.add(-1);
+            objStrF.add(-1.0);
+            objStrF.add(0);
+            objStrF.add(0.0);
+            objStrF.add(1);
+            objStrF.add(1.0);
+            objStrF.add(1.23);
 
-            final List<String> listStrF = Lists.newArrayList("anna", "betty");
-            final List<Object> listObjF = Lists.newArrayList((Object)Colour.BLUE, Colour.RED);
+            final List<String> strListF = Lists.newArrayList("anna", "betty");
+            final List<Object> objListF = Lists.newArrayList((Object)Colour.BLUE, Colour.RED);
 
             final Generic<IdWrapper> genericF = new Generic<IdWrapper>(new IdWrapper("Dan"));
             final Generic<Interface> generic2F = new Generic<Interface>(new IdWrapper("John"));
@@ -105,9 +111,9 @@ public class ComplexClass implements Serializable {
                     intEnumMapF,
                     objObjMapF,
                     strSetF,
-                    strObjF,
-                    listStrF,
-                    listObjF,
+                    objStrF,
+                    strListF,
+                    objListF,
                     genericF,
                     generic2F
             );
@@ -127,9 +133,9 @@ public class ComplexClass implements Serializable {
             final Map<Integer, Colour> intEnumMapF = Maps.newTreeMap();
             final Map<Object, Object> objObjMapF = new TreeMap<Object, Object>();
             final Set<String> strSetF = Sets.newTreeSet();
-            final Set<Object> strObjF = new TreeSet<Object>();
-            final List<String> listStrF = Lists.newArrayList();
-            final List<Object> listObjF = null;
+            final Set<Object> objStrF = new HashSet<Object>();
+            final List<String> strListF = Lists.newArrayList();
+            final List<Object> objListF = null;
             final Generic<IdWrapper> genericF = new Generic<IdWrapper>(new IdWrapper("Ackroyd"));
             final Generic<Interface> generic2F = new Generic<Interface>(new IdWrapper("Belushi"));
 
@@ -148,9 +154,9 @@ public class ComplexClass implements Serializable {
                     intEnumMapF,
                     objObjMapF,
                     strSetF,
-                    strObjF,
-                    listStrF,
-                    listObjF,
+                    objStrF,
+                    strListF,
+                    objListF,
                     genericF,
                     generic2F
             );
@@ -175,8 +181,8 @@ public class ComplexClass implements Serializable {
     public final Set<String> strSetF;
     public final Set<Object> objSetF;
 
-    public final List<String> listStrF;
-    public final List<Object> listObjF;
+    public final List<String> strListF;
+    public final List<Object> objListF;
 
     public final Generic<IdWrapper> genericF;
     public final Generic<Interface> generic2F;
@@ -197,8 +203,8 @@ public class ComplexClass implements Serializable {
             Map<Object, Object> objObjMapF,
             Set<String> strSetF,
             Set<Object> objSetF,
-            List<String> listStrF,
-            List<Object> listObjF,
+            List<String> strListF,
+            List<Object> objListF,
             Generic<IdWrapper> genericF,
             Generic<Interface> generic2F) {
         this.booleanF = booleanF;
@@ -216,8 +222,8 @@ public class ComplexClass implements Serializable {
         this.objObjMapF = objObjMapF;
         this.strSetF = strSetF;
         this.objSetF = objSetF;
-        this.listStrF = listStrF;
-        this.listObjF = listObjF;
+        this.strListF = strListF;
+        this.objListF = objListF;
         this.genericF = genericF;
         this.generic2F = generic2F;
     }
@@ -239,8 +245,8 @@ public class ComplexClass implements Serializable {
         if (shortF != that.shortF) return false;
         if (enumF != that.enumF) return false;
         if (intEnumMapF != null ? !intEnumMapF.equals(that.intEnumMapF) : that.intEnumMapF != null) return false;
-        if (listObjF != null ? !listObjF.equals(that.listObjF) : that.listObjF != null) return false;
-        if (listStrF != null ? !listStrF.equals(that.listStrF) : that.listStrF != null) return false;
+        if (objListF != null ? !objListF.equals(that.objListF) : that.objListF != null) return false;
+        if (strListF != null ? !strListF.equals(that.strListF) : that.strListF != null) return false;
         if (objObjMapF != null ? !objObjMapF.equals(that.objObjMapF) : that.objObjMapF != null) return false;
         if (strDblMapF != null ? !strDblMapF.equals(that.strDblMapF) : that.strDblMapF != null) return false;
         if (objSetF != null ? !objSetF.equals(that.objSetF) : that.objSetF != null) return false;

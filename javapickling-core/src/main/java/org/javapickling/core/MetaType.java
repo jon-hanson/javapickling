@@ -22,6 +22,7 @@ public class MetaType {
         BOOLEAN(Boolean.class),
         BYTE(Byte.class),
         CHAR(Character.class),
+        CLASS(Class.class),
         DOUBLE(Double.class),
         ENUM(String.class),
         FLOAT(Float.class),
@@ -46,10 +47,10 @@ public class MetaType {
                 case BOOLEAN:   return core.boolean_p();
                 case BYTE:      return core.byte_p();
                 case CHAR:      return core.char_p();
+                case CLASS:     return core.class_p();
                 case DOUBLE:    return core.double_p();
                 case ENUM:
                     // TODO: Remove the use of TypeKind from the following line once we upgrade to Java 7.
-                    // It's required for the Java 6 compiler as the type inference is too weak.
                     return core.enum_p(MetaType.<TypeKind>castEnumClass(clazz));
                 case FLOAT:     return core.float_p();
                 case INT:       return core.integer_p();
@@ -72,19 +73,13 @@ public class MetaType {
     private static final Map<String, TypeKind> classTypeMap = Maps.newTreeMap();
 
     static {
-        register(Boolean.class, TypeKind.BOOLEAN);
-        register(Byte.class, TypeKind.BYTE);
-        register(Character.class, TypeKind.CHAR);
-        register(Double.class, TypeKind.DOUBLE);
-        register(Float.class, TypeKind.FLOAT);
-        register(Integer.class, TypeKind.INT);
-        register(Long.class, TypeKind.LONG);
-        register(Short.class, TypeKind.SHORT);
-        register(String.class, TypeKind.STRING);
+        for (TypeKind typeKind : TypeKind.values()) {
+            register(typeKind);
+        }
     }
 
-    private static void register(Class<?> clazz, TypeKind typeKind) {
-        classTypeMap.put(clazz.getName(), typeKind);
+    private static void register(TypeKind typeKind) {
+        classTypeMap.put(typeKind.clazz.getName(), typeKind);
     }
 
     public static MetaType ofObject(Object obj) {
