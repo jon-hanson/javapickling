@@ -68,6 +68,16 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      */
     protected final Map<String, Pickler<?, PF>> picklerCache = Maps.newTreeMap();
 
+    /**
+     * A registry of constructors for PicklerClasses.
+     */
+    protected final Map<String, GenericPicklerCtor<?, PF>> genericPicklerClassRegistry = Maps.newTreeMap();
+
+    /**
+     * Pickler for objects where static type is unknown.
+     */
+    protected final Pickler<Object, PF> dynObjectP = new DynamicObjectPickler<PF, Object>(this);
+
     public PicklerCoreBase() {
         register(Boolean.class, boolean_p());
         register(Byte.class, byte_p());
@@ -140,8 +150,6 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     interface GenericPicklerCtor<T, PF> {
         Pickler<T, PF> create(Pickler<?, PF>[] picklerArgs);
     }
-
-    protected final Map<String, GenericPicklerCtor<?, PF>> genericPicklerClassRegistry = Maps.newTreeMap();
 
     protected <T, P extends Pickler<T, PF>> void registerGeneric(final Class<T> valueClass, final Class<P> picklerClass) {
 
@@ -330,7 +338,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
     @Override
     public Pickler<Object, PF> d_object_p() {
-        return new DynamicObjectPickler<PF, Object>(this);
+        return dynObjectP;
     }
 
     @Override

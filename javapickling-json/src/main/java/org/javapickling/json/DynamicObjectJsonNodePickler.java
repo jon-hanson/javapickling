@@ -9,9 +9,9 @@ import org.javapickling.core.DynamicObjectPickler;
 import org.javapickling.core.MetaType;
 import org.javapickling.core.PicklerCore;
 
-public class DynamicObjectJsonPickler<T> extends DynamicObjectPickler<JsonNode, T> {
+public class DynamicObjectJsonNodePickler<T> extends DynamicObjectPickler<JsonNode, T> {
 
-    public DynamicObjectJsonPickler(PicklerCore<JsonNode> core) {
+    public DynamicObjectJsonNodePickler(PicklerCore<JsonNode> core) {
         super(core);
     }
 

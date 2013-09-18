@@ -479,12 +479,12 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
     @Override
     public Pickler<Object, JsonNode> d_object_p() {
-        return new DynamicObjectJsonPickler<Object>(this);
+        return new DynamicObjectJsonNodePickler<Object>(this);
     }
 
     @Override
     public <T, S extends T> Pickler<S, JsonNode> d_object_p(Class<T> clazz) {
-        return new DynamicObjectJsonPickler<S>(this);
+        return new DynamicObjectJsonNodePickler<S>(this);
     }
 
     @Override

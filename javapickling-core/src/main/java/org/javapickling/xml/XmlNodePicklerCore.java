@@ -23,10 +23,11 @@ import java.util.Set;
  */
 public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
-    public final DocumentBuilder docBuilder;
-    public final Document doc;
+    public DocumentBuilder docBuilder;
+    public Document doc;
 
     public static String nodeToString(Document xml, boolean pretty) throws Exception {
+
         final Transformer tf = TransformerFactory.newInstance().newTransformer();
         tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         if (pretty) {
@@ -46,13 +47,29 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         }
     }
 
-    private static Element getChild(Element parent, String name)
+    protected static Element getChildElement(Node parent, String name)
     {
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
             if (child instanceof Element && name.equals(child.getNodeName()))
                 return (Element)child;
         }
         return null;
+    }
+
+    protected static Text getChildText(Node parent) {
+        for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child instanceof Text)
+                return (Text)child;
+        }
+        return null;
+    }
+
+    protected static String getChildAttrValue(Element parent, String name) {
+        return parent.getAttribute(name);
+    }
+
+    protected void addAttribute(Element parent, String name, String value) {
+        parent.setAttribute(name, value);
     }
 
     public XmlNodePicklerCore() {
@@ -62,6 +79,14 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
     public XmlNodePicklerCore(DocumentBuilder docBuilder) {
         this.docBuilder = docBuilder;
         this.doc = docBuilder.newDocument();
+    }
+
+    public void setDocumentBuilder(DocumentBuilder docBuilder) {
+        this.docBuilder = docBuilder;
+    }
+
+    public void setDocument(Document doc) {
+        this.doc = doc;
     }
 
     protected final Pickler<Object, Node> nullP = new Pickler<Object, Node>() {
@@ -86,7 +111,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Boolean unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Boolean.parseBoolean(text.getWholeText());
         }
     };
@@ -100,7 +125,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Byte unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Byte.valueOf(text.getWholeText());
         }
     };
@@ -114,7 +139,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Character unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Character.valueOf(text.getWholeText().charAt(0));
         }
     };
@@ -128,7 +153,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public String unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return text.getWholeText();
         }
     };
@@ -142,7 +167,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Integer unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Integer.valueOf(text.getWholeText());
         }
     };
@@ -156,7 +181,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Short unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Short.valueOf(text.getWholeText());
         }
     };
@@ -170,7 +195,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Long unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Long.valueOf(text.getWholeText());
         }
     };
@@ -184,7 +209,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Float unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Float.valueOf(text.getWholeText());
         }
     };
@@ -198,7 +223,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
         @Override
         public Double unpickle(Node source) throws Exception {
-            final Text text = (Text)source.getFirstChild();
+            final Text text = getChildText(source);
             return Double.valueOf(text.getWholeText());
         }
     };
@@ -237,11 +262,13 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
                 @Override
                 public <T> T field(String name, Pickler<T, Node> pickler) throws Exception {
-                    return pickler.unpickle(getChild(elem, name));
+                    return pickler.unpickle(getChildElement(elem, name));
                 }
             };
         }
     };
+
+    protected final Pickler<Object, Node> dynObjectP = new DynamicObjectXmlNodePickler<Object>(this);
 
     @Override
     public Pickler<Object, Node> null_p() {
@@ -305,7 +332,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
             @Override
             public T unpickle(Node source) throws Exception {
-                final Text text = (Text)source.getFirstChild();
+                final Text text = getChildText(source);
                 return T.valueOf(enumClass, text.getWholeText());
             }
         };
@@ -469,13 +496,8 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
                 for (int i = 0; i < l; ++i) {
                     final Element node = (Element)nodes.item(i);
-
-                    final Node keyNode = getChild(node, keyF);
-                    final K key = keyPickler.unpickle(keyNode);
-
-                    final Node valueNode = getChild(node, valueF);
-                    final V value = valuePickler.unpickle(valueNode);
-
+                    final K key = keyPickler.unpickle(getChildElement(node, keyF));
+                    final V value = valuePickler.unpickle(getChildElement(node, valueF));
                     result.put(key, value);
                 }
 
@@ -522,6 +544,16 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
     }
 
     @Override
+    public Pickler<Object, Node> d_object_p() {
+        return dynObjectP;
+    }
+
+    @Override
+    public <T, S extends T> Pickler<S, Node> d_object_p(Class<T> clazz) {
+        return new DynamicObjectXmlNodePickler<S>(this);
+    }
+
+    @Override
     public MapPickler<Node> object_map() {
         return mapP;
     }
@@ -549,35 +581,4 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
             }
         };
     }
-
-    /*
-        @Override
-    public <T> Pickler<T, Node> nullable(final Pickler<T, Node> pickler) {
-        return new Pickler<T, Node>() {
-
-            private final String nullName = "null";
-
-            @Override
-            public Node pickle(T t, Node target) throws Exception {
-                if (t == null) {
-                    return target.appendChild(doc.createTextNode(nullName));
-                } else {
-                    return pickler.pickle(t, target);
-                }
-            }
-
-            @Override
-            public T unpickle(Node source) throws Exception {
-                if (source.getNodeType() == Node.TEXT_NODE) {
-                    final Text text = (Text)source;
-                    if (text.getWholeText().equals(nullName)) {
-                        return null;
-                    }
-                }
-
-                return pickler.unpickle(source);
-            }
-        };
-    }
-     */
 }
