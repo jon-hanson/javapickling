@@ -69,32 +69,32 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public <T extends Enum<T>> Pickler<T, PF> enum_p(Class<T> enumClass) {
+    public <U extends Enum<U>> Pickler<U, PF> enum_p(Class<U> enumClass) {
         return core.enum_p(enumClass);
     }
 
     @Override
-    public <T> Pickler<Class<T>, PF> class_p() {
+    public <U> Pickler<Class<U>, PF> class_p() {
         return core.class_p();
     }
 
     @Override
-    public <T, S extends T> Pickler<Class<S>, PF> class_p(Class<T> clazz) {
+    public <U, V extends U> Pickler<Class<V>, PF> class_p(Class<U> clazz) {
         return core.class_p(clazz);
     }
 
     @Override
-    public <T> Pickler<T[], PF> array_p(Pickler<T, PF> elemPickler, Class<T> elemClass) {
+    public <U> Pickler<U[], PF> array_p(Pickler<U, PF> elemPickler, Class<U> elemClass) {
         return core.array_p(elemPickler, elemClass);
     }
 
     @Override
-    public <T> Pickler<List<T>, PF> list_p(Pickler<T, PF> elemPickler, Class<? extends List> listClass) {
+    public <U> Pickler<List<U>, PF> list_p(Pickler<U, PF> elemPickler, Class<? extends List> listClass) {
         return core.list_p(elemPickler, listClass);
     }
 
     @Override
-    public <T> Pickler<Map<String, T>, PF> map_p(Pickler<T, PF> valuePickler, Class<? extends Map> mapClass) {
+    public <U> Pickler<Map<String, U>, PF> map_p(Pickler<U, PF> valuePickler, Class<? extends Map> mapClass) {
         return core.map_p(valuePickler, mapClass);
     }
 
@@ -104,17 +104,17 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public <T> Pickler<Set<T>, PF> set_p(Pickler<T, PF> elemPickler, Class<? extends Set> setClass) {
+    public <U> Pickler<Set<U>, PF> set_p(Pickler<U, PF> elemPickler, Class<? extends Set> setClass) {
         return core.set_p(elemPickler, setClass);
     }
 
     @Override
-    public <T> Pickler<T, PF> object_p(Class<T> clazz) {
+    public <U> Pickler<U, PF> object_p(Class<U> clazz) {
         return core.object_p(clazz);
     }
 
     @Override
-    public <T, S extends T> Pickler<S, PF> generic_p(final Class<T> clazz, Pickler<?, PF>... picklers) {
+    public <U, V extends U> Pickler<V, PF> generic_p(final Class<U> clazz, Pickler<?, PF>... picklers) {
         return core.generic_p(clazz, picklers);
     }
 
@@ -124,7 +124,7 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public <T, S extends T> Pickler<S, PF> d_object_p(Class<T> clazz) {
+    public <U, V extends U> Pickler<V, PF> d_object_p(Class<U> clazz) {
         return core.d_object_p(clazz);
     }
 
@@ -134,17 +134,17 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public <T> Field<T, PF> field(String name, Pickler<T, PF> pickler) {
+    public <U> Field<U, PF> field(String name, Pickler<U, PF> pickler) {
         return core.field(name, pickler);
     }
 
     @Override
-    public <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler) {
+    public <U> Field<U, PF> null_field(String name, Pickler<U, PF> pickler) {
         return core.null_field(name, pickler);
     }
 
     @Override
-    public <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler) {
+    public <U> Pickler<U, PF> nullable(final Pickler<U, PF> pickler) {
         return core.nullable(pickler);
     }
 }

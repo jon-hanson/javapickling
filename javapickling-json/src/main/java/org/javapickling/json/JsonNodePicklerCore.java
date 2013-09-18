@@ -196,7 +196,6 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
                 public <T> T field(String name, Pickler<T, JsonNode> pickler) throws Exception {
                     return pickler.unpickle(source.get(name));
                 }
-
             };
         }
     };
@@ -508,7 +507,7 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
             @Override
             public T unpickle(JsonNode source) throws Exception {
-                if (source.isNull()) {
+                if (source == null || source.isNull()) {
                     return null;
                 } else {
                     return pickler.unpickle(source);
