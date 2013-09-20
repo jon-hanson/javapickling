@@ -56,29 +56,35 @@ In particular, a pickler for a class will be composed of picklers corresponding 
     }
 
 A class which provides a pickling implementation for a class T implements `Pickler<T, PF>`.
-The `PF` type parameter represents the target format type (such as JsonNode), and remains a type parameter for the Pickler impementation class.
+The `PF` type parameter represents the target format type (such as JsonNode),
+and remains a type parameter for the Pickler impementation class.
 
-Pickler implementations generally sub-class PicklerBase as this provides an implicit means of referencing the pickler methods in PicklerCore, such as string\_p() and integer\_p().
+Pickler implementations generally sub-class PicklerBase
+as this provides an implicit means of referencing the pickler methods in PicklerCore,
+such as string\_p() and integer\_p().
 This means picklers can be expressed more concisely.
 
 ### PicklerCore
 
 [Source code](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/main/java/org/javapickling/core/PicklerCore.java)
 
-A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`, where the PF type parameter specifies the target format. For example,
+A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`,
+where the PF type parameter specifies the target format. For example,
 
     public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         // ...
     }
 
-Implementations of `PicklerCore<PF>` provide `Pickler<T, PF>` implementations for the core types (primitives, collections and enums).
+Implementations of `PicklerCore<PF>` provide `Pickler<T, PF>`
+implementations for the core types (primitives, collections and enums).
 It also provides the tools required to facilitate implementing picklers for custom classes.
 
 ### Custom Class Pickling
 
 "custom class" here means any class not directly supported by the framework.
 Picklers for custom classes can take one of two forms.
-If the class in question supports a direct conversion to a core type supported by the PicklerCore, such as String, then the pickler can delegate directly to the pickler for that type.
+If the class in question supports a direct conversion to a core type supported by the PicklerCore, such as String,
+then the pickler can delegate directly to the pickler for that type.
 E.g.
 
     @DefaultPickler(MyTypePickler.class)
@@ -103,7 +109,8 @@ E.g.
         }
     }
 
-If the class to be pickled doesn't support conversion to and from a core type, then the more general approach is to express the pickler as a pickler for each field comprising the class. E.g.:
+If the class to be pickled doesn't support conversion to and from a core type,
+then the more general approach is to implement the pickler as class composed of picklers for each field comprising the class. E.g.:
 
     @DefaultPickler(MyTypePickler.class)
     public class MyType {
@@ -147,6 +154,77 @@ A couple of things to note:
 
 ## Tutorial
 
+The javapickling-json module contains a set of simple classes under the test/java/org/javapickling/tutorial directory.
+The classes are as follows:
+
+    public class Person implements Comparable<Person> {
+        public final String name;
+        public final boolean isFemale;
+        public final Date dateOfBirth;
+
+        public Person(String name, boolean isFemale, Date dateOfBirth) {
+            this.name = name;
+            this.isFemale = isFemale;
+            this.dateOfBirth = dateOfBirth;
+        }
+        
+        // ...
+    }
+
+    public class Team {
+        public enum Role {ANALYST, DEVELOPER, TESTER};
+
+        public final Optional<Person> leader;
+        public final Map<Role, Set<Person>> members;
+
+        public Team(Optional<Person> leader, Map<Role, Set<Person>> members) {
+            this.leader = leader;
+            this.members = members;
+        }
+    }
+
+The pickler class for `Person` is a generic class
+paramaterised with a PF type parameter and which extends `PicklerBase<Person, PF>`:
+
+    public class PersonPickler<PF> extends PicklerBase<Person, PF> {
+
+`Person` is composed of 3 members, and `PersonPickler` needs a `Field` member for each `Person` member:
+
+        private final Field<String, PF> name = field("name", string_p());
+        private final Field<Boolean, PF> isFemale = field("isFemale", boolean_p());
+        private final Field<Date, PF> dateOfBirth = field("dateOfBirth", object_p(Date.class));
+
+The constructor for `PersonPickler` just takes the `PicklerCore<PF>` and passes it to the base class constructor:
+        public PersonPickler(PicklerCore<PF> core) {
+            super(core);
+        }
+
+The `pickle` method is responsible for pickling a `Person` object into the pickled format.
+It does this by requesting a `FieldPickler` and then passing it each of the fields comprising `Person`:
+
+        @Override
+        public PF pickle(Person person, PF target) throws Exception {
+            final FieldPickler<PF> mp = object_map().pickler(target);
+            mp.field(name,          person.name);
+            mp.field(isFemale,      person.isFemale);
+            mp.field(dateOfBirth,   person.dateOfBirth);
+            return mp.pickle(target);
+        }
+
+The `unpickle` method is responsible for unpickling a `Person` object from the pickled format.
+It does this by requesting a `FieldUnpickler` and extracting each field before passing them to the `Person` constructor@
+
+        @Override
+        public Person unpickle(PF source) throws Exception {
+            final FieldUnpickler<PF> mu = object_map().unpickler(source);
+            return new Person(
+                    mu.field(name),
+                    mu.field(isFemale),
+                    mu.field(dateOfBirth)
+                );
+        }
+}
+
 In progress...
 
 ## History
@@ -167,7 +245,7 @@ This seemed to rule out most, if not all, of the existing frameworks and librari
 I was already familiar with Parser Combinator style frameworks, having previously written a simple one in F#, and wanted something similar for serialisers.
 
 Around about this time the paper on the [Scala Pickling project](https://github.com/scala/pickling) came out.
-This looked very interesting, uUnfortunately, being Scala-based ruled it out.
+This looked very interesting, though being Scala-based ruled it out.
 Also the paper and the website documentation was light on implementation details,
 but it did lead me to the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf),
 which, although aimed at functional languages, had some interesting ideas which at first glance might translate to Java.
