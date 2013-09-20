@@ -185,7 +185,7 @@ The classes are as follows:
     }
 
 The pickler class for `Person` is a generic class
-paramaterised with a PF type parameter and which extends `PicklerBase<Person, PF>`:
+which is parameterised with a `PF` type parameter and extends `PicklerBase<Person, PF>`:
 
     public class PersonPickler<PF> extends PicklerBase<Person, PF> {
 
@@ -196,6 +196,7 @@ paramaterised with a PF type parameter and which extends `PicklerBase<Person, PF
         private final Field<Date, PF> dateOfBirth = field("dateOfBirth", object_p(Date.class));
 
 The constructor for `PersonPickler` just takes the `PicklerCore<PF>` and passes it to the base class constructor:
+
         public PersonPickler(PicklerCore<PF> core) {
             super(core);
         }
@@ -213,7 +214,7 @@ It does this by requesting a `FieldPickler` and then passing it each of the fiel
         }
 
 The `unpickle` method is responsible for unpickling a `Person` object from the pickled format.
-It does this by requesting a `FieldUnpickler` and extracting each field before passing them to the `Person` constructor@
+It does this by requesting a `FieldUnpickler` and extracting each field before passing them to the `Person` constructor.
 
         @Override
         public Person unpickle(PF source) throws Exception {
@@ -224,7 +225,7 @@ It does this by requesting a `FieldUnpickler` and extracting each field before p
                     mu.field(dateOfBirth)
                 );
         }
-}
+    }
 
 In progress...
 
