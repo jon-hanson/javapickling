@@ -32,6 +32,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         if (pretty) {
             tf.setOutputProperty(OutputKeys.INDENT, "yes");
+            tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         }
 
         final Writer out = new StringWriter();
