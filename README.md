@@ -59,9 +59,9 @@ A class which provides a pickling implementation for a class T implements `Pickl
 The `PF` type parameter represents the target format type (such as JsonNode),
 and remains a type parameter for the Pickler impementation class.
 
-Pickler implementations generally sub-class PicklerBase
-as this provides an implicit means of referencing the pickler methods in PicklerCore,
-such as string\_p() and integer\_p().
+Pickler implementations generally sub-class `PicklerBase`
+as this provides an implicit means of referencing the pickler methods in `PicklerCore`,
+such as `string\_p()` and `integer\_p()`.
 This means picklers can be expressed more concisely.
 
 ### PicklerCore
@@ -69,7 +69,7 @@ This means picklers can be expressed more concisely.
 [Source code](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/main/java/org/javapickling/core/PicklerCore.java)
 
 A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`,
-where the PF type parameter specifies the target format. For example,
+where the PF type parameter specifies the pickled format. For example,
 
     public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
         // ...
@@ -83,7 +83,7 @@ It also provides the tools required to facilitate implementing picklers for cust
 
 "custom class" here means any class not directly supported by the framework.
 Picklers for custom classes can take one of two forms.
-If the class in question supports a direct conversion to a core type supported by the PicklerCore, such as String,
+If the class in question supports a direct conversion to a core type supported by the PicklerCore, such as `String`,
 then the pickler can delegate directly to the pickler for that type.
 E.g.
 
@@ -109,8 +109,9 @@ E.g.
         }
     }
 
-If the class to be pickled doesn't support conversion to and from a core type,
-then the more general approach is to implement the pickler as class composed of picklers for each field comprising the class. E.g.:
+If the class in question is more complex
+then the more general approach is to implement the pickler
+as being composed of picklers for each field comprising the class. E.g.:
 
     @DefaultPickler(MyTypePickler.class)
     public class MyType {
@@ -150,7 +151,7 @@ then the more general approach is to implement the pickler as class composed of 
 
 A couple of things to note:
 * The pickler for MyType is expressed in terms of the picklers for the field types which comprise MyType, namely Integer and String.
-* The pickler is independent of the target format PF.
+* The pickler is independent of the pickled format `PF`.
 
 ## Tutorial
 
