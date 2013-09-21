@@ -41,7 +41,7 @@ however once a PicklerCore set up this illustrates the basic API:
 
 The framework is based around two interfaces, described in more detail in the following sections.
 The `Pickler` interface allows the pickling of types to be expressed, independently of a specific target format.
-The `PicklerCore` interface provides a way for pickling into a specific format to be expressed as a set of `Pickler`s for the base types.
+The `PicklerCore` interface provides a way for pickling into a specific format to be expressed as a set of Picklers for the base types.
 
 Since this is based on a combinator framework, picklers are composable.
 In particular, a pickler for a class will be composed of picklers corresponding to the field types of that class.
