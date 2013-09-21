@@ -16,7 +16,7 @@ The design supports pickling into multiple pickled formats - JSON, XML and byte[
 
 See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
 and [JsonNodePicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/javapickling-json/src/test/java/org/javapickling/json/JsonNodePicklerTest.java) for example usage,
-however once a PicklerCore set up this illustrates the API usage:
+however once a PicklerCore set up this illustrates the basic API:
 
     void test(House house) {
 
@@ -56,13 +56,13 @@ In particular, a pickler for a class will be composed of picklers corresponding 
     }
 
 A class which provides a pickling implementation for a class T implements `Pickler<T, PF>`.
-The `PF` type parameter represents the target format type (such as JsonNode),
-and remains a type parameter for the Pickler impementation class.
+The `PF` type parameter represents the pickled format type (such as JsonNode),
+and remains a type parameter for the Pickler implementation class.
 
 Pickler implementations generally sub-class `PicklerBase`
 as this provides an implicit means of referencing the pickler methods in `PicklerCore`,
 such as `string\_p()` and `integer\_p()`.
-This means picklers can be expressed more concisely.
+This allows picklers to be expressed more concisely.
 
 ### PicklerCore
 
@@ -244,11 +244,12 @@ The library was born out the need for a Java serialisation framework that satisf
 1. Performance should be reasonable - on a par with Java's built-in Serialisation (excluding Java Serialisation's initial Reflection-based start-up cost).
 
 This seemed to rule out most, if not all, of the existing frameworks and libraries.
-I was already familiar with Parser Combinator style frameworks, having previously written a simple one in F#, and wanted something similar for serialisers.
+I was already familiar with Parser Combinator style frameworks having previously written a simple one in F#,
+and wanted something similar for serialisers.
 
 Around about this time the paper on the [Scala Pickling project](https://github.com/scala/pickling) came out.
 This looked very interesting, though being Scala-based ruled it out.
 Also the paper and the website documentation was light on implementation details,
 but it did lead me to the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf),
 which, although aimed at functional languages, had some interesting ideas which at first glance might translate to Java.
-One weekend of coding later I had a working implementation.
+One weekend of coding later I had a working basic implementation.
