@@ -33,9 +33,9 @@ however once a PicklerCore set up this illustrates the basic API:
 ## Quick Start
 
 1. Add the javapickling jar to your build.
-1. For any custom classes you wish to pickle implement a `Pickler` class.
-1. Either register your Pickler class with the `PicklerCore` implementation you're about to use, or use the `DefaultPickler` annotation to specify your Pickler.
-1. Call `PicklerCore.pickle(obj, target)` to pickle your class into the target, and `obj = PicklerCore.unpickler(source)` to reconstitute a class from a source.
+1. For any custom classes you wish to pickle implement a pickler class.
+1. Either register your pickler class with the `PicklerCore` implementation you're about to use, or use the `DefaultPickler` annotation to specify your pickler.
+1. Call `PicklerCore.pickle(obj, target)` to pickle an object into a pickled format, and `obj = PicklerCore.unpickler(source)` to reconstitute an object.
 
 ## Overview
 
@@ -61,8 +61,8 @@ and remains a type parameter for the Pickler implementation class.
 
 Pickler implementations generally sub-class `PicklerBase`
 as this provides an implicit means of referencing the pickler methods in `PicklerCore`,
-such as `string\_p()` and `integer\_p()`.
-This allows picklers to be expressed more concisely.
+such as `string\_p()` and `integer\_p()`,
+and allows picklers to be expressed more concisely.
 
 ### PicklerCore
 
