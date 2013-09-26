@@ -149,12 +149,12 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         }
     };
 
-    protected final MapPickler<ByteIO> mapP = new MapPickler<ByteIO>() {
+    protected final ObjectMapPickler<ByteIO> objectMapP = new ObjectMapPickler<ByteIO>() {
 
         @Override
         public FieldPickler<ByteIO> pickler(final ByteIO target) {
 
-            return new FieldPicklerBase(target) {
+            return new AbstractFieldPickler(target) {
 
                 @Override
                 public <T> void field(final String name, final T value, final Pickler<T, ByteIO> pickler) throws Exception {
@@ -176,7 +176,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         @Override
         public FieldUnpickler<ByteIO> unpickler(final ByteIO source) {
 
-            return new FieldUnpicklerBase(source) {
+            return new AbstractFieldUnpickler(source) {
 
                 @Override
                 public <T> T field(String name, Pickler<T, ByteIO> pickler) throws Exception {
@@ -435,7 +435,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public MapPickler<ByteIO> object_map() {
-        return mapP;
+    public ObjectMapPickler<ByteIO> object_map() {
+        return objectMapP;
     }
 }

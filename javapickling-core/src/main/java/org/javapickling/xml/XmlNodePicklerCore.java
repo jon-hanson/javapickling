@@ -229,12 +229,12 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         }
     };
 
-    protected final MapPickler<Node> mapP = new MapPickler<Node>() {
+    protected final ObjectMapPickler<Node> objectMapP = new ObjectMapPickler<Node>() {
 
         @Override
         public FieldPickler<Node> pickler(final Node target) {
 
-            return new FieldPicklerBase(target) {
+            return new AbstractFieldPickler(target) {
 
                 private final Element elem = (Element)target;
 
@@ -257,7 +257,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         @Override
         public FieldUnpickler<Node> unpickler(final Node source) {
 
-            return new FieldUnpicklerBase(source) {
+            return new AbstractFieldUnpickler(source) {
 
                 private final Element elem = (Element)source;
 
@@ -555,8 +555,8 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
     }
 
     @Override
-    public MapPickler<Node> object_map() {
-        return mapP;
+    public ObjectMapPickler<Node> object_map() {
+        return objectMapP;
     }
 
     @Override

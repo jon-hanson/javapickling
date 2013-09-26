@@ -164,7 +164,7 @@ public interface PicklerCore<PF> {
      * Generally used for pickling objects.
      * @return a Pickler for a object/Map.
      */
-    MapPickler<PF> object_map();
+    ObjectMapPickler<PF> object_map();
 
     /**
      * Create a field handler.

@@ -1,10 +1,10 @@
 package org.javapickling.core;
 
 /**
- * MapPickler is an intermediate interface for pickling heterogeneous maps.
+ * ObjectMapPickler is an intermediate interface for pickling heterogeneous maps.
  * @param <PF>
  */
-public interface MapPickler<PF> {
+public interface ObjectMapPickler<PF> {
 
     /**
      * Provide a pseudo-pickler for pickling the fields comprising a map.

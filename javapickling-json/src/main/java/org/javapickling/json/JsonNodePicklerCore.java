@@ -166,12 +166,12 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
         }
     };
 
-    protected final MapPickler<JsonNode> mapP = new MapPickler<JsonNode>() {
+    protected final ObjectMapPickler<JsonNode> objectMapP = new ObjectMapPickler<JsonNode>() {
 
         @Override
         public FieldPickler<JsonNode> pickler(final JsonNode target) {
 
-            return new FieldPicklerBase(target) {
+            return new AbstractFieldPickler(target) {
 
                 private ObjectNode objectNode = nodeFactory.objectNode();
 
@@ -190,7 +190,7 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
         @Override
         public FieldUnpickler<JsonNode> unpickler(final JsonNode source) {
 
-            return new FieldUnpicklerBase(source) {
+            return new AbstractFieldUnpickler(source) {
 
                 @Override
                 public <T> T field(String name, Pickler<T, JsonNode> pickler) throws Exception {
@@ -488,8 +488,8 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public MapPickler<JsonNode> object_map() {
-        return mapP;
+    public ObjectMapPickler<JsonNode> object_map() {
+        return objectMapP;
     }
 
     @Override

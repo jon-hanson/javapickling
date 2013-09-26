@@ -129,7 +129,7 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public MapPickler<PF> object_map() {
+    public ObjectMapPickler<PF> object_map() {
         return core.object_map();
     }
 

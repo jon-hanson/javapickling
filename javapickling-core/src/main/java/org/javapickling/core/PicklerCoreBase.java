@@ -14,24 +14,27 @@ import java.util.Map;
  */
 public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
+    /**
+     * Utility function to call Class.newInstance and rethrow exceptions.
+     */
     protected static <T> T newInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (InstantiationException ex) {
-            throw new PicklerException("Can not create map class", ex);
+            throw new PicklerException("Can not create class " + clazz.getName(), ex);
         } catch (IllegalAccessException ex) {
-            throw new PicklerException("Can not create map class", ex);
+            throw new PicklerException("Can not create class " + clazz.getName(), ex);
         }
     }
 
     /**
-     * FieldPicklerBase adds helper methods to simplify calling FieldPickler.field().
+     * AbstractFieldPickler adds a helper method to simplify calling FieldPickler.field().
      */
-    protected abstract class FieldPicklerBase implements FieldPickler<PF> {
+    protected abstract class AbstractFieldPickler implements FieldPickler<PF> {
 
         protected final PF target;
 
-        public FieldPicklerBase(PF target) {
+        public AbstractFieldPickler(PF target) {
             this.target = target;
         }
 
@@ -42,13 +45,13 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     /**
-     * FieldUnpicklerBase adds helper methods to simplify calling FieldUnpickler.field().
+     * AbstractFieldPickler adds a helper method to simplify calling FieldUnpickler.field().
      */
-    protected abstract class FieldUnpicklerBase implements FieldUnpickler<PF> {
+    protected abstract class AbstractFieldUnpickler implements FieldUnpickler<PF> {
 
         protected final PF source;
 
-        public FieldUnpicklerBase(PF source) {
+        public AbstractFieldUnpickler(PF source) {
             this.source = source;
         }
 
@@ -83,6 +86,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         register(Long.class, long_p());
         register(Float.class, float_p());
         register(Double.class, double_p());
+        register(Class.class, this.class_p());
     }
 
     /**
@@ -91,7 +95,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      * @param pickler the pickler.
      * @param <T> value type.
      */
-    protected <T> void register(Class<T> valueClass, Pickler<T, PF> pickler) {
+    protected <T, S extends T> void register(Class<S> valueClass, Pickler<T, PF> pickler) {
         picklerCache.put(valueClass.getName(), pickler);
     }
 
