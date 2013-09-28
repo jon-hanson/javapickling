@@ -22,7 +22,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
     final Field<Integer, PF>                intF =          field("int",        integer_p());
     final Field<Float, PF>                  floatF =        field("float",      float_p());
     final Field<Double, PF>                 doubleF =       field("double",     double_p());
-    final Field<ComplexClass.Colour, PF>                 enumF =         field("enum",       enum_p(ComplexClass.Colour.class));
+    final Field<ComplexClass.Colour, PF>    enumF =         field("enum",       enum_p(ComplexClass.Colour.class));
     final Field<String, PF>                 stringF =       field("string",     string_p());
     final Field<Map<String, Double>, PF>    strDblMapF =    field("strDblMap",  map_p(double_p(), TreeMap.class));
     final Field<Map<Integer, ComplexClass.Colour>, PF>   intEnumMapF =   field("intEnumMap", map_p(integer_p(), enum_p(ComplexClass.Colour.class), TreeMap.class));

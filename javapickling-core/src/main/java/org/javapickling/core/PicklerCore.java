@@ -112,7 +112,7 @@ public interface PicklerCore<PF> {
      * @param valuePickler a Pickler for the Map value type.
      * @param <K>
      * @param <V>
-     * @return
+     * @return a Pickler for a homogeneous Map
      */
     <K, V> Pickler<Map<K, V>, PF> map_p(
             final Pickler<K, PF> keyPickler,
@@ -171,7 +171,7 @@ public interface PicklerCore<PF> {
      * @param name the name of the field.
      * @param pickler the pickler for the field value.
      * @param <T>
-     * @return
+     * @return a field handler
      */
     <T> Field<T, PF> field(String name, Pickler<T, PF> pickler);
 
@@ -180,7 +180,7 @@ public interface PicklerCore<PF> {
      * @param name the name of the field.
      * @param pickler the pickler for the field value.
      * @param <T>
-     * @return
+     * @return a field handler
      */
     <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler);
 
@@ -188,7 +188,7 @@ public interface PicklerCore<PF> {
      * Convert a pickler into one that checks for nulls.
      * @param pickler
      * @param <T>
-     * @return
+     * @return a pickler
      */
     <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler);
 }

@@ -77,6 +77,9 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     protected final Map<String, GenericPicklerCtor<?, PF>> genericPicklerClassRegistry = Maps.newTreeMap();
 
     public PicklerCoreBase() {
+    }
+
+    public void initialise() {
         register(Boolean.class, boolean_p());
         register(Byte.class, byte_p());
         register(Character.class, char_p());
@@ -227,7 +230,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         if (pickler != null)
             return pickler;
 
-        Class<P> picklerClass = (Class<P>) getPicklerClass(valueClass);
+        Class<P> picklerClass = (Class<P>)getPicklerClass(valueClass);
         if (picklerClass == null) {
             if (valueClass.isAnnotationPresent(DefaultPickler.class)) {
                 final DefaultPickler defPickAnn = valueClass.getAnnotation(DefaultPickler.class);

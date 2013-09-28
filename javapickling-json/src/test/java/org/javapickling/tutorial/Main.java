@@ -47,7 +47,7 @@ public abstract class Main {
 
     private static String pickleJson(Team team) throws Exception {
 
-        final JsonNodePicklerCore jsonPickleCore = new JsonNodePicklerCore();
+        final JsonNodePicklerCore jsonPickleCore = JsonNodePicklerCore.create();
         jsonPickleCore.register(Date.class, DatePickler.class);
 
         final Pickler<Team, JsonNode> pickler = jsonPickleCore.object_p(Team.class);
@@ -60,7 +60,7 @@ public abstract class Main {
 
     private static String pickleXml(Team team) throws Exception {
 
-        final XmlNodePicklerCore xmlPickleCore = new XmlNodePicklerCore();
+        final XmlNodePicklerCore xmlPickleCore = XmlNodePicklerCore.create();
         xmlPickleCore.register(Date.class, DatePickler.class);
 
         final Element rootNode = xmlPickleCore.doc.createElement("team");

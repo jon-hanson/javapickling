@@ -10,6 +10,12 @@ import java.util.*;
  */
 public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
+    public static ByteIOPicklerCore create() {
+        final ByteIOPicklerCore core = new ByteIOPicklerCore();
+        core.initialise();
+        return core;
+    }
+
     protected final Pickler<Object, ByteIO> nullP = new Pickler<Object, ByteIO>() {
 
         @Override
@@ -190,6 +196,9 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
             };
         }
     };
+
+    private ByteIOPicklerCore() {
+    }
 
     @Override
     public Pickler<Object, ByteIO> null_p() {

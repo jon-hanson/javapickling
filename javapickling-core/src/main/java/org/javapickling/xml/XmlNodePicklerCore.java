@@ -23,8 +23,17 @@ import java.util.Set;
  */
 public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
-    public DocumentBuilder docBuilder;
-    public Document doc;
+    public static XmlNodePicklerCore create() {
+        final XmlNodePicklerCore core = new XmlNodePicklerCore();
+        core.initialise();
+        return core;
+    }
+
+    public static XmlNodePicklerCore create(DocumentBuilder docBuilder) {
+        final XmlNodePicklerCore core = new XmlNodePicklerCore(docBuilder);
+        core.initialise();
+        return core;
+    }
 
     public static String nodeToString(Document xml, boolean pretty) throws Exception {
 
@@ -69,15 +78,19 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         return parent.getAttribute(name);
     }
 
-    protected void addAttribute(Element parent, String name, String value) {
+    protected static void addAttribute(Element parent, String name, String value) {
         parent.setAttribute(name, value);
     }
 
-    public XmlNodePicklerCore() {
+    public DocumentBuilder docBuilder;
+
+    public Document doc;
+
+    private XmlNodePicklerCore() {
         this(createDocumentBuilder());
     }
 
-    public XmlNodePicklerCore(DocumentBuilder docBuilder) {
+    private XmlNodePicklerCore(DocumentBuilder docBuilder) {
         this.docBuilder = docBuilder;
         this.doc = docBuilder.newDocument();
     }

@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 
 public class XmlNodePicklerTest {
 
-    private static final XmlNodePicklerCore xmlPickler = new XmlNodePicklerCore();
+    private static final XmlNodePicklerCore xmlPickler = XmlNodePicklerCore.create();
 
     @Test
     public void testPickle() throws Exception {

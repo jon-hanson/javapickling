@@ -10,7 +10,7 @@ import java.io.*;
 
 public class ByteIOPicklerTest {
 
-    private static final ByteIOPicklerCore byteIOPickler = new ByteIOPicklerCore();
+    private static final ByteIOPicklerCore byteIOPickler = ByteIOPicklerCore.create();
 
     @Test
     public void testPickle() throws Exception {

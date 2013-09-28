@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class JsonNodePicklerTest {
 
-    private static final JsonNodePicklerCore jsonPickler = new JsonNodePicklerCore();
+    private static final JsonNodePicklerCore jsonPickler = JsonNodePicklerCore.create();
 
     @Test
     public void testPickle() throws Exception {

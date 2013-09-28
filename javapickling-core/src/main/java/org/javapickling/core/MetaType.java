@@ -19,6 +19,7 @@ public class MetaType {
      */
     public enum TypeKind {
         NULL(Object.class),
+        ARRAY(Array.class),
         BOOLEAN(Boolean.class),
         BYTE(Byte.class),
         CHAR(Character.class),
@@ -78,6 +79,35 @@ public class MetaType {
         }
     }
 
+    public static TypeKind typeKindOf(Class<?> clazz) {
+
+        if (clazz == null) {
+            return TypeKind.NULL;
+        } else if (clazz.isEnum()) {
+            return TypeKind.ENUM;
+        } else if (clazz.isArray()) {
+            return TypeKind.ARRAY;
+        }
+
+        final Class<?>[] interfaces = clazz.getInterfaces();
+        final Class<?> mapInter = Map.class;
+        final Class<?> listInter = List.class;
+        for (Class<?> interfaze : interfaces) {
+            if (mapInter.isAssignableFrom(interfaze)) {
+                return TypeKind.MAP;
+            } else if (listInter.isAssignableFrom(interfaze)) {
+                return TypeKind.LIST;
+            }
+        }
+
+        final TypeKind typeKind = classTypeMap.get(clazz.getName());
+        if (typeKind != null) {
+            return typeKind;
+        } else {
+            return TypeKind.OBJECT;
+        }
+    }
+
     private static void register(TypeKind typeKind) {
         classTypeMap.put(typeKind.clazz.getName(), typeKind);
     }
@@ -95,15 +125,14 @@ public class MetaType {
             clazz = clazz.getComponentType();
         }
 
-        if (clazz.isEnum()) {
-            return new MetaType(TypeKind.ENUM, clazz, arrayDepth);
+        final TypeKind typeKind = typeKindOf(clazz);
+
+        if (typeKind == TypeKind.ENUM) {
+            return new MetaType(typeKind, clazz, arrayDepth);
+        } else if (typeKind == null) {
+            return new MetaType(typeKind, arrayDepth);
         } else {
-            TypeKind typeKind = classTypeMap.get(clazz.getName());
-            if (typeKind != null) {
-                return new MetaType(typeKind, arrayDepth);
-            } else {
-                return new MetaType(TypeKind.OBJECT, clazz, arrayDepth);
-            }
+            return new MetaType(TypeKind.OBJECT, clazz, arrayDepth);
         }
     }
 

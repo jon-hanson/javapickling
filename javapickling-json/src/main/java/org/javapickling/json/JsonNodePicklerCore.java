@@ -17,6 +17,12 @@ import java.util.*;
  */
 public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
+    public static JsonNodePicklerCore create() {
+        final JsonNodePicklerCore core = new JsonNodePicklerCore();
+        core.initialise();
+        return core;
+    }
+
     public static String nodeToString(JsonNode node, boolean pretty) throws JsonProcessingException {
         final ObjectMapper om = new ObjectMapper();
         final ObjectWriter writer =
@@ -25,16 +31,6 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
                     om.writer();
 
         return writer.writeValueAsString(node);
-    }
-
-    private final JsonNodeFactory nodeFactory;
-
-    public JsonNodePicklerCore() {
-        this(JsonNodeFactory.instance);
-    }
-
-    public JsonNodePicklerCore(JsonNodeFactory nodeFactory) {
-        this.nodeFactory = nodeFactory;
     }
 
     protected final Pickler<Object, JsonNode> nullP = new Pickler<Object, JsonNode>() {
@@ -127,6 +123,7 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
             return source.shortValue();
         }
     };
+
     protected final Pickler<Long, JsonNode> longP = new Pickler<Long, JsonNode>() {
 
         @Override
@@ -199,6 +196,16 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
             };
         }
     };
+
+    private final JsonNodeFactory nodeFactory;
+
+    private JsonNodePicklerCore() {
+        this(JsonNodeFactory.instance);
+    }
+
+    private JsonNodePicklerCore(JsonNodeFactory nodeFactory) {
+        this.nodeFactory = nodeFactory;
+    }
 
     @Override
     public Pickler<Object, JsonNode> null_p() {
