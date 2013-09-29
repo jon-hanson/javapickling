@@ -90,13 +90,16 @@ public class MetaType {
         }
 
         final Class<?>[] interfaces = clazz.getInterfaces();
-        final Class<?> mapInter = Map.class;
-        final Class<?> listInter = List.class;
+        final Class<List> listInter = List.class;
+        final Class<Map> mapInter = Map.class;
+        final Class<Set> setInter = Set.class;
         for (Class<?> interfaze : interfaces) {
-            if (mapInter.isAssignableFrom(interfaze)) {
-                return TypeKind.MAP;
-            } else if (listInter.isAssignableFrom(interfaze)) {
+            if (listInter.isAssignableFrom(interfaze)) {
                 return TypeKind.LIST;
+            } else if (mapInter.isAssignableFrom(interfaze)) {
+                return TypeKind.MAP;
+            } else if (setInter.isAssignableFrom(interfaze)) {
+                return TypeKind.SET;
             }
         }
 
@@ -129,10 +132,10 @@ public class MetaType {
 
         if (typeKind == TypeKind.ENUM) {
             return new MetaType(typeKind, clazz, arrayDepth);
-        } else if (typeKind == null) {
-            return new MetaType(typeKind, arrayDepth);
-        } else {
+        } else if (typeKind == TypeKind.OBJECT) {
             return new MetaType(TypeKind.OBJECT, clazz, arrayDepth);
+        } else {
+            return new MetaType(typeKind, arrayDepth);
         }
     }
 
@@ -149,7 +152,7 @@ public class MetaType {
     }
 
     public final TypeKind typeKind;
-    public Class<?> clazz;
+    public final Class<?> clazz;
     public final int arrayDepth;
 
     public MetaType(TypeKind typeKind, Class<?> clazz, int arrayDepth) {

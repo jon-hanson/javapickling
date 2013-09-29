@@ -6,34 +6,34 @@ import java.util.*;
 
 public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
-    private Pickler<ComplexClass.Generic<ComplexClass.IdWrapper>, PF> genIdWrapperPickler() {
-        return generic_p(ComplexClass.Generic.class, object_p(ComplexClass.IdWrapper.class));
+    private <T> Field<T, PF> field(String name) {
+        return field(ComplexClass.class, name);
     }
 
-    private Pickler<ComplexClass.Generic<ComplexClass.Interface>, PF> genInterfacePickler() {
-        return generic_p(ComplexClass.Generic.class, d_object_p());
+    private <T> Field<T, PF> null_field(String name) {
+        return null_field(ComplexClass.class, name);
     }
 
-    final Field<Boolean, PF> booleanF =      field("bool",       boolean_p());
-    final Field<Byte, PF>                   byteF =         field("byte",       byte_p());
-    final Field<Character, PF>              charF =         field("char",       char_p());
-    final Field<Short, PF>                  shortF =        field("short",      short_p());
-    final Field<Long, PF>                   longF =         field("long",       long_p());
-    final Field<Integer, PF>                intF =          field("int",        integer_p());
-    final Field<Float, PF>                  floatF =        field("float",      float_p());
-    final Field<Double, PF>                 doubleF =       field("double",     double_p());
-    final Field<ComplexClass.Colour, PF>    enumF =         field("enum",       enum_p(ComplexClass.Colour.class));
-    final Field<String, PF>                 stringF =       field("string",     string_p());
-    final Field<Map<String, Double>, PF>    strDblMapF =    field("strDblMap",  map_p(double_p(), TreeMap.class));
-    final Field<Map<Integer, ComplexClass.Colour>, PF>   intEnumMapF =   field("intEnumMap", map_p(integer_p(), enum_p(ComplexClass.Colour.class), TreeMap.class));
-    final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMap",  map_p(d_object_p(), d_object_p(), TreeMap.class));
-    final Field<Set<String>, PF>            strSetF =       field("strSet",     set_p(string_p(), TreeSet.class));
-    final Field<Set<Object>, PF>            objSetF =       field("objSet",     set_p(d_object_p(), HashSet.class));
-    final Field<List<String>, PF>           strListF =      field("listStr",    list_p(string_p(), ArrayList.class));
-    final Field<List<Object>, PF>           objListF =      null_field("listObj", list_p(d_object_p(), ArrayList.class));
+    final Field<Boolean, PF>                booleanF =      field("booleanF");
+    final Field<Byte, PF>                   byteF =         field("byteF");
+    final Field<Character, PF>              charF =         field("charF");
+    final Field<Short, PF>                  shortF =        field("shortF");
+    final Field<Long, PF>                   longF =         field("longF");
+    final Field<Integer, PF>                intF =          field("intF");
+    final Field<Float, PF>                  floatF =        field("floatF");
+    final Field<Double, PF>                 doubleF =       field("doubleF");
+    final Field<ComplexClass.Colour, PF>    enumF =         field("enumF");
+    final Field<String, PF>                 stringF =       field("stringF");
+    final Field<Map<String, Double>, PF>    strDblMapF =    field("strDblMapF");
+    final Field<Map<Integer, ComplexClass.Colour>, PF>   intEnumMapF =   field("intEnumMapF");
+    final Field<Map<Object, Object>, PF>    objObjMapF =    field("objObjMapF");
+    final Field<Set<String>, PF>            strSetF =       field("strSetF");
+    final Field<Set<Object>, PF>            objSetF =       field("objSetF");
+    final Field<List<String>, PF>           strListF =      field("strListF");
+    final Field<List<Object>, PF>           objListF =      null_field("objListF");
 
-    final Field<ComplexClass.Generic<ComplexClass.IdWrapper>, PF>     genericF =      field("generic",    genIdWrapperPickler());
-    final Field<ComplexClass.Generic<ComplexClass.Interface>, PF>     generic2F =     field("generic2",   genInterfacePickler());
+    final Field<ComplexClass.Generic<ComplexClass.IdWrapper>, PF>     genericF =      field("genericF");
+    final Field<ComplexClass.Generic<ComplexClass.Interface>, PF>     generic2F =     field("generic2F");
 
     public ComplexClassPickler(PicklerCore<PF> core) {
         super(core);

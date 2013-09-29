@@ -1,8 +1,6 @@
 package org.javapickling.core;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Base class for Pickler implementations.
@@ -94,18 +92,43 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
+    public <T> Pickler<List<T>, PF> list_p(final Pickler<T, PF> elemPickler) {
+        return list_p(elemPickler);
+    }
+
+    @Override
     public <U> Pickler<Map<String, U>, PF> map_p(Pickler<U, PF> valuePickler, Class<? extends Map> mapClass) {
         return core.map_p(valuePickler, mapClass);
     }
 
     @Override
-    public <K, V> Pickler<Map<K, V>, PF> map_p(Pickler<K, PF> keyPickler, Pickler<V, PF> valuePickler, Class<? extends Map> mapClass) {
+    public <T> Pickler<Map<String, T>, PF> map_p(final Pickler<T, PF> valuePickler) {
+        return map_p(valuePickler);
+    }
+
+    @Override
+    public <K, V> Pickler<Map<K, V>, PF> map_p(
+            Pickler<K, PF> keyPickler,
+            Pickler<V, PF> valuePickler,
+            Class<? extends Map> mapClass) {
         return core.map_p(keyPickler, valuePickler, mapClass);
+    }
+
+    @Override
+    public <K, V> Pickler<Map<K, V>, PF> map_p(
+            final Pickler<K, PF> keyPickler,
+            final Pickler<V, PF> valuePickler) {
+        return map_p(keyPickler, valuePickler);
     }
 
     @Override
     public <U> Pickler<Set<U>, PF> set_p(Pickler<U, PF> elemPickler, Class<? extends Set> setClass) {
         return core.set_p(elemPickler, setClass);
+    }
+
+    @Override
+    public <T> Pickler<Set<T>, PF> set_p(final Pickler<T, PF> elemPickler) {
+        return core.set_p(elemPickler);
     }
 
     @Override
@@ -139,8 +162,18 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
+    public <T> Field<T, PF> field(Class<?> clazz, String name) {
+        return core.field(clazz, name);
+    }
+
+    @Override
     public <U> Field<U, PF> null_field(String name, Pickler<U, PF> pickler) {
         return core.null_field(name, pickler);
+    }
+
+    @Override
+    public <U> Field<U, PF> null_field(Class<?> clazz, String name) {
+        return core.null_field(clazz, name);
     }
 
     @Override

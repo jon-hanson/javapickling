@@ -74,7 +74,7 @@ public class ComplexClass implements Serializable {
             intEnumMapF.put(12, Colour.GREEN);
             intEnumMapF.put(45, Colour.BLUE);
             final Map<Object, Object> objObjMapF = new TreeMap<Object, Object>();
-            objObjMapF.put(Colour.RED, "RED");
+            objObjMapF.put(Colour.RED, "OrDead");
             objObjMapF.put(Colour.GREEN, createInstance(false));
 
             final Set<String> strSetF = Sets.newTreeSet();

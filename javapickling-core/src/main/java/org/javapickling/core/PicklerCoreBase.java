@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.TypeVariable;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Base class for PicklerCore implementations.
@@ -76,6 +76,8 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      */
     protected final Map<String, GenericPicklerCtor<?, PF>> genericPicklerClassRegistry = Maps.newTreeMap();
 
+    protected FieldReflector fieldReflector = new FieldReflector(this);
+
     public PicklerCoreBase() {
     }
 
@@ -89,7 +91,15 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         register(Long.class, long_p());
         register(Float.class, float_p());
         register(Double.class, double_p());
-        register(Class.class, this.class_p());
+        register(Class.class, class_p());
+        register(boolean.class, boolean_p());
+        register(byte.class, byte_p());
+        register(char.class, char_p());
+        register(int.class, integer_p());
+        register(short.class, short_p());
+        register(long.class, long_p());
+        register(float.class, float_p());
+        register(double.class, double_p());
     }
 
     /**
@@ -158,9 +168,9 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         final TypeVariable<Class<T>>[] valueTps = valueClass.getTypeParameters();
         final TypeVariable<Class<P>>[] picklerTps = picklerClass.getTypeParameters();
 
+        // We expect the first type parameter to be PF unless the Pickler is specialised for a specific format.
         final int picklerCount;
-        final boolean firstParamIsPF = picklerTps[0].getName().equals("PF");
-        if (firstParamIsPF) {
+        if (picklerTps[0].getName().equals("PF")) {
             picklerCount = picklerTps.length - 1;
         } else {
             picklerCount = picklerTps.length;
@@ -195,9 +205,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
                 register(valueClass, (Pickler<T,PF>)createPickler(picklerClass.getName(), ctor, args));
 
-                break;
+                return;
             }
         }
+
+        throw new PicklerException("Could not find a constructor for " + picklerClass.getName() + " which takes " + picklerCount + " pickler arguments");
     }
 
     private <T> Pickler<T, PF> createPickler(String name, Constructor ctor, Object[] args) {
@@ -334,6 +346,28 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     @Override
+    public <T> Pickler<Set<T>, PF> set_p(final Pickler<T, PF> elemPickler) {
+        return set_p(elemPickler, HashSet.class);
+    }
+
+    @Override
+    public <T> Pickler<List<T>, PF> list_p(final Pickler<T, PF> elemPickler) {
+        return list_p(elemPickler, ArrayList.class);
+    }
+
+    @Override
+    public <T> Pickler<Map<String, T>, PF> map_p(final Pickler<T, PF> valuePickler) {
+        return map_p(valuePickler, TreeMap.class);
+    }
+
+    @Override
+    public <K, V> Pickler<Map<K, V>, PF> map_p(
+            final Pickler<K, PF> keyPickler,
+            final Pickler<V, PF> valuePickler) {
+        return map_p(keyPickler, valuePickler, HashMap.class);
+    }
+
+    @Override
     public <T, S extends T> Pickler<S, PF> generic_p(final Class<T> clazz, Pickler<?, PF>... picklers) {
         return (Pickler<S, PF>)getGenericPickler(clazz, picklers);
     }
@@ -355,10 +389,33 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     @Override
+    public <T> Field<T, PF> field(Class<?> clazz, String name) {
+        final java.lang.reflect.Field field;
+        try {
+            field = clazz.getField(name);
+        } catch (NoSuchFieldException ex) {
+            throw new PicklerException(clazz.getName() + " has no field called " + name);
+        }
+        return new Field<T, PF>(field.getName(), fieldReflector.inferPickler(field));
+    }
+
+    @Override
     public <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler) {
         return new Field<T, PF>(name, nullable(pickler));
     }
 
+    @Override
+    public <T> Field<T, PF> null_field(Class<?> clazz, String name) {
+        final java.lang.reflect.Field field;
+        try {
+            field = clazz.getField(name);
+        } catch (NoSuchFieldException ex) {
+            throw new PicklerException(clazz.getName() + " has no field called " + name);
+        }
+        return new Field<T, PF>(field.getName(), nullable(fieldReflector.inferPickler(field)));
+    }
+
+    @Override
     public <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler) {
 
         return new Pickler<T, PF>() {

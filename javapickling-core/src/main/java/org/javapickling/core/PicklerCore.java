@@ -97,6 +97,14 @@ public interface PicklerCore<PF> {
             Class<? extends List> listClass);
 
     /**
+     * Provide a Pickler for an List.
+     * @param elemPickler a Pickler for the List element type.
+     * @param <T>
+     * @return a Pickler for an List.
+     */
+    <T> Pickler<List<T>, PF> list_p(final Pickler<T, PF> elemPickler);
+
+    /**
      * Provide a Pickler for a homogeneous String to value Map.
      * @param valuePickler a Pickler for the Map value type.
      * @param <T>
@@ -104,6 +112,28 @@ public interface PicklerCore<PF> {
      */
     <T> Pickler<Map<String, T>, PF> map_p(
             final Pickler<T, PF> valuePickler,
+            final Class<? extends Map> mapClass);
+
+    /**
+     * Provide a Pickler for a homogeneous String to value Map.
+     * @param valuePickler a Pickler for the Map value type.
+     * @param <T>
+     * @return a Pickler for an Map.
+     */
+    <T> Pickler<Map<String, T>, PF> map_p(final Pickler<T, PF> valuePickler);
+
+    /**
+     * Provide a Pickler for a homogeneous Map.
+     * @param keyPickler a Pickler for the Map key type.
+     * @param valuePickler a Pickler for the Map value type.
+     * @param mapClass the Map implementation to use.
+     * @param <K>
+     * @param <V>
+     * @return a Pickler for a homogeneous Map
+     */
+    <K, V> Pickler<Map<K, V>, PF> map_p(
+            final Pickler<K, PF> keyPickler,
+            final Pickler<V, PF> valuePickler,
             final Class<? extends Map> mapClass);
 
     /**
@@ -116,8 +146,7 @@ public interface PicklerCore<PF> {
      */
     <K, V> Pickler<Map<K, V>, PF> map_p(
             final Pickler<K, PF> keyPickler,
-            final Pickler<V, PF> valuePickler,
-            final Class<?  extends Map> mapClass);
+            final Pickler<V, PF> valuePickler);
 
     /**
      * Provide a Pickler for a homogeneous Set.
@@ -128,7 +157,15 @@ public interface PicklerCore<PF> {
      */
     <T> Pickler<Set<T>, PF> set_p(
             final Pickler<T, PF> elemPickler,
-            final Class<?  extends Set> setClass);
+            final Class<? extends Set> setClass);
+
+    /**
+     * Provide a Pickler for a homogeneous Set.
+     * @param elemPickler a Pickler for the Set value type.
+     * @param <T>
+     * @return a Pickler for an Map.
+     */
+    <T> Pickler<Set<T>, PF> set_p(final Pickler<T, PF> elemPickler);
 
     /**
      * Provide a Pickler corresponding to the specified Class.
@@ -176,6 +213,15 @@ public interface PicklerCore<PF> {
     <T> Field<T, PF> field(String name, Pickler<T, PF> pickler);
 
     /**
+     * Create a field handler using reflection to create the field pickler.
+     * @param clazz the containing class.
+     * @param name the field name.
+     * @param <T>
+     * @return a field handler
+     */
+    <T> Field<T, PF> field(Class<?> clazz, String name);
+
+    /**
      * Create a field handler for a nullable field.
      * @param name the name of the field.
      * @param pickler the pickler for the field value.
@@ -185,10 +231,20 @@ public interface PicklerCore<PF> {
     <T> Field<T, PF> null_field(String name, Pickler<T, PF> pickler);
 
     /**
+     * Create a field handler for a nullable field.
+     * @param clazz the containing class.
+     * @param name the field name.
+     * @param <T>
+     * @return a field handler
+     */
+    <T> Field<T, PF> null_field(Class<?> clazz, String name);
+
+    /**
      * Convert a pickler into one that checks for nulls.
      * @param pickler
      * @param <T>
      * @return a pickler
      */
     <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler);
+
 }

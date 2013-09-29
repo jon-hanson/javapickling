@@ -7,18 +7,18 @@
     <parent>
         <groupId>org.javapickling</groupId>
         <artifactId>javapickling</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.javapickling</groupId>
     <artifactId>javapickling-json</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>org.javapickling</groupId>
             <artifactId>javapickling-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.javapickling</groupId>
             <artifactId>javapickling-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.4-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

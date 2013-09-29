@@ -35,10 +35,11 @@ public class XmlNodePicklerTest {
         final Node node = pickler.pickle(complex, rootNode);
         final long endTime1 = System.nanoTime();
 
+        final String xml = XmlNodePicklerCore.nodeToString(xmlPickler.doc, true);
         System.out.println("XML=");
-        System.out.println(XmlNodePicklerCore.nodeToString(xmlPickler.doc, true));
+        System.out.println(xml);
 
-        final int size = -1;
+        final int size = xml.length();
 
         final long startTime2 = System.nanoTime();
         final ComplexClass complex2 = pickler.unpickle(node);
