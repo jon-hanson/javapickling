@@ -198,10 +198,10 @@ public interface PicklerCore<PF> {
 
     /**
      * Provide a proxy for pickling heterogeneous maps of strings to a static type.
-     * Generally used for pickling objects.
+     * Generally used for defining picklers for objects.
      * @return a Pickler for a object/Map.
      */
-    ObjectMapPickler<PF> object_map();
+    ObjectPickler<PF> object_map();
 
     /**
      * Create a field handler.

@@ -155,7 +155,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         }
     };
 
-    protected final ObjectMapPickler<ByteIO> objectMapP = new ObjectMapPickler<ByteIO>() {
+    protected final ObjectPickler<ByteIO> objectMapP = new ObjectPickler<ByteIO>() {
 
         @Override
         public FieldPickler<ByteIO> pickler(final ByteIO target) {
@@ -444,7 +444,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     }
 
     @Override
-    public ObjectMapPickler<ByteIO> object_map() {
+    public ObjectPickler<ByteIO> object_map() {
         return objectMapP;
     }
 }

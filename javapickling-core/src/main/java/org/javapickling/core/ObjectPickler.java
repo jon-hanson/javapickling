@@ -1,10 +1,11 @@
 package org.javapickling.core;
 
 /**
- * ObjectMapPickler is an intermediate interface for pickling heterogeneous maps.
+ * ObjectPickler is an intermediate interface for pickling objects.
+ * In this context objects are heterogeneous maps where the key type is String.
  * @param <PF>
  */
-public interface ObjectMapPickler<PF> {
+public interface ObjectPickler<PF> {
 
     /**
      * Provide a pseudo-pickler for pickling the fields comprising a map.

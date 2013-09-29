@@ -163,7 +163,7 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
         }
     };
 
-    protected final ObjectMapPickler<JsonNode> objectMapP = new ObjectMapPickler<JsonNode>() {
+    protected final ObjectPickler<JsonNode> objectMapP = new ObjectPickler<JsonNode>() {
 
         @Override
         public FieldPickler<JsonNode> pickler(final JsonNode target) {
@@ -495,7 +495,7 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
     }
 
     @Override
-    public ObjectMapPickler<JsonNode> object_map() {
+    public ObjectPickler<JsonNode> object_map() {
         return objectMapP;
     }
 
