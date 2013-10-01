@@ -42,6 +42,13 @@ public class MetaType {
             this.clazz = clazz;
         }
 
+        /**
+         * Construct a pickler for the type described by this TypeKind.
+         * @param core PicklerCore implementation.
+         * @param clazz optional Class object.
+         * @param <PF>
+         * @return
+         */
         public <PF> Pickler<?, PF> pickler(PicklerCore<PF> core, Class<?> clazz) {
             switch (this) {
                 case NULL:      return core.null_p();
@@ -79,8 +86,18 @@ public class MetaType {
         }
     }
 
+    private static void register(TypeKind typeKind) {
+        classTypeMap.put(typeKind.clazz.getName(), typeKind);
+    }
+
+    /**
+     * Determine the TypeKind for the supplied class object.
+     * @param clazz
+     * @return
+     */
     public static TypeKind typeKindOf(Class<?> clazz) {
 
+        // Is it one of the simple cases?
         if (clazz == null) {
             return TypeKind.NULL;
         } else if (clazz.isEnum()) {
@@ -89,6 +106,7 @@ public class MetaType {
             return TypeKind.ARRAY;
         }
 
+        // Is it one of the interface-based kinds?
         final Class<?>[] interfaces = clazz.getInterfaces();
         final Class<List> listInter = List.class;
         final Class<Map> mapInter = Map.class;
@@ -103,6 +121,7 @@ public class MetaType {
             }
         }
 
+        // Is it registered in the classTypeMap?
         final TypeKind typeKind = classTypeMap.get(clazz.getName());
         if (typeKind != null) {
             return typeKind;
@@ -111,36 +130,44 @@ public class MetaType {
         }
     }
 
-    private static void register(TypeKind typeKind) {
-        classTypeMap.put(typeKind.clazz.getName(), typeKind);
-    }
-
+    /**
+     * Determine the MetaType for an object.
+     * @param obj
+     * @return
+     */
     public static MetaType ofObject(Object obj) {
 
+        // Handle nulls.
         if (obj == null)
             return new MetaType((TypeKind.NULL));
 
+        // Unwrap the arrays.
         Class<?> clazz = obj.getClass();
-
         int arrayDepth = 0;
         while (clazz.isArray()) {
             ++arrayDepth;
             clazz = clazz.getComponentType();
         }
 
+        // Determine the TypeKind.
         final TypeKind typeKind = typeKindOf(clazz);
 
-        if (typeKind == TypeKind.ENUM) {
+        if (typeKind == TypeKind.ENUM || typeKind == TypeKind.OBJECT) {
+            // Enums and Objects require the class object.
             return new MetaType(typeKind, clazz, arrayDepth);
-        } else if (typeKind == TypeKind.OBJECT) {
-            return new MetaType(TypeKind.OBJECT, clazz, arrayDepth);
         } else {
             return new MetaType(typeKind, arrayDepth);
         }
     }
 
+    /**
+     * Construct a MetaType from its name
+     * @param name the name, typically generated using the name() method.
+     * @return
+     */
     public static MetaType ofName(String name) {
 
+        // Unwrap array prefixes.
         int arrayDepth = 0;
         while (name.endsWith(ARRAY_SUFFIX)) {
             ++arrayDepth;
@@ -173,8 +200,18 @@ public class MetaType {
         this(typeKind, null, 0);
     }
 
+    /**
+     * Request a pickler for the type described by this MetaType.
+     * @param core PicklerCore implementation.
+     * @param <PF>
+     * @return
+     */
     public <PF> Pickler<Object, PF> pickler(PicklerCore<PF> core) {
+
+        // Get the pickler for the leaf type.
         Pickler<?, PF> pickler = typeKind.pickler(core, clazz);
+
+        // Wrap the pickler for each enclosing array.
         Class<?> arrClazz = clazz == null ? typeKind.clazz : clazz;
         for (int i = 0; i < arrayDepth; ++i) {
             pickler = core.array_p((Pickler<Object, PF>)pickler, (Class<Object>)arrClazz);
@@ -184,6 +221,10 @@ public class MetaType {
         return (Pickler<Object, PF>)pickler;
     }
 
+    /**
+     * Generate a unique name for this MetaType.
+     * @return readable name
+     */
     public String name() {
         final StringBuilder sb = new StringBuilder(typeKind.name());
         for (int i = 0; i < arrayDepth; ++i) {

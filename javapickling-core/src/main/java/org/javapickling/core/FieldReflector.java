@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * FieldReflector uses reflection to infer the Pickler for a Field (java.lang.reflect.Field).
+ * FieldReflector encapsulates methods to infer the Pickler for a Field (java.lang.reflect.Field),
+ * using Reflection.
  * @param <PF>
  */
 public class FieldReflector<PF> {
@@ -57,7 +58,7 @@ public class FieldReflector<PF> {
     }
 
     /**
-     * Infer the Pickler for a ParameterizedType - i.e. for a generic type.
+     * Infer the Pickler for a ParameterizedType, i.e. for a generic type.
      * @param type
      * @param <T>
      * @return
@@ -66,6 +67,7 @@ public class FieldReflector<PF> {
 
         final Type rawType = type.getRawType();
 
+        // Handle the base interface types?
         if (rawType instanceof Class) {
             final Class clazz = (Class)rawType;
             final MetaType.TypeKind typeKind = MetaType.typeKindOf(clazz);
@@ -85,6 +87,7 @@ public class FieldReflector<PF> {
             }
         }
 
+        // Must be a generic class, so infer a pickler for each of its type arguments.
         final Type[] typeArgs = type.getActualTypeArguments();
         final Pickler[] picklers = new Pickler[typeArgs.length];
         for (int i = 0; i < typeArgs.length; ++i) {

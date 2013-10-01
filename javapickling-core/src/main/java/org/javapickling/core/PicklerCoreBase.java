@@ -81,7 +81,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     public PicklerCoreBase() {
     }
 
-    public void initialise() {
+    /**
+     * Initialisation has to be performed outside the constructor
+     * to avoid calling virtual methods from the constructors.
+     */
+    protected void initialise() {
         register(Boolean.class, boolean_p());
         register(Byte.class, byte_p());
         register(Character.class, char_p());
@@ -374,7 +378,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
     @Override
     public Pickler<Object, PF> d_object_p() {
-        // Create this object on the fly to avoid construction order dependency issues.
+        // Create this object on the fly to avoid construction-order dependency issues.
         return new DynamicObjectPickler<PF, Object>(this);
     }
 

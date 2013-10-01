@@ -8,6 +8,9 @@ import org.javapickling.core.*;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * A (slightly pathologically) complex class for illustration purposes.
+ */
 @DefaultPickler(ComplexClassPickler.class)
 public class ComplexClass implements Serializable {
 

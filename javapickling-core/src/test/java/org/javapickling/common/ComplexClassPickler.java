@@ -4,12 +4,18 @@ import org.javapickling.core.*;
 
 import java.util.*;
 
+/**
+ * A pickler for the ComplexClass.
+ * @param <PF>
+ */
 public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
+    // Utility method for creating fields.
     private <T> Field<T, PF> field(String name) {
         return field(ComplexClass.class, name);
     }
 
+    // Utility method for creating nullable fields.
     private <T> Field<T, PF> null_field(String name) {
         return null_field(ComplexClass.class, name);
     }
@@ -60,7 +66,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
         mp.field(strListF,      sc.strListF);
         mp.field(objListF,      sc.objListF);
         mp.field(genericF,      sc.genericF);
-        mp.field(generic2F,      sc.generic2F);
+        mp.field(generic2F,     sc.generic2F);
         return mp.pickle(target);
     }
 

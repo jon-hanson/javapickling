@@ -1,7 +1,7 @@
 package org.javapickling.core;
 
 /**
- * A field description.
+ * A field name and pickler wrapper.
  * @param <T> The field type
  * @param <PF> Pickler format
  */
@@ -17,7 +17,7 @@ public class Field<T, PF> {
      */
     public final Pickler<T, PF> pickler;
 
-    protected Field(String name, Pickler<T, PF> pickler) {
+    public Field(String name, Pickler<T, PF> pickler) {
         this.name = name;
         this.pickler = pickler;
     }
