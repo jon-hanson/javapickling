@@ -63,7 +63,7 @@ and remains a type parameter for the Pickler implementation class.
 
 Pickler implementations generally sub-class `PicklerBase`
 as this provides an implicit means of referencing the pickler methods in `PicklerCore`,
-such as `string\_p()` and `integer\_p()`,
+such as `string_p()` and `integer_p()`,
 and allows picklers to be expressed more concisely.
 
 ### PicklerCore
@@ -256,7 +256,7 @@ but it did lead me to the [Pickling Combinators paper](http://research.microsoft
 which, although aimed at functional languages, had some interesting ideas which at first glance might translate to Java.
 One weekend of coding later I had a working basic implementation.
 
-# To-Do List
+## To-Do List
 
 1. Unit tests:
     1. More comprehensive tests.
