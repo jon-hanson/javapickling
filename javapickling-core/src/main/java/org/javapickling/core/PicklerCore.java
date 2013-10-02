@@ -6,7 +6,13 @@ import java.util.Set;
 
 /**
  * PicklerCore models the core set of picklers an implementation must provide.
- * @param <PF> The pickle format.
+ * <p>
+ * An implementation of PicklerCore will specify the pickled format PF,
+ * and will provide picklers for the base types and for objects.
+ * <p>
+ * The pickler methods comprising this interface provide a set of combinators
+ * for building more complex picklers.
+ * @param <PF> the pickle format.
  */
 public interface PicklerCore<PF> {
 
@@ -246,5 +252,4 @@ public interface PicklerCore<PF> {
      * @return a pickler
      */
     <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler);
-
 }

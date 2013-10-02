@@ -8,6 +8,8 @@ The approach and design were inspired by the [Pickling Combinators paper](http:/
 
 The pickling is driven by the static types of values,
 however it will also handle objects where the static type is unknown.
+Unlike typical serialisation frameworks this framework attempts to generate "optimal" pickled data,
+by avoiding encoding type information when the static type is known.
 At present it does not provide automatic of pickling of custom classes,
 ergo pickling of those types must be implemented by the user.
 The custom picklers only need be defined once - the same pickler will be used regardless of the pickled format.
@@ -253,3 +255,11 @@ Also the paper and the website documentation was light on implementation details
 but it did lead me to the [Pickling Combinators paper](http://research.microsoft.com/en-us/um/people/akenn/fun/picklercombinators.pdf),
 which, although aimed at functional languages, had some interesting ideas which at first glance might translate to Java.
 One weekend of coding later I had a working basic implementation.
+
+# To-Do List
+
+1. Unit tests:
+    1. More comprehensive tests.
+    1. Individual unit tests for picklers.
+1. Reflection based generation of pciklers for classes.
+1. More Javadocs and general documentation.

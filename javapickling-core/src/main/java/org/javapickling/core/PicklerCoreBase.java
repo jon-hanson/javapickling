@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  * Base class for PicklerCore implementations.
- * @param <PF>
+ * @param <PF> the pickle format.
  */
 public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
@@ -379,12 +379,12 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     @Override
     public Pickler<Object, PF> d_object_p() {
         // Create this object on the fly to avoid construction-order dependency issues.
-        return new DynamicObjectPickler<PF, Object>(this);
+        return new DynamicObjectPickler<Object, PF>(this);
     }
 
     @Override
     public <T, S extends T> Pickler<S, PF> d_object_p(Class<T> clazz) {
-        return new DynamicObjectPickler<PF, S>(this);
+        return new DynamicObjectPickler<S, PF>(this);
     }
 
     @Override

@@ -14,6 +14,8 @@
     <artifactId>javapickling-core</artifactId>
     <version>0.0.4-SNAPSHOT</version>
 
+    <name>javapickling-core</name>
+
     <build>
         <plugins>
             <plugin>

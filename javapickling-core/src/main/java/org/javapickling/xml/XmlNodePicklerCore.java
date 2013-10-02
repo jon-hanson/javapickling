@@ -57,8 +57,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         }
     }
 
-    protected static Element getChildElement(Node parent, String name)
-    {
+    protected static Element getChildElement(Node parent, String name) {
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
             if (child instanceof Element && name.equals(child.getNodeName()))
                 return (Element)child;

@@ -2,8 +2,8 @@ package org.javapickling.core;
 
 /**
  * A field name and pickler wrapper.
- * @param <T> The field type
- * @param <PF> Pickler format
+ * @param <T> the type of object to be pickled.
+ * @param <PF> the pickle format.
  */
 public class Field<T, PF> {
 

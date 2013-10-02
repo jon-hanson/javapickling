@@ -2,7 +2,7 @@ package org.javapickling.core;
 
 /**
  * An intermediate interface though which objects composed of fields can be unpickled.
- * @param <PF>
+ * @param <PF> the pickle format.
  */
 public interface FieldUnpickler<PF> {
 

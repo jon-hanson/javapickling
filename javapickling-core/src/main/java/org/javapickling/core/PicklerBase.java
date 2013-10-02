@@ -5,8 +5,8 @@ import java.util.*;
 /**
  * Base class for Pickler implementations.
  * Also acts as a proxy for core by implementing the PicklerCore interface.
- * @param <T>
- * @param <PF>
+ * @param <T> the type of object to be pickled.
+ * @param <PF> the pickle format.
  */
 public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<PF> {
 

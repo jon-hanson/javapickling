@@ -1,5 +1,7 @@
 package org.javapickling.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,12 +19,22 @@ import java.util.*;
  */
 public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final JsonFactory factory = mapper.getFactory();
+
     public static JsonNodePicklerCore create() {
         final JsonNodePicklerCore core = new JsonNodePicklerCore();
         core.initialise();
         return core;
     }
 
+    /**
+     * Utility function to simplify converting a JsonNode into a String.
+     * @param node
+     * @param pretty
+     * @return
+     * @throws JsonProcessingException
+     */
     public static String nodeToString(JsonNode node, boolean pretty) throws JsonProcessingException {
         final ObjectMapper om = new ObjectMapper();
         final ObjectWriter writer =
@@ -31,6 +43,17 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
                     om.writer();
 
         return writer.writeValueAsString(node);
+    }
+
+    /**
+     * Utility function to simplify converting a String into a JsonNode.
+     * @param json
+     * @return
+     * @throws Exception
+     */
+    public static JsonNode stringToNode(String json) throws Exception {
+        final JsonParser parser = factory.createParser(json);
+        return mapper.readTree(parser);
     }
 
     protected final Pickler<Object, JsonNode> nullP = new Pickler<Object, JsonNode>() {

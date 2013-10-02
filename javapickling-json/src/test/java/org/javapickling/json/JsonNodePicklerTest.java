@@ -32,9 +32,11 @@ public class JsonNodePicklerTest {
         final JsonNode node = pickler.pickle(complex, null);
         final long endTime1 = System.nanoTime();
 
+        final String jsonPretty = JsonNodePicklerCore.nodeToString(node, true);
         System.out.println("JSON=");
-        System.out.println(node);
-        final int size = node.toString().getBytes().length;
+        System.out.println(jsonPretty);
+        final String json = JsonNodePicklerCore.nodeToString(node, false);
+        final int size = json.length();
 
         final long startTime2 = System.nanoTime();
         final ComplexClass complex2 = pickler.unpickle(node);
