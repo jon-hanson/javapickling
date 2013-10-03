@@ -124,14 +124,14 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
         @Override
         public PF pickle(ComplexClass.Generic<T> generic, PF target) throws Exception {
-            final FieldPickler<PF> mp = core.object_map().pickler(target);
+            final FieldPickler<PF> mp = object_map().pickler(target);
             mp.field(valueF, generic.value);
             return mp.pickle(target);
         }
 
         @Override
         public ComplexClass.Generic<T> unpickle(PF source) throws Exception {
-            final FieldUnpickler<PF> mu = core.object_map().unpickler(source);
+            final FieldUnpickler<PF> mu = object_map().unpickler(source);
             return new ComplexClass.Generic<T>(mu.field(valueF));
         }
     }
