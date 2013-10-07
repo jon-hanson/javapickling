@@ -53,60 +53,60 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
     @Override
     public PF pickle(ComplexClass sc, PF target) throws Exception {
-        final FieldPickler<PF> mp = object_map().pickler(target);
-        mp.field(booleanF,      sc.booleanF);
-        mp.field(byteF,         sc.byteF);
-        mp.field(charF,         sc.charF);
-        mp.field(shortF,        sc.shortF);
-        mp.field(longF,         sc.longF);
-        mp.field(intF,          sc.intF);
-        mp.field(floatF,        sc.floatF);
-        mp.field(doubleF,       sc.doubleF);
-        mp.field(enumF,         sc.enumF);
-        mp.field(stringF,       sc.stringF);
-        mp.field(strDblMapF,    sc.strDblMapF);
-        mp.field(intEnumMapF,   sc.intEnumMapF);
-        mp.field(objObjMapF,    sc.objObjMapF);
-        mp.field(strSetF,       sc.strSetF);
-        mp.field(objSetF,       sc.objSetF);
-        mp.field(strListF,      sc.strListF);
-        mp.field(objListF,      sc.objListF);
-        mp.field(genericF,      sc.genericF);
-        mp.field(generic2F,     sc.generic2F);
-        mp.field(strArrF,       sc.strArrF);
-        mp.field(dblArrF,       sc.dblArrF);
-        mp.field(idWrapArrF,    sc.idWrapArrF);
-        mp.field(intfArrF,      sc.intfArrF);
-        return mp.pickle(target);
+        final FieldPickler<PF> fp = object_map().pickler(target);
+        fp.field(booleanF,      sc.booleanF);
+        fp.field(byteF,         sc.byteF);
+        fp.field(charF,         sc.charF);
+        fp.field(shortF,        sc.shortF);
+        fp.field(longF,         sc.longF);
+        fp.field(intF,          sc.intF);
+        fp.field(floatF,        sc.floatF);
+        fp.field(doubleF,       sc.doubleF);
+        fp.field(enumF,         sc.enumF);
+        fp.field(stringF,       sc.stringF);
+        fp.field(strDblMapF,    sc.strDblMapF);
+        fp.field(intEnumMapF,   sc.intEnumMapF);
+        fp.field(objObjMapF,    sc.objObjMapF);
+        fp.field(strSetF,       sc.strSetF);
+        fp.field(objSetF,       sc.objSetF);
+        fp.field(strListF,      sc.strListF);
+        fp.field(objListF,      sc.objListF);
+        fp.field(genericF,      sc.genericF);
+        fp.field(generic2F,     sc.generic2F);
+        fp.field(strArrF,       sc.strArrF);
+        fp.field(dblArrF,       sc.dblArrF);
+        fp.field(idWrapArrF,    sc.idWrapArrF);
+        fp.field(intfArrF,      sc.intfArrF);
+        return fp.pickle(target);
     }
 
     @Override
     public ComplexClass unpickle(PF source) throws Exception {
-        final FieldUnpickler<PF> mu = object_map().unpickler(source);
+        final FieldUnpickler<PF> fu = object_map().unpickler(source);
         return new ComplexClass(
-                mu.field(booleanF),
-                mu.field(byteF),
-                mu.field(charF),
-                mu.field(shortF),
-                mu.field(longF),
-                mu.field(intF),
-                mu.field(floatF),
-                mu.field(doubleF),
-                mu.field(enumF),
-                mu.field(stringF),
-                mu.field(strDblMapF),
-                mu.field(intEnumMapF),
-                mu.field(objObjMapF),
-                mu.field(strSetF),
-                mu.field(objSetF),
-                mu.field(strListF),
-                mu.field(objListF),
-                mu.field(genericF),
-                mu.field(generic2F),
-                mu.field(strArrF),
-                mu.field(dblArrF),
-                mu.field(idWrapArrF),
-                mu.field(intfArrF));
+                fu.field(booleanF),
+                fu.field(byteF),
+                fu.field(charF),
+                fu.field(shortF),
+                fu.field(longF),
+                fu.field(intF),
+                fu.field(floatF),
+                fu.field(doubleF),
+                fu.field(enumF),
+                fu.field(stringF),
+                fu.field(strDblMapF),
+                fu.field(intEnumMapF),
+                fu.field(objObjMapF),
+                fu.field(strSetF),
+                fu.field(objSetF),
+                fu.field(strListF),
+                fu.field(objListF),
+                fu.field(genericF),
+                fu.field(generic2F),
+                fu.field(strArrF),
+                fu.field(dblArrF),
+                fu.field(idWrapArrF),
+                fu.field(intfArrF));
     }
 
     public static class IdWrapperPickler<PF> extends PicklerBase<IdWrapper, PF> {
@@ -137,15 +137,15 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
 
         @Override
         public PF pickle(Generic<T> generic, PF target) throws Exception {
-            final FieldPickler<PF> mp = object_map().pickler(target);
-            mp.field(valueF, generic.value);
-            return mp.pickle(target);
+            final FieldPickler<PF> fp = object_map().pickler(target);
+            fp.field(valueF, generic.value);
+            return fp.pickle(target);
         }
 
         @Override
         public Generic<T> unpickle(PF source) throws Exception {
-            final FieldUnpickler<PF> mu = object_map().unpickler(source);
-            return new Generic<T>(mu.field(valueF));
+            final FieldUnpickler<PF> fu = object_map().unpickler(source);
+            return new Generic<T>(fu.field(valueF));
         }
     }
 }

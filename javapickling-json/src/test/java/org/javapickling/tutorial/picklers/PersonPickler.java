@@ -17,20 +17,20 @@ public class PersonPickler<PF> extends PicklerBase<Person, PF> {
 
     @Override
     public PF pickle(Person person, PF target) throws Exception {
-        final FieldPickler<PF> mp = object_map().pickler(target);
-        mp.field(name,          person.name);
-        mp.field(isFemale,      person.isFemale);
-        mp.field(dateOfBirth,   person.dateOfBirth);
-        return mp.pickle(target);
+        final FieldPickler<PF> fp = object_map().pickler(target);
+        fp.field(name,          person.name);
+        fp.field(isFemale,      person.isFemale);
+        fp.field(dateOfBirth,   person.dateOfBirth);
+        return fp.pickle(target);
     }
 
     @Override
     public Person unpickle(PF source) throws Exception {
-        final FieldUnpickler<PF> mu = object_map().unpickler(source);
+        final FieldUnpickler<PF> fu = object_map().unpickler(source);
         return new Person(
-                mu.field(name),
-                mu.field(isFemale),
-                mu.field(dateOfBirth)
+                fu.field(name),
+                fu.field(isFemale),
+                fu.field(dateOfBirth)
             );
     }
 }

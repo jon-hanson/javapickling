@@ -94,17 +94,17 @@ E.g.
         public MyType(String s) {...}
         @Override public String toString() {...}
     }
-    
+
     public class MyTypePickler<PF> extends PicklerBase<MyType, PF> {
         public MyTypePickler(PicklerCore<PF> core) {
             super(core);
         }
-    
+
         @Override
         public PF pickle(MyType myType, PF target) throws IOException {
             return string_p().pickle(myType.toString(), target);
         }
-    
+
         @Override
         public MyType unpickle(PF source) throws IOException {
             return new MyType(string_p().unpickle(source));
@@ -136,18 +136,18 @@ as being composed of picklers for each field comprising the class. E.g.:
 
         @Override
         public PF pickle(MyType myType, PF target) throws IOException {
-            final FieldPickler<PF> mp = object_map().pickler(target);
-            mp.field(id, myType.id);
-            mp.field(name, myType.name);
-            return mp.pickle(target);
+            final FieldPickler<PF> fp = object_map().pickler(target);
+            fp.field(id, myType.id);
+            fp.field(name, myType.name);
+            return fp.pickle(target);
         }
 
         @Override
         public MyType unpickle(PF source) throws IOException {
-            final FieldUnpickler<PF> mu = object_map().unpickler(source);
+            final FieldUnpickler<PF> fu = object_map().unpickler(source);
             return new MyType(
-                mu.field(id),
-                mu.field(name));
+                fu.field(id),
+                fu.field(name));
         }
     }
 
@@ -170,7 +170,7 @@ The classes are as follows:
             this.isFemale = isFemale;
             this.dateOfBirth = dateOfBirth;
         }
-        
+
         // ...
     }
 
@@ -208,11 +208,11 @@ It does this by requesting a `FieldPickler` and then passing it each of the fiel
 
         @Override
         public PF pickle(Person person, PF target) throws Exception {
-            final FieldPickler<PF> mp = object_map().pickler(target);
-            mp.field(name,          person.name);
-            mp.field(isFemale,      person.isFemale);
-            mp.field(dateOfBirth,   person.dateOfBirth);
-            return mp.pickle(target);
+            final FieldPickler<PF> fp = object_map().pickler(target);
+            fp.field(name,          person.name);
+            fp.field(isFemale,      person.isFemale);
+            fp.field(dateOfBirth,   person.dateOfBirth);
+            return fp.pickle(target);
         }
 
 The `unpickle` method is responsible for unpickling a `Person` object from the pickled format.
@@ -220,11 +220,11 @@ It does this by requesting a `FieldUnpickler` and extracting each field before p
 
         @Override
         public Person unpickle(PF source) throws Exception {
-            final FieldUnpickler<PF> mu = object_map().unpickler(source);
+            final FieldUnpickler<PF> fu = object_map().unpickler(source);
             return new Person(
-                    mu.field(name),
-                    mu.field(isFemale),
-                    mu.field(dateOfBirth)
+                    fu.field(name),
+                    fu.field(isFemale),
+                    fu.field(dateOfBirth)
                 );
         }
     }

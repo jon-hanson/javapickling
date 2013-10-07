@@ -30,18 +30,18 @@ public class TeamPickler<PF> extends PicklerBase<Team, PF> {
 
     @Override
     public PF pickle(Team team, PF target) throws Exception {
-        final FieldPickler<PF> mp = object_map().pickler(target);
-        mp.field(leader,    team.leader);
-        mp.field(members,   team.members);
-        return mp.pickle(target);
+        final FieldPickler<PF> fp = object_map().pickler(target);
+        fp.field(leader,    team.leader);
+        fp.field(members,   team.members);
+        return fp.pickle(target);
     }
 
     @Override
     public Team unpickle(PF source) throws Exception {
-        final FieldUnpickler<PF> mu = object_map().unpickler(source);
+        final FieldUnpickler<PF> fu = object_map().unpickler(source);
         return new Team(
-                mu.field(leader),
-                mu.field(members)
+                fu.field(leader),
+                fu.field(members)
             );
     }
 }
