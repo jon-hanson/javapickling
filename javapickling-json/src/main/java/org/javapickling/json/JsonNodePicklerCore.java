@@ -186,6 +186,298 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
         }
     };
 
+    protected final Pickler<boolean[], JsonNode> booleanArrayP = new Pickler<boolean[], JsonNode>() {
+
+        final Pickler<Boolean, JsonNode> elemPickler = boolean_p();
+
+        @Override
+        public JsonNode pickle(boolean[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (boolean elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public boolean[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final boolean[] result = new boolean[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
+
+    protected final Pickler<byte[], JsonNode> byteArrayP = new Pickler<byte[], JsonNode>() {
+
+            final Pickler<Byte, JsonNode> elemPickler = byte_p();
+
+            @Override
+            public JsonNode pickle(byte[] arr, JsonNode target) throws Exception {
+
+                final ArrayNode result = nodeFactory.arrayNode();
+
+                for (byte elem : arr) {
+                    result.add(elemPickler.pickle(elem, result));
+                }
+
+                return result;
+            }
+
+            @Override
+            public byte[] unpickle(JsonNode source) throws Exception {
+
+                if (!source.isArray())
+                    throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+                final ArrayNode contNode = (ArrayNode)source;
+
+                final byte[] result = new byte[contNode.size()];
+
+                int i = 0;
+                for (JsonNode elem : contNode) {
+                    result[i] = elemPickler.unpickle(elem);
+                    ++i;
+                }
+
+                return result;
+            }
+        };
+
+
+    protected final  Pickler<char[], JsonNode> charArrayP = new Pickler<char[], JsonNode>() {
+
+        final Pickler<Character, JsonNode> elemPickler = char_p();
+
+        @Override
+        public JsonNode pickle(char[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (char elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public char[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final char[] result = new char[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
+
+    protected final  Pickler<int[], JsonNode> integerArrayP = new Pickler<int[], JsonNode>() {
+
+        final Pickler<Integer, JsonNode> elemPickler = integer_p();
+
+        @Override
+        public JsonNode pickle(int[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (int elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public int[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final int[] result = new int[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
+
+    protected final  Pickler<short[], JsonNode> shortArrayP = new Pickler<short[], JsonNode>() {
+
+        final Pickler<Short, JsonNode> elemPickler = short_p();
+
+        @Override
+        public JsonNode pickle(short[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (short elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public short[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final short[] result = new short[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
+    protected final  Pickler<long[], JsonNode> longArrayP = new Pickler<long[], JsonNode>() {
+
+        final Pickler<Long, JsonNode> elemPickler = long_p();
+
+        @Override
+        public JsonNode pickle(long[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (long elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public long[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final long[] result = new long[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
+    protected final  Pickler<float[], JsonNode> floatArrayP = new Pickler<float[], JsonNode>() {
+
+        final Pickler<Float, JsonNode> elemPickler = float_p();
+
+        @Override
+        public JsonNode pickle(float[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (float elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public float[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final float[] result = new float[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
+    public Pickler<double[], JsonNode> doubleArrayP = new Pickler<double[], JsonNode>() {
+
+        final Pickler<Double, JsonNode> elemPickler = double_p();
+
+        @Override
+        public JsonNode pickle(double[] arr, JsonNode target) throws Exception {
+
+            final ArrayNode result = nodeFactory.arrayNode();
+
+            for (double elem : arr) {
+                result.add(elemPickler.pickle(elem, result));
+            }
+
+            return result;
+        }
+
+        @Override
+        public double[] unpickle(JsonNode source) throws Exception {
+
+            if (!source.isArray())
+                throw new PicklerException("Can not unpickle a " + source.getNodeType() + " into an array");
+
+            final ArrayNode contNode = (ArrayNode)source;
+
+            final double[] result = new double[contNode.size()];
+
+            int i = 0;
+            for (JsonNode elem : contNode) {
+                result[i] = elemPickler.unpickle(elem);
+                ++i;
+            }
+
+            return result;
+        }
+    };
+
     protected final ObjectPickler<JsonNode> objectMapP = new ObjectPickler<JsonNode>() {
 
         @Override
@@ -278,6 +570,46 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
     @Override
     public Pickler<Double, JsonNode> double_p() {
         return doubleP;
+    }
+
+    @Override
+    public Pickler<boolean[], JsonNode> boolean_array_p() {
+        return booleanArrayP;
+    }
+
+    @Override
+    public Pickler<byte[], JsonNode> byte_array_p() {
+        return byteArrayP;
+    }
+
+    @Override
+    public Pickler<char[], JsonNode> char_array_p() {
+        return charArrayP;
+    }
+
+    @Override
+    public Pickler<int[], JsonNode> integer_array_p() {
+        return integerArrayP;
+    }
+
+    @Override
+    public Pickler<short[], JsonNode> short_array_p() {
+        return shortArrayP;
+    }
+
+    @Override
+    public Pickler<long[], JsonNode> long_array_p() {
+        return longArrayP;
+    }
+
+    @Override
+    public Pickler<float[], JsonNode> float_array_p() {
+        return floatArrayP;
+    }
+
+    @Override
+    public Pickler<double[], JsonNode> double_array_p() {
+        return doubleArrayP;
     }
 
     @Override

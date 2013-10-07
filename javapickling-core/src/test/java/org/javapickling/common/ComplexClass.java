@@ -9,53 +9,10 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * A (slightly pathologically) complex class for illustration purposes.
+ * A (pathologically) complex class for illustration purposes.
  */
 @DefaultPickler(ComplexClassPickler.class)
 public class ComplexClass implements Serializable {
-
-    enum Colour {
-        RED, GREEN, BLUE
-    }
-
-    interface Interface {
-        boolean equals(Object rhs);
-    }
-
-    @DefaultPickler(ComplexClassPickler.IdWrapperPickler.class)
-    public static class IdWrapper implements Interface, Serializable {
-        public final String id;
-
-        IdWrapper(String id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            final IdWrapper rhs = (IdWrapper)obj;
-            return id.equals(rhs.id);
-        }
-    }
-
-    @DefaultPickler(ComplexClassPickler.GenericPickler.class)
-    public static class Generic<T extends Interface> implements Serializable {
-
-        public final T value;
-
-        public Generic(T value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            final Generic<T> rhs = (Generic<T>)obj;
-            return value.equals(rhs.value);
-        }
-    }
 
     public static ComplexClass createInstance(boolean first) {
         if (first) {
@@ -63,7 +20,7 @@ public class ComplexClass implements Serializable {
             final byte byteF = 12;
             final char charF = 'A';
             final short shortF = 1234;
-            final long longF = 23456789;
+            final long longF = 234567890;
             final int intF = 456789;
             final float floatF = 123.456f;
             final double doubleF = Math.PI;
@@ -99,6 +56,11 @@ public class ComplexClass implements Serializable {
             final Generic<IdWrapper> genericF = new Generic<IdWrapper>(new IdWrapper("Dan"));
             final Generic<Interface> generic2F = new Generic<Interface>(new IdWrapper("John"));
 
+            final String[] strArrF = {"Plato", "Socrates", "Aristotle"};
+            final double[][] dblArrF = {{-1.1, -1.0, -0.1, 0.0, 0.1, 1.0, 1.1}, {-9.9, -9.0, -0.9, 0.0, 0.9, 9.0, 9.9}};
+            final IdWrapper[] idWrapArrF = {new IdWrapper("Constantine")};
+            final Interface[] intfArrF = {new IdWrapper("Augustus")};
+
             return new ComplexClass(
                     booleanF,
                     byteF,
@@ -118,8 +80,11 @@ public class ComplexClass implements Serializable {
                     strListF,
                     objListF,
                     genericF,
-                    generic2F
-            );
+                    generic2F,
+                    strArrF,
+                    dblArrF,
+                    idWrapArrF,
+                    intfArrF);
         } else {
             final boolean booleanF = true;
             final byte byteF = 56;
@@ -142,6 +107,11 @@ public class ComplexClass implements Serializable {
             final Generic<IdWrapper> genericF = new Generic<IdWrapper>(new IdWrapper("Ackroyd"));
             final Generic<Interface> generic2F = new Generic<Interface>(new IdWrapper("Belushi"));
 
+            final String[] strArrF = {};
+            final double[][] dblArrF = {};
+            final IdWrapper[] idWrapArrF = {};
+            final Interface[] intfArrF = {};
+
             return new ComplexClass(
                     booleanF,
                     byteF,
@@ -161,8 +131,11 @@ public class ComplexClass implements Serializable {
                     strListF,
                     objListF,
                     genericF,
-                    generic2F
-            );
+                    generic2F,
+                    strArrF,
+                    dblArrF,
+                    idWrapArrF,
+                    intfArrF);
         }
     }
 
@@ -190,6 +163,11 @@ public class ComplexClass implements Serializable {
     public final Generic<IdWrapper> genericF;
     public final Generic<Interface> generic2F;
 
+    public final String[] strArrF;
+    public final double[][] dblArrF;
+    public final IdWrapper[] idWrapArrF;
+    public final Interface[] intfArrF;
+
     public ComplexClass(
             boolean booleanF,
             byte byteF,
@@ -209,7 +187,11 @@ public class ComplexClass implements Serializable {
             List<String> strListF,
             List<Object> objListF,
             Generic<IdWrapper> genericF,
-            Generic<Interface> generic2F) {
+            Generic<Interface> generic2F,
+            String[] strArrF,
+            double[][] dblArrF,
+            IdWrapper[] idWrapArrF,
+            Interface[] intfArrF) {
         this.booleanF = booleanF;
         this.byteF = byteF;
         this.charF = charF;
@@ -229,9 +211,12 @@ public class ComplexClass implements Serializable {
         this.objListF = objListF;
         this.genericF = genericF;
         this.generic2F = generic2F;
+        this.strArrF = strArrF;
+        this.dblArrF = dblArrF;
+        this.idWrapArrF = idWrapArrF;
+        this.intfArrF = intfArrF;
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -257,7 +242,40 @@ public class ComplexClass implements Serializable {
         if (stringF != null ? !stringF.equals(that.stringF) : that.stringF != null) return false;
         if (genericF != null ? !genericF.equals(that.genericF) : that.genericF != null) return false;
         if (generic2F != null ? !generic2F.equals(that.generic2F) : that.generic2F != null) return false;
+        if (strArrF != null ? !Arrays.deepEquals(strArrF, that.strArrF) : that.strArrF != null) return false;
+        if (dblArrF != null ? !Arrays.deepEquals(dblArrF, that.dblArrF) : that.dblArrF != null) return false;
+        if (idWrapArrF != null ? !Arrays.deepEquals(idWrapArrF, that.idWrapArrF) : that.idWrapArrF != null) return false;
+        if (intfArrF != null ? !Arrays.deepEquals(intfArrF, that.intfArrF) : that.intfArrF != null) return false;
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ComplexClass{" +
+                "\n booleanF=" + booleanF +
+                ",\n byteF=" + byteF +
+                ",\n charF=" + charF +
+                ",\n shortF=" + shortF +
+                ",\n longF=" + longF +
+                ",\n intF=" + intF +
+                ",\n floatF=" + floatF +
+                ",\n doubleF=" + doubleF +
+                ",\n enumF=" + enumF +
+                ",\n stringF='" + stringF + '\'' +
+                ",\n strDblMapF=" + strDblMapF +
+                ",\n intEnumMapF=" + intEnumMapF +
+                ",\n objObjMapF=" + objObjMapF +
+                ",\n strSetF=" + strSetF +
+                ",\n objSetF=" + objSetF +
+                ",\n strListF=" + strListF +
+                ",\n objListF=" + objListF +
+                ",\n genericF=" + genericF +
+                ",\n generic2F=" + generic2F +
+                ",\n strArrF=" + Arrays.toString(strArrF) +
+                ",\n dblArrF=" + Arrays.deepToString(dblArrF) +
+                ",\n idWrapArrF=" + Arrays.toString(idWrapArrF) +
+                ",\n intfArrF=" + Arrays.toString(intfArrF) +
+                '}';
     }
 }

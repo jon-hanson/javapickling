@@ -192,7 +192,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         for (final Constructor<?> ctor : ctors) {
             final int ctorPicklerCount = ctor.getParameterTypes().length - 1;
 
-                // Register a generic pickler constructor.
+            // Register a generic pickler constructor.
             genPicklerCtors.add(new GenericPicklerCtor<T, PF>() {
                 @Override public int picklerCount() {
                     return ctorPicklerCount;
@@ -210,8 +210,8 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
             });
 
             // Register a generic pickler which pickles its arguments dynamically.
-            final Object[] args = new Object[picklerCount];
-            for (int i = 0; i < picklerCount; ++i) {
+            final Object[] args = new Object[ctorPicklerCount];
+            for (int i = 0; i < ctorPicklerCount; ++i) {
                 args[i] = d_object_p();
             }
 

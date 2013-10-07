@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * FieldReflector encapsulates methods to infer the Pickler for a Field (java.lang.reflect.Field),
  * using Reflection.
- * @param <PF>
+ * @param <PF> the pickle format.
  */
 public class FieldReflector<PF> {
 
@@ -67,7 +67,7 @@ public class FieldReflector<PF> {
 
         final Type rawType = type.getRawType();
 
-        // Handle the base interface types?
+        // Is the type one of the recognised interface types?
         if (rawType instanceof Class) {
             final Class clazz = (Class)rawType;
             final MetaType.TypeKind typeKind = MetaType.typeKindOf(clazz);
@@ -144,7 +144,29 @@ public class FieldReflector<PF> {
             }
             case ARRAY: {
                 final Class<?> compClass = clazz.getComponentType();
-                return this.array_p(inferPickler((compClass)), compClass);
+                if (compClass.isPrimitive()) {
+                    if (compClass.equals(boolean.class)) {
+                        return (Pickler<T, PF>)core.boolean_array_p();
+                    } else if (compClass.equals(byte.class)) {
+                        return (Pickler<T, PF>)core.byte_array_p();
+                    } else if (compClass.equals(char.class)) {
+                        return (Pickler<T, PF>)core.char_array_p();
+                    } else if (compClass.equals(double.class)) {
+                        return (Pickler<T, PF>)core.double_array_p();
+                    } else if (compClass.equals(float.class)) {
+                        return (Pickler<T, PF>)core.float_array_p();
+                    } else if (compClass.equals(int.class)) {
+                        return (Pickler<T, PF>)core.integer_array_p();
+                    } else if (compClass.equals(long.class)) {
+                        return (Pickler<T, PF>)core.long_array_p();
+                    } else if (compClass.equals(short.class)) {
+                        return (Pickler<T, PF>)core.short_array_p();
+                    } else {
+                        throw new PicklerException("Unxpected class for primitive type " + compClass);
+                    }
+                } else {
+                    return this.array_p(inferPickler((compClass)), compClass);
+                }
             }
         }
 

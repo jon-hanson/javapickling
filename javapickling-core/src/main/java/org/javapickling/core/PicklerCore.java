@@ -67,6 +67,46 @@ public interface PicklerCore<PF> {
     Pickler<Double, PF> double_p();
 
     /**
+     * @return a Pickler for Boolean.
+     */
+    Pickler<boolean[], PF> boolean_array_p();
+
+    /**
+     * @return a Pickler for Byte.
+     */
+    Pickler<byte[], PF> byte_array_p();
+
+    /**
+     * @return a Pickler for Character.
+     */
+    Pickler<char[], PF> char_array_p();
+
+    /**
+     * @return a Pickler for Integer.
+     */
+    Pickler<int[], PF> integer_array_p();
+
+    /**
+     * @return a Pickler for Short.
+     */
+    Pickler<short[], PF> short_array_p();
+
+    /**
+     * @return a Pickler for Long.
+     */
+    Pickler<long[], PF> long_array_p();
+
+    /**
+     * @return a Pickler for Float.
+     */
+    Pickler<float[], PF> float_array_p();
+
+    /**
+     * @return a Pickler for Double.
+     */
+    Pickler<double[], PF> double_array_p();
+
+    /**
      * @param <T>
      * @return a Pickler for an enum.
      */

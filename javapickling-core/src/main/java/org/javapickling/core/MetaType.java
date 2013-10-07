@@ -14,6 +14,50 @@ public class MetaType {
 
     private static final String ARRAY_SUFFIX = "[]";
 
+    public static <PT> Class<?> primToObjClass(Class<PT> clazz) {
+        if (clazz.equals(boolean.class)) {
+            return Boolean.class;
+        } else if (clazz.equals(byte.class)) {
+            return Byte.class;
+        } else if (clazz.equals(char.class)) {
+            return Character.class;
+        } else if (clazz.equals(double.class)) {
+            return Double.class;
+        } else if (clazz.equals(float.class)) {
+            return Float.class;
+        } else if (clazz.equals(int.class)) {
+            return Integer.class;
+        } else if (clazz.equals(long.class)) {
+            return Long.class;
+        } else if (clazz.equals(short.class)) {
+            return Short.class;
+        } else {
+            return null;
+        }
+    }
+
+    public static <OT> Class<?> objToPrimClass(Class<OT> clazz) {
+        if (clazz.equals(Boolean.class)) {
+            return boolean.class;
+        } else if (clazz.equals(Byte.class)) {
+            return byte.class;
+        } else if (clazz.equals(Character.class)) {
+            return char.class;
+        } else if (clazz.equals(Double.class)) {
+            return double.class;
+        } else if (clazz.equals(Float.class)) {
+            return float.class;
+        } else if (clazz.equals(Integer.class)) {
+            return int.class;
+        } else if (clazz.equals(Long.class)) {
+            return long.class;
+        } else if (clazz.equals(Short.class)) {
+            return short.class;
+        } else {
+            return null;
+        }
+    }
+
     /**
      * An enum for what we consider to be the base types.
      */
@@ -88,6 +132,10 @@ public class MetaType {
 
     private static void register(TypeKind typeKind) {
         classTypeMap.put(typeKind.clazz.getName(), typeKind);
+        final Class<?> primClass = objToPrimClass(typeKind.clazz);
+        if (primClass != null) {
+            classTypeMap.put(primClass.getName(), typeKind);
+        }
     }
 
     /**
@@ -213,6 +261,7 @@ public class MetaType {
 
         // Wrap the pickler for each enclosing array.
         Class<?> arrClazz = clazz == null ? typeKind.clazz : clazz;
+
         for (int i = 0; i < arrayDepth; ++i) {
             pickler = core.array_p((Pickler<Object, PF>)pickler, (Class<Object>)arrClazz);
             arrClazz = Array.newInstance(arrClazz, 0).getClass();

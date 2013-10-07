@@ -241,6 +241,254 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         }
     };
 
+    protected final Pickler<boolean[], Node> booleanArrayP = new Pickler<boolean[], Node>() {
+
+        final Pickler<Boolean, Node> elemPickler = boolean_p();
+
+        @Override
+        public Node pickle(boolean[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public boolean[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final boolean[] result = new boolean[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<byte[], Node> byteArrayP = new Pickler<byte[], Node>() {
+
+        final Pickler<Byte, Node> elemPickler = byte_p();
+
+        @Override
+        public Node pickle(byte[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public byte[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final byte[] result = new byte[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<char[], Node> charArrayP = new Pickler<char[], Node>() {
+
+        final Pickler<Character, Node> elemPickler = char_p();
+
+        @Override
+        public Node pickle(char[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public char[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final char[] result = new char[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<int[], Node> intArrayP = new Pickler<int[], Node>() {
+
+        final Pickler<Integer, Node> elemPickler = integer_p();
+
+        @Override
+        public Node pickle(int[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public int[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final int[] result = new int[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<short[], Node> shortArrayP = new Pickler<short[], Node>() {
+
+        final Pickler<Short, Node> elemPickler = short_p();
+
+        @Override
+        public Node pickle(short[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public short[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final short[] result = new short[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<long[], Node> longArrayP = new Pickler<long[], Node>() {
+
+        final Pickler<Long, Node> elemPickler = long_p();
+
+        @Override
+        public Node pickle(long[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public long[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final long[] result = new long[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<float[], Node> floatArrayP = new Pickler<float[], Node>() {
+
+        final Pickler<Float, Node> elemPickler = float_p();
+
+        @Override
+        public Node pickle(float[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public float[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final float[] result = new float[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<double[], Node> doubleArrayP = new Pickler<double[], Node>() {
+
+        final Pickler<Double, Node> elemPickler =double_p();
+
+        @Override
+        public Node pickle(double[] arr, Node target) throws Exception {
+
+            for (int i = 0; i < arr.length; ++i) {
+                final Node node = doc.createElement("_" + Integer.toString(i));
+                elemPickler.pickle(arr[i], node);
+                target.appendChild(node);
+            }
+
+            return target;
+        }
+
+        @Override
+        public double[] unpickle(Node source) throws Exception {
+
+            final NodeList nodes = source.getChildNodes();
+            final int l = nodes.getLength();
+            final double[] result = new double[l];
+
+            for (int i = 0; i < l; ++i) {
+                result[i] = elemPickler.unpickle(nodes.item(i));
+            }
+
+            return result;
+        }
+    };
+
     protected final ObjectPickler<Node> objectMapP = new ObjectPickler<Node>() {
 
         @Override
@@ -257,7 +505,6 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
                         target.appendChild(node);
                     }
                 }
-
 
                 @Override
                 public Node pickle(Node source) {
@@ -331,6 +578,76 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
     @Override
     public Pickler<Double, Node> double_p() {
         return doubleP;
+    }
+
+    @Override
+    public Pickler<boolean[], Node> boolean_array_p() {
+
+        final Pickler<Boolean, Node> elemPickler = boolean_p();
+
+        return new Pickler<boolean[], Node>() {
+
+            @Override
+            public Node pickle(boolean[] arr, Node target) throws Exception {
+
+                for (int i = 0; i < arr.length; ++i) {
+                    final Node node = doc.createElement("_" + Integer.toString(i));
+                    elemPickler.pickle(arr[i], node);
+                    target.appendChild(node);
+                }
+
+                return target;
+            }
+
+            @Override
+            public boolean[] unpickle(Node source) throws Exception {
+
+                final NodeList nodes = source.getChildNodes();
+                final int l = nodes.getLength();
+                final boolean[] result = new boolean[l];
+
+                for (int i = 0; i < l; ++i) {
+                    result[i] = elemPickler.unpickle(nodes.item(i));
+                }
+
+                return result;
+            }
+        };
+    }
+
+    @Override
+    public Pickler<byte[], Node> byte_array_p() {
+        return byteArrayP;
+    }
+
+    @Override
+    public Pickler<char[], Node> char_array_p() {
+        return charArrayP;
+    }
+
+    @Override
+    public Pickler<int[], Node> integer_array_p() {
+        return intArrayP;
+    }
+
+    @Override
+    public Pickler<short[], Node> short_array_p() {
+        return shortArrayP;
+    }
+
+    @Override
+    public Pickler<long[], Node> long_array_p() {
+        return longArrayP;
+    }
+
+    @Override
+    public Pickler<float[], Node> float_array_p() {
+        return floatArrayP;
+    }
+
+    @Override
+    public Pickler<double[], Node> double_array_p() {
+        return doubleArrayP;
     }
 
     @Override

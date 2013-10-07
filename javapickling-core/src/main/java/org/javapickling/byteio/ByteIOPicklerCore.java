@@ -155,6 +155,246 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         }
     };
 
+    protected final Pickler<boolean[], ByteIO> booleanArrayP = new Pickler<boolean[], ByteIO>() {
+
+        final Pickler<Boolean, ByteIO> elemPickler = boolean_p();
+
+        @Override
+        public ByteIO pickle(boolean[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (boolean elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public boolean[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final boolean[] result = new boolean[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<byte[], ByteIO> byteArrayP = new Pickler<byte[], ByteIO>() {
+
+        final Pickler<Byte, ByteIO> elemPickler = byte_p();
+
+        @Override
+        public ByteIO pickle(byte[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (byte elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public byte[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final byte[] result = new byte[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<char[], ByteIO> charArrayP = new Pickler<char[], ByteIO>() {
+
+        final Pickler<Character, ByteIO> elemPickler =char_p();
+
+        @Override
+        public ByteIO pickle(char[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (char elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public char[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final char[] result = new char[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<int[], ByteIO> integerArrayP = new Pickler<int[], ByteIO>() {
+
+        final Pickler<Integer, ByteIO> elemPickler = integer_p();
+
+        @Override
+        public ByteIO pickle(int[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (int elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public int[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final int[] result = new int[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<short[], ByteIO> shortArrayP = new Pickler<short[], ByteIO>() {
+
+        final Pickler<Short, ByteIO> elemPickler = short_p();
+
+        @Override
+        public ByteIO pickle(short[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (short elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public short[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final short[] result = new short[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<long[], ByteIO> longArrayP = new Pickler<long[], ByteIO>() {
+
+        final Pickler<Long, ByteIO> elemPickler = long_p();
+
+        @Override
+        public ByteIO pickle(long[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (long elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public long[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final long[] result = new long[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<float[], ByteIO> floatArrayP = new Pickler<float[], ByteIO>() {
+
+        final Pickler<Float, ByteIO> elemPickler = float_p();
+
+        @Override
+        public ByteIO pickle(float[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (float elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public float[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final float[] result = new float[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
+    protected final Pickler<double[], ByteIO> doubleArrayP = new Pickler<double[], ByteIO>() {
+
+        final Pickler<Double, ByteIO> elemPickler = double_p();
+
+        @Override
+        public ByteIO pickle(double[] arr, ByteIO target) throws Exception {
+
+            target.output.writeInt(arr.length);
+
+            for (double elem : arr) {
+                elemPickler.pickle(elem, target);
+            }
+
+            return target;
+        }
+
+        @Override
+        public double[] unpickle(ByteIO source) throws Exception {
+
+            int size = source.input.readInt();
+            final double[] result = new double[size];
+
+            for (int i = 0; i < size; ++i) {
+                result[i] = elemPickler.unpickle(source);
+            }
+
+            return result;
+        }
+    };
+
     protected final ObjectPickler<ByteIO> objectMapP = new ObjectPickler<ByteIO>() {
 
         @Override
@@ -248,6 +488,47 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     @Override
     public Pickler<Double, ByteIO> double_p() {
         return doubleP;
+    }
+
+    @Override
+    public Pickler<boolean[], ByteIO> boolean_array_p() {
+
+        return booleanArrayP;
+    }
+
+    @Override
+    public Pickler<byte[], ByteIO> byte_array_p() {
+        return byteArrayP;
+    }
+
+    @Override
+    public Pickler<char[], ByteIO> char_array_p() {
+        return charArrayP;
+    }
+
+    @Override
+    public Pickler<int[], ByteIO> integer_array_p() {
+        return integerArrayP;
+    }
+
+    @Override
+    public Pickler<short[], ByteIO> short_array_p() {
+        return shortArrayP;
+    }
+
+    @Override
+    public Pickler<long[], ByteIO> long_array_p() {
+        return longArrayP;
+    }
+
+    @Override
+    public Pickler<float[], ByteIO> float_array_p() {
+        return floatArrayP;
+    }
+
+    @Override
+    public Pickler<double[], ByteIO> double_array_p() {
+        return doubleArrayP;
     }
 
     @Override

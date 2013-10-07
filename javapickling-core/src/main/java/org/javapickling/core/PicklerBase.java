@@ -67,6 +67,46 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
+    public Pickler<boolean[], PF> boolean_array_p() {
+        return core.boolean_array_p();
+    }
+
+    @Override
+    public Pickler<byte[], PF> byte_array_p() {
+        return core.byte_array_p();
+    }
+
+    @Override
+    public Pickler<char[], PF> char_array_p() {
+        return core.char_array_p();
+    }
+
+    @Override
+    public Pickler<int[], PF> integer_array_p() {
+        return core.integer_array_p();
+    }
+
+    @Override
+    public Pickler<short[], PF> short_array_p() {
+        return core.short_array_p();
+    }
+
+    @Override
+    public Pickler<long[], PF> long_array_p() {
+        return core.long_array_p();
+    }
+
+    @Override
+    public Pickler<float[], PF> float_array_p() {
+        return core.float_array_p();
+    }
+
+    @Override
+    public Pickler<double[], PF> double_array_p() {
+        return core.double_array_p();
+    }
+
+    @Override
     public <U extends Enum<U>> Pickler<U, PF> enum_p(Class<U> enumClass) {
         return core.enum_p(enumClass);
     }
@@ -93,7 +133,7 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
 
     @Override
     public <T> Pickler<List<T>, PF> list_p(final Pickler<T, PF> elemPickler) {
-        return list_p(elemPickler);
+        return core.list_p(elemPickler);
     }
 
     @Override
@@ -103,7 +143,7 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
 
     @Override
     public <T> Pickler<Map<String, T>, PF> map_p(final Pickler<T, PF> valuePickler) {
-        return map_p(valuePickler);
+        return core.map_p(valuePickler);
     }
 
     @Override
@@ -118,7 +158,7 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     public <K, V> Pickler<Map<K, V>, PF> map_p(
             final Pickler<K, PF> keyPickler,
             final Pickler<V, PF> valuePickler) {
-        return map_p(keyPickler, valuePickler);
+        return core.map_p(keyPickler, valuePickler);
     }
 
     @Override
