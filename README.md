@@ -8,8 +8,6 @@ The approach and design were inspired by the [Pickling Combinators paper](http:/
 
 The pickling is driven by the static types of values,
 however it will also handle objects where the static type is unknown.
-Unlike typical serialisation frameworks this framework attempts to generate "optimal" pickled data,
-by avoiding encoding type information when the static type is known.
 At present it does not provide automatic of pickling of custom classes,
 ergo pickling of those types must be implemented by the user.
 The custom picklers only need be defined once - the same pickler will be used regardless of the pickled format.
