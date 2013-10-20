@@ -1,5 +1,5 @@
 package org.javapickling.common;
 
-enum Colour {
+public enum Colour {
     RED, GREEN, BLUE
 }

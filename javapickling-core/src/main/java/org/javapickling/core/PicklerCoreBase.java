@@ -1,5 +1,7 @@
 package org.javapickling.core;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -77,6 +79,11 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
      */
     protected final Map<String, List<GenericPicklerCtor<?, PF>>> genericPicklerClassRegistry = Maps.newTreeMap();
 
+    /**
+     * A map of class names to short names.
+     */
+    protected final BiMap<String, String> classShortNameMap = HashBiMap.create();
+
     protected FieldReflector fieldReflector = new FieldReflector(this);
 
     public PicklerCoreBase() {
@@ -152,15 +159,45 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         }
     }
 
+    public void registerClassShortName(Class<?> clazz, String shortName) {
+        classShortNameMap.put(clazz.getName(), shortName);
+    }
+
+    public void registerClassShortName(Class<?> clazz) {
+        classShortNameMap.put(clazz.getName(), clazz.getSimpleName());
+    }
+
+    public String classToName(Class<?> clazz) {
+
+        final String clazzName = clazz.getName();
+
+        String name = classShortNameMap.get(clazzName);
+        if (name != null) {
+            return name;
+        } else {
+            return clazzName;
+        }
+    }
+
+    public Class<?> nameToClass(String name) throws ClassNotFoundException {
+
+        String clazzName = classShortNameMap.inverse().get(name);
+        if (clazzName == null) {
+            clazzName = name;
+        }
+
+        return Class.forName(clazzName);
+    }
+
     private <P> void registerPicklerClass(Class<?> valueClass, Class<P> picklerClass) {
-        picklerClassRegistry.put(valueClass.getName(), this.<P, Pickler<?, PF>>castPicklerClass(picklerClass));
+        picklerClassRegistry.put(valueClass.getName(), this.<Pickler<?, PF>>castPicklerClass(picklerClass));
     }
 
     private <T> Class<Pickler<T, PF>> getPicklerClass(Class<T> valueClass) {
         return castPicklerClass(picklerClassRegistry.get(valueClass.getName()));
     }
 
-    private <S, T> Class<T> castPicklerClass(Class<S> picklerClass) {
+    private <T> Class<T> castPicklerClass(Class<?> picklerClass) {
         return (Class<T>)picklerClass;
     }
 

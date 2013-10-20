@@ -14,7 +14,7 @@
     <artifactId>javapickling-json</artifactId>
     <version>0.0.4-SNAPSHOT</version>
 
-    <name>javapickling-core</name>
+    <name>javapickling-json</name>
 
     <dependencies>
         <dependency>

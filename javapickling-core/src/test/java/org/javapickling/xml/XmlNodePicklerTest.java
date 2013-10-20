@@ -1,7 +1,6 @@
 package org.javapickling.xml;
 
-import org.javapickling.common.ComplexClass;
-import org.javapickling.common.RoundTrip;
+import org.javapickling.common.*;
 import org.javapickling.core.Pickler;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +10,13 @@ import org.w3c.dom.Node;
 public class XmlNodePicklerTest {
 
     private static final XmlNodePicklerCore xmlPickler = XmlNodePicklerCore.create();
+
+    static {
+        xmlPickler.registerClassShortName(Colour.class);
+        xmlPickler.registerClassShortName(ComplexClass.class);
+        xmlPickler.registerClassShortName(Generic.class);
+        xmlPickler.registerClassShortName(IdWrapper.class);
+    }
 
     @Test
     public void testPickle() throws Exception {

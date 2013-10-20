@@ -220,4 +220,14 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     public <U> Pickler<U, PF> nullable(final Pickler<U, PF> pickler) {
         return core.nullable(pickler);
     }
+
+    @Override
+    public String classToName(Class<?> clazz) {
+        return core.classToName(clazz);
+    }
+
+    @Override
+    public Class<?> nameToClass(String name) throws ClassNotFoundException {
+        return core.nameToClass(name);
+    }
 }

@@ -1,8 +1,7 @@
 package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.javapickling.common.ComplexClass;
-import org.javapickling.common.RoundTrip;
+import org.javapickling.common.*;
 import org.junit.Assert;
 import org.javapickling.core.*;
 import org.junit.Test;
@@ -10,6 +9,13 @@ import org.junit.Test;
 public class JsonNodePicklerTest {
 
     private static final JsonNodePicklerCore jsonPickler = JsonNodePicklerCore.create();
+
+    static {
+        jsonPickler.registerClassShortName(Colour.class);
+        jsonPickler.registerClassShortName(ComplexClass.class);
+        jsonPickler.registerClassShortName(Generic.class);
+        jsonPickler.registerClassShortName(IdWrapper.class);
+    }
 
     @Test
     public void testPickle() throws Exception {
@@ -19,8 +25,8 @@ public class JsonNodePicklerTest {
         final RoundTrip jsonTimeMs = roundTripViaJson(simple);
         System.out.println(jsonTimeMs);
 
-        org.javapickling.common.Utils.roundTripViaJavaSer(simple);
-        final RoundTrip javaSerTimeMs = org.javapickling.common.Utils.roundTripViaJavaSer(simple);
+        Utils.roundTripViaJavaSer(simple);
+        final RoundTrip javaSerTimeMs = Utils.roundTripViaJavaSer(simple);
         System.out.println(javaSerTimeMs);
     }
 
@@ -46,4 +52,5 @@ public class JsonNodePicklerTest {
 
         return new RoundTrip("JsonNodePickler", endTime1 - startTime1, endTime2 - startTime2, size);
     }
+
 }

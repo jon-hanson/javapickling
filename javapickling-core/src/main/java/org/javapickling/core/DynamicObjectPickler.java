@@ -28,10 +28,10 @@ public class DynamicObjectPickler<T, PF> extends PicklerBase<T, PF> {
         }
     }
 
-    protected static final String VALUE_NAME = "value";
+    protected static final String VALUE_NAME = "@value";
 
-    protected Field<String, PF> typeField = field("type", string_p());
-    protected Field<String, PF> clazzField = field("class", string_p());
+    protected Field<String, PF> typeField = field("@type", string_p());
+    protected Field<String, PF> clazzField = field("@class", string_p());
 
     public DynamicObjectPickler(PicklerCore<PF> core) {
         super(core);
@@ -50,7 +50,7 @@ public class DynamicObjectPickler<T, PF> extends PicklerBase<T, PF> {
         final FieldPickler<PF> fp = object_map().pickler(target);
         fp.field(typeField, metaType.name());
         if (metaType.typeKind == MetaType.TypeKind.ENUM || metaType.typeKind == MetaType.TypeKind.OBJECT) {
-            fp.field(clazzField, metaType.clazz.getName());
+            fp.field(clazzField, core.classToName(metaType.clazz));
         }
 
         if (metaType.typeKind != MetaType.TypeKind.NULL) {
@@ -74,7 +74,7 @@ public class DynamicObjectPickler<T, PF> extends PicklerBase<T, PF> {
 
         if (metaType.typeKind == MetaType.TypeKind.ENUM || metaType.typeKind == MetaType.TypeKind.OBJECT) {
             try {
-                final Class clazz = Class.forName(fu.field(clazzField));
+                final Class clazz = core.nameToClass(fu.field(clazzField));
                 metaType = new MetaType(metaType.typeKind, clazz, metaType.arrayDepth);
             } catch (ClassNotFoundException ex) {
                 throw new PicklerException("Can not construct class", ex);

@@ -217,7 +217,7 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
 
     protected final Pickler<char[], ByteIO> charArrayP = new Pickler<char[], ByteIO>() {
 
-        final Pickler<Character, ByteIO> elemPickler =char_p();
+        final Pickler<Character, ByteIO> elemPickler = char_p();
 
         @Override
         public ByteIO pickle(char[] arr, ByteIO target) throws Exception {

@@ -292,4 +292,8 @@ public interface PicklerCore<PF> {
      * @return a pickler
      */
     <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler);
+
+    String classToName(Class<?> clazz);
+
+    Class<?> nameToClass(String name) throws ClassNotFoundException;
 }

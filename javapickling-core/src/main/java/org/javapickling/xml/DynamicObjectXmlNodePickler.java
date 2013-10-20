@@ -25,7 +25,7 @@ public class DynamicObjectXmlNodePickler<T> extends PicklerBase<T, Node> {
         xmlCore.addAttribute(targetElem, typeName, metaType.name());
 
         if (metaType.typeKind == MetaType.TypeKind.ENUM || metaType.typeKind == MetaType.TypeKind.OBJECT) {
-            xmlCore.addAttribute(targetElem, className, metaType.clazz.getName());
+            xmlCore.addAttribute(targetElem, className, core.classToName(metaType.clazz));
         }
 
         if (metaType.typeKind != MetaType.TypeKind.NULL) {
@@ -44,7 +44,7 @@ public class DynamicObjectXmlNodePickler<T> extends PicklerBase<T, Node> {
 
         if (metaType.typeKind == MetaType.TypeKind.ENUM || metaType.typeKind == MetaType.TypeKind.OBJECT) {
             try {
-                final Class<?> clazz = Class.forName(xmlCore.getChildAttrValue(sourceElem, className));
+                final Class<?> clazz = core.nameToClass(xmlCore.getChildAttrValue(sourceElem, className));
                 metaType = new MetaType(metaType.typeKind, clazz, metaType.arrayDepth);
             } catch (ClassNotFoundException ex) {
                 throw new PicklerException("Can not construct class", ex);
