@@ -10,8 +10,8 @@ import java.util.List;
 
 public class DynamicObjectJsonNodePickler<T> extends DynamicObjectPickler<T, JsonNode> {
 
-    public DynamicObjectJsonNodePickler(PicklerCore<JsonNode> core) {
-        super(core);
+    public DynamicObjectJsonNodePickler(PicklerCore<JsonNode> core, Class<? super T> clazz) {
+        super(core, clazz);
     }
 
     @Override

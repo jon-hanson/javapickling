@@ -1,7 +1,9 @@
 package org.javapickling.core;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.*;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,9 +54,9 @@ public class FieldReflector<PF> {
             return inferPickler((Class)type);
         } else if (type instanceof ParameterizedType) {
             return inferPickler((ParameterizedType)type);
+        } else {
+            return (Pickler<T, PF>)core.d_object_p();
         }
-
-        throw new PicklerException("Unable to infer a pickler for field Type " + type);
     }
 
     /**
@@ -70,6 +72,7 @@ public class FieldReflector<PF> {
         // Is the type one of the recognised interface types?
         if (rawType instanceof Class) {
             final Class clazz = (Class)rawType;
+
             final MetaType.TypeKind typeKind = MetaType.typeKindOf(clazz);
             switch (typeKind) {
                 case MAP: {
@@ -85,16 +88,25 @@ public class FieldReflector<PF> {
                     return inferSetPickler(clazz, typeParams);
                 }
             }
-        }
 
-        // Must be a generic class, so infer a pickler for each of its type arguments.
-        final Type[] typeArgs = type.getActualTypeArguments();
-        final Pickler[] picklers = new Pickler[typeArgs.length];
-        for (int i = 0; i < typeArgs.length; ++i) {
-            picklers[i] = inferPickler(typeArgs[i]);
-        }
+            // Must be a generic instance, so infer a pickler for each of its type arguments.
+            final Type[] typeArgs = type.getActualTypeArguments();
+            final Pickler[] picklers = new Pickler[typeArgs.length];
+            for (int i = 0; i < typeArgs.length; ++i) {
+                picklers[i] = inferPickler(typeArgs[i]);
+            }
 
-        return generic_p((Class)type.getRawType(), picklers);
+            try {
+                // Do we have a registered pickler for this class.
+                return generic_p(clazz, picklers);
+            } catch (PicklerException ex) {
+            }
+
+            // Must be a generic base class for a derived type.
+            return d_object_p((Class)type.getRawType());
+        } else {
+            throw new PicklerException("Unexpected generic non-class type");
+        }
     }
 
     /**
@@ -226,5 +238,9 @@ public class FieldReflector<PF> {
 
     private Pickler generic_p(final Class clazz, Pickler... picklers) {
         return core.generic_p(clazz, picklers);
+    }
+
+    private Pickler d_object_p(final Class clazz) {
+        return core.d_object_p(clazz);
     }
 }

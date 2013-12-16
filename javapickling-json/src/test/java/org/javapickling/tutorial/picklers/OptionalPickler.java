@@ -10,8 +10,8 @@ public class OptionalPickler<PF, T> extends PicklerBase<Optional<T>, PF> {
     private final Pickler<T, PF> valPickler;
 
     public OptionalPickler(PicklerCore<PF> core, Pickler<T, PF> valPickler) {
-        super(core);
-        this.valPickler = nullable(valPickler);
+        super(core, Optional.class);
+        this.valPickler = valPickler;
     }
 
     @Override

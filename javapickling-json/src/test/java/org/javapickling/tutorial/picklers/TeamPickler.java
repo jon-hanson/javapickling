@@ -25,7 +25,7 @@ public class TeamPickler<PF> extends PicklerBase<Team, PF> {
                     TreeMap.class));
 
     public TeamPickler(PicklerCore<PF> core) {
-        super(core);
+        super(core, Team.class);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class DatePickler<PF> extends PicklerBase<Date, PF> {
     private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
     public DatePickler(PicklerCore<PF> core) {
-        super(core);
+        super(core, Date.class);
     }
 
     @Override

@@ -9,10 +9,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Optional;
 import org.javapickling.core.*;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * PicklerCore implementation which pickles objects to JsonNodes.
@@ -54,6 +58,11 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
     public static JsonNode stringToNode(String json) throws Exception {
         final JsonParser parser = factory.createParser(json);
         return mapper.readTree(parser);
+    }
+
+    protected void initialise() {
+        super.initialise();
+        registerGeneric(Optional.class, OptionalPickler.class);
     }
 
     protected final Pickler<Object, JsonNode> nullP = new Pickler<Object, JsonNode>() {
@@ -512,7 +521,7 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
         }
     };
 
-    private final JsonNodeFactory nodeFactory;
+    protected final JsonNodeFactory nodeFactory;
 
     private JsonNodePicklerCore() {
         this(JsonNodeFactory.instance);
@@ -754,8 +763,8 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
         return new Pickler<Map<K, V>, JsonNode>() {
 
-            private static final String keyF = "key";
-            private static final String valueF = "value";
+            private static final String keyF = "@key";
+            private static final String valueF = "@value";
 
             @Override
             public JsonNode pickle(Map<K, V> map, JsonNode target) throws Exception {
@@ -841,12 +850,12 @@ public class JsonNodePicklerCore extends PicklerCoreBase<JsonNode> {
 
     @Override
     public Pickler<Object, JsonNode> d_object_p() {
-        return new DynamicObjectJsonNodePickler<Object>(this);
+        return new DynamicObjectJsonNodePickler<Object>(this, Object.class);
     }
 
     @Override
     public <T, S extends T> Pickler<S, JsonNode> d_object_p(Class<T> clazz) {
-        return new DynamicObjectJsonNodePickler<S>(this);
+        return new DynamicObjectJsonNodePickler<S>(this, clazz);
     }
 
     @Override

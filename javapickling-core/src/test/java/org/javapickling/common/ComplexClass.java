@@ -1,9 +1,10 @@
 package org.javapickling.common;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.javapickling.core.*;
+import org.javapickling.core.DefaultPickler;
 
 import java.io.Serializable;
 import java.util.*;
@@ -61,6 +62,8 @@ public class ComplexClass implements Serializable {
             final IdWrapper[] idWrapArrF = {new IdWrapper("Constantine")};
             final Interface[] intfArrF = {new IdWrapper("Augustus")};
 
+            final Optional<IdWrapper> optionalF = Optional.of(new IdWrapper("SomeId"));
+
             return new ComplexClass(
                     booleanF,
                     byteF,
@@ -84,7 +87,8 @@ public class ComplexClass implements Serializable {
                     strArrF,
                     dblArrF,
                     idWrapArrF,
-                    intfArrF);
+                    intfArrF,
+                    optionalF);
         } else {
             final boolean booleanF = true;
             final byte byteF = 56;
@@ -112,6 +116,8 @@ public class ComplexClass implements Serializable {
             final IdWrapper[] idWrapArrF = {};
             final Interface[] intfArrF = {};
 
+            final Optional<IdWrapper> optionalF = Optional.absent();
+
             return new ComplexClass(
                     booleanF,
                     byteF,
@@ -135,7 +141,8 @@ public class ComplexClass implements Serializable {
                     strArrF,
                     dblArrF,
                     idWrapArrF,
-                    intfArrF);
+                    intfArrF,
+                    optionalF);
         }
     }
 
@@ -168,6 +175,8 @@ public class ComplexClass implements Serializable {
     public final IdWrapper[] idWrapArrF;
     public final Interface[] intfArrF;
 
+    public final Optional<IdWrapper> optionalF;
+
     public ComplexClass(
             boolean booleanF,
             byte byteF,
@@ -191,7 +200,8 @@ public class ComplexClass implements Serializable {
             String[] strArrF,
             double[][] dblArrF,
             IdWrapper[] idWrapArrF,
-            Interface[] intfArrF) {
+            Interface[] intfArrF,
+            Optional<IdWrapper> optionalF) {
         this.booleanF = booleanF;
         this.byteF = byteF;
         this.charF = charF;
@@ -215,6 +225,7 @@ public class ComplexClass implements Serializable {
         this.dblArrF = dblArrF;
         this.idWrapArrF = idWrapArrF;
         this.intfArrF = intfArrF;
+        this.optionalF = optionalF;
     }
 
     public boolean equals(Object o) {
@@ -246,6 +257,7 @@ public class ComplexClass implements Serializable {
         if (dblArrF != null ? !Arrays.deepEquals(dblArrF, that.dblArrF) : that.dblArrF != null) return false;
         if (idWrapArrF != null ? !Arrays.deepEquals(idWrapArrF, that.idWrapArrF) : that.idWrapArrF != null) return false;
         if (intfArrF != null ? !Arrays.deepEquals(intfArrF, that.intfArrF) : that.intfArrF != null) return false;
+        if (!optionalF.equals(that.optionalF)) return false;
 
         return true;
     }
@@ -276,6 +288,7 @@ public class ComplexClass implements Serializable {
                 ",\n dblArrF=" + Arrays.deepToString(dblArrF) +
                 ",\n idWrapArrF=" + Arrays.toString(idWrapArrF) +
                 ",\n intfArrF=" + Arrays.toString(intfArrF) +
+                ",\n optionalF=" + optionalF +
                 '}';
     }
 }

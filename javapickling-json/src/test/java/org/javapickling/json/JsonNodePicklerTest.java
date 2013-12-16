@@ -2,19 +2,19 @@ package org.javapickling.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.javapickling.common.*;
+import org.javapickling.core.Pickler;
 import org.junit.Assert;
-import org.javapickling.core.*;
 import org.junit.Test;
 
 public class JsonNodePicklerTest {
 
-    private static final JsonNodePicklerCore jsonPickler = JsonNodePicklerCore.create();
+    private static final JsonNodePicklerCore picklerCore = JsonNodePicklerCore.create();
 
     static {
-        jsonPickler.registerClassShortName(Colour.class);
-        jsonPickler.registerClassShortName(ComplexClass.class);
-        jsonPickler.registerClassShortName(Generic.class);
-        jsonPickler.registerClassShortName(IdWrapper.class);
+        picklerCore.registerClassShortName(Colour.class);
+        picklerCore.registerClassShortName(ComplexClass.class);
+        picklerCore.registerClassShortName(Generic.class);
+        picklerCore.registerClassShortName(IdWrapper.class);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class JsonNodePicklerTest {
 
     private static RoundTrip roundTripViaJson(ComplexClass complex) throws Exception {
 
-        final Pickler<ComplexClass, JsonNode> pickler = jsonPickler.object_p(ComplexClass.class);
+        final Pickler<ComplexClass, JsonNode> pickler = picklerCore.object_p(ComplexClass.class);
 
         final long startTime1 = System.nanoTime();
         final JsonNode node = pickler.pickle(complex, null);

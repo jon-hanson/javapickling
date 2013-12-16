@@ -1,6 +1,8 @@
 package org.javapickling.core;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base class for Pickler implementations.
@@ -11,9 +13,11 @@ import java.util.*;
 public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<PF> {
 
     protected final PicklerCore<PF> core;
+    protected final Class<? super T> clazz;
 
-    protected PicklerBase(PicklerCore<PF> core) {
+    protected PicklerBase(PicklerCore<PF> core, Class<? super T> clazz) {
         this.core = core;
+        this.clazz = clazz;
     }
 
     @Override
@@ -117,11 +121,6 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
     }
 
     @Override
-    public <U, V extends U> Pickler<Class<V>, PF> class_p(Class<U> clazz) {
-        return core.class_p(clazz);
-    }
-
-    @Override
     public <U> Pickler<U[], PF> array_p(Pickler<U, PF> elemPickler, Class<U> elemClass) {
         return core.array_p(elemPickler, elemClass);
     }
@@ -206,6 +205,10 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
         return core.field(clazz, name);
     }
 
+    public <T> Field<T, PF> field(String name) {
+        return core.field(clazz, name);
+    }
+
     @Override
     public <U> Field<U, PF> null_field(String name, Pickler<U, PF> pickler) {
         return core.null_field(name, pickler);
@@ -213,6 +216,10 @@ public abstract class PicklerBase<T, PF> implements Pickler<T, PF>, PicklerCore<
 
     @Override
     public <U> Field<U, PF> null_field(Class<?> clazz, String name) {
+        return core.null_field(clazz, name);
+    }
+
+    public <U> Field<U, PF> null_field(String name) {
         return core.null_field(clazz, name);
     }
 

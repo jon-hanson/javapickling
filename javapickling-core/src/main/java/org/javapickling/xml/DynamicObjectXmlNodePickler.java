@@ -1,6 +1,9 @@
 package org.javapickling.xml;
 
-import org.javapickling.core.*;
+import org.javapickling.core.MetaType;
+import org.javapickling.core.PicklerBase;
+import org.javapickling.core.PicklerCore;
+import org.javapickling.core.PicklerException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -11,8 +14,8 @@ public class DynamicObjectXmlNodePickler<T> extends PicklerBase<T, Node> {
     private final String typeName = "type";
     private final String className = "class";
 
-    public DynamicObjectXmlNodePickler(PicklerCore<Node> core) {
-        super(core);
+    public DynamicObjectXmlNodePickler(PicklerCore<Node> core, Class<? super T> clazz) {
+        super(core, clazz);
     }
 
     @Override

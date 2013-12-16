@@ -1,6 +1,12 @@
 package org.javapickling.xml;
 
-import org.javapickling.core.*;
+import com.google.common.base.Optional;
+import org.javapickling.core.Pickler;
+import org.javapickling.core.PicklerCoreBase;
+import org.javapickling.core.PicklerException;
+import org.javapickling.core.FieldPickler;
+import org.javapickling.core.FieldUnpickler;
+import org.javapickling.core.ObjectPickler;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -92,6 +98,11 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
     private XmlNodePicklerCore(DocumentBuilder docBuilder) {
         this.docBuilder = docBuilder;
         this.doc = docBuilder.newDocument();
+    }
+
+    protected void initialise() {
+        super.initialise();
+        registerGeneric(Optional.class, OptionalPickler.class);
     }
 
     public void setDocumentBuilder(DocumentBuilder docBuilder) {
@@ -528,7 +539,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
         }
     };
 
-    protected final Pickler<Object, Node> dynObjectP = new DynamicObjectXmlNodePickler<Object>(this);
+    protected final Pickler<Object, Node> dynObjectP = new DynamicObjectXmlNodePickler<Object>(this, Object.class);
 
     @Override
     public Pickler<Object, Node> null_p() {
@@ -880,7 +891,7 @@ public class XmlNodePicklerCore extends PicklerCoreBase<Node> {
 
     @Override
     public <T, S extends T> Pickler<S, Node> d_object_p(Class<T> clazz) {
-        return new DynamicObjectXmlNodePickler<S>(this);
+        return new DynamicObjectXmlNodePickler<S>(this, clazz);
     }
 
     @Override

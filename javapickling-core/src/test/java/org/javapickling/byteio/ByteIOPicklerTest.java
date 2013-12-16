@@ -1,16 +1,25 @@
 package org.javapickling.byteio;
 
-import org.javapickling.common.ComplexClass;
-import org.javapickling.common.RoundTrip;
-import org.junit.Assert;
+import org.javapickling.common.*;
 import org.javapickling.core.Pickler;
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 public class ByteIOPicklerTest {
 
-    private static final ByteIOPicklerCore byteIOPickler = ByteIOPicklerCore.create();
+    private static final ByteIOPicklerCore picklerCore = ByteIOPicklerCore.create();
+
+    static {
+        picklerCore.registerClassShortName(Colour.class);
+        picklerCore.registerClassShortName(ComplexClass.class);
+        picklerCore.registerClassShortName(Generic.class);
+        picklerCore.registerClassShortName(IdWrapper.class);
+    }
 
     @Test
     public void testPickle() throws Exception {
@@ -27,7 +36,7 @@ public class ByteIOPicklerTest {
 
     private static RoundTrip roundTripViaByteIO(ComplexClass complex) throws Exception {
 
-        final Pickler<ComplexClass, ByteIO> pickler = byteIOPickler.object_p(ComplexClass.class);
+        final Pickler<ComplexClass, ByteIO> pickler = picklerCore.object_p(ComplexClass.class);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ByteIO byteOutput = new ByteIO(new DataOutputStream(baos));

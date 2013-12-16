@@ -1,9 +1,12 @@
 package org.javapickling.byteio;
 
+import com.google.common.base.Optional;
 import org.javapickling.core.*;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * PicklerCore implementation which pickles objects to byte[] data, via the ByteIO wrapper.
@@ -14,6 +17,11 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
         final ByteIOPicklerCore core = new ByteIOPicklerCore();
         core.initialise();
         return core;
+    }
+
+    protected void initialise() {
+        super.initialise();
+        registerGeneric(Optional.class, OptionalPickler.class);
     }
 
     protected final Pickler<Object, ByteIO> nullP = new Pickler<Object, ByteIO>() {
@@ -727,5 +735,31 @@ public class ByteIOPicklerCore extends PicklerCoreBase<ByteIO> {
     @Override
     public ObjectPickler<ByteIO> object_map() {
         return objectMapP;
+    }
+
+    @Override
+    public <T> Pickler<T, ByteIO> nullable(final Pickler<T, ByteIO> pickler) {
+
+        return new Pickler<T, ByteIO>() {
+
+            @Override
+            public ByteIO pickle(T t, ByteIO target) throws Exception {
+                final ByteIO target2 = boolean_p().pickle(t != null, target);
+                if (t != null) {
+                    return pickler.pickle(t, target2);
+                } else {
+                    return target2;
+                }
+            }
+
+            @Override
+            public T unpickle(ByteIO source) throws Exception {
+                if (boolean_p().unpickle(source)) {
+                    return pickler.unpickle(source);
+                } else {
+                    return null;
+                }
+            }
+        };
     }
 }

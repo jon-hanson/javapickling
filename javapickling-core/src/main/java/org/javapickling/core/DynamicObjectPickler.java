@@ -33,8 +33,8 @@ public class DynamicObjectPickler<T, PF> extends PicklerBase<T, PF> {
     protected Field<String, PF> typeField = field("@type", string_p());
     protected Field<String, PF> clazzField = field("@class", string_p());
 
-    public DynamicObjectPickler(PicklerCore<PF> core) {
-        super(core);
+    public DynamicObjectPickler(PicklerCore<PF> core, Class<? super T> clazz) {
+        super(core, clazz);
     }
 
     @Override

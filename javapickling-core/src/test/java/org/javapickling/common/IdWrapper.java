@@ -5,10 +5,11 @@ import org.javapickling.core.DefaultPickler;
 import java.io.Serializable;
 
 @DefaultPickler(ComplexClassPickler.IdWrapperPickler.class)
-public class IdWrapper implements Interface, Serializable {
+public final class IdWrapper implements Interface, Serializable {
+
     public final String id;
 
-    IdWrapper(String id) {
+    public IdWrapper(String id) {
         this.id = id;
     }
 

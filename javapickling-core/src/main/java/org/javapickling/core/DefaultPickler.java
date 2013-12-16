@@ -8,8 +8,13 @@ import java.lang.annotation.Target;
 /**
  * An annotation class to allow data classes to specify their default pickler.
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface DefaultPickler {
+
+    /**
+     * The default pickler class for the referenced class.
+     * @return
+     */
     Class<? extends Pickler> value();
 }

@@ -12,7 +12,7 @@ public class PersonPickler<PF> extends PicklerBase<Person, PF> {
     private final Field<Date, PF> dateOfBirth = field("dateOfBirth", object_p(Date.class));
 
     public PersonPickler(PicklerCore<PF> core) {
-        super(core);
+        super(core, Person.class);
     }
 
     @Override

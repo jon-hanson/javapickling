@@ -118,11 +118,6 @@ public interface PicklerCore<PF> {
     <T> Pickler<Class<T>, PF> class_p();
 
     /**
-     * @return a Pickler for Class objects.
-     */
-    <T, S extends T> Pickler<Class<S>, PF> class_p(Class<T> clazz);
-
-    /**
      * Provide a Pickler for an array.
      * @param elemPickler a Pickler for the array element type.
      * @param elemClass element class.

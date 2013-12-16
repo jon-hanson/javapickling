@@ -1,5 +1,6 @@
 package org.javapickling.core;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
@@ -67,24 +68,24 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     /**
      * A cache of picklers by class name.
      */
-    protected final Map<String, Class<Pickler<?, PF>>> picklerClassRegistry = Maps.newTreeMap();
+    protected final Map<String, Class<Pickler<?, PF>>> picklerClassRegistry = Maps.newConcurrentMap();
 
     /**
      * A cache of picklers by class name.
      */
-    protected final Map<String, Pickler<?, PF>> picklerCache = Maps.newTreeMap();
+    protected final Map<String, Pickler<?, PF>> picklerCache = Maps.newConcurrentMap();
 
     /**
      * A registry of constructors for PicklerClasses.
      */
-    protected final Map<String, List<GenericPicklerCtor<?, PF>>> genericPicklerClassRegistry = Maps.newTreeMap();
+    protected final Map<String, List<GenericPicklerCtor<?, PF>>> genericPicklerClassRegistry = Maps.newConcurrentMap();
 
     /**
      * A map of class names to short names.
      */
     protected final BiMap<String, String> classShortNameMap = HashBiMap.create();
 
-    protected FieldReflector fieldReflector = new FieldReflector(this);
+    protected final FieldReflector fieldReflector = new FieldReflector(this);
 
     public PicklerCoreBase() {
     }
@@ -103,7 +104,9 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         register(Long.class, long_p());
         register(Float.class, float_p());
         register(Double.class, double_p());
+
         register(Class.class, class_p());
+
         register(boolean.class, boolean_p());
         register(byte.class, byte_p());
         register(char.class, char_p());
@@ -160,11 +163,20 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     }
 
     public void registerClassShortName(Class<?> clazz, String shortName) {
-        classShortNameMap.put(clazz.getName(), shortName);
+        final String clazzName = clazz.getName();
+        if (classShortNameMap.containsValue(shortName)) {
+            final String existClazzName = classShortNameMap.inverse().get(shortName);
+            if (!clazzName.equals(existClazzName)) {
+                throw new PicklerException("Can not register short name '" + shortName + "' for " + clazz.getName() +
+                        " as it has already been registered to " + clazzName);
+            }
+        } else {
+            classShortNameMap.put(clazz.getName(), shortName);
+        }
     }
 
     public void registerClassShortName(Class<?> clazz) {
-        classShortNameMap.put(clazz.getName(), clazz.getSimpleName());
+        registerClassShortName(clazz, clazz.getSimpleName());
     }
 
     public String classToName(Class<?> clazz) {
@@ -227,6 +239,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         final List<GenericPicklerCtor<?, PF>> genPicklerCtors = Lists.newArrayList();
         final Constructor<?>[] ctors = picklerClass.getConstructors();
         for (final Constructor<?> ctor : ctors) {
+            // The first pickler ctor args is always PicklerCore.
             final int ctorPicklerCount = ctor.getParameterTypes().length - 1;
 
             // Register a generic pickler constructor.
@@ -295,12 +308,17 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
                 picklerClass = (Class<P>)defPickAnn.value();
                 register(valueClass, picklerClass, true);
             } else {
-                throw new PicklerException("No Pickler class registered for " + valueClass.getName());
+                final Class<?> superClass = valueClass.getSuperclass();
+                if (superClass != null) {
+                    return (P)getPickler(superClass);
+                } else {
+                    throw new PicklerException("No Pickler class registered for " + valueClass.getName());
+                }
             }
         }
 
         try {
-            // Acquire a picklerClass constructor which takes a PicklerCore.
+            // Acquire a picklerClass constructor which takes a PicklerCore and a class.
             final Constructor<P> ctor = picklerClass.getConstructor(PicklerCore.class);
 
             // Invoke the constructor to get a new instance of the Pickler.
@@ -313,7 +331,7 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
         } catch (NoSuchMethodException ex) {
             throw new PicklerException(
                     "Pickler class " + picklerClass.getName() +
-                            " must have a public constructor which takes a PicklerCore", ex);
+                            " must have a public constructor which takes a PicklerCore and a class", ex);
         } catch (InvocationTargetException ex) {
             throw new PicklerException("Failed to call constructor for Pickler class " + picklerClass.getName(), ex);
         } catch (InstantiationException ex) {
@@ -360,36 +378,14 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
 
             @Override
             public PF pickle(Class<T> clazz, PF target) throws Exception {
-                return string_p().pickle(clazz.getName(), target);
+                return string_p().pickle(classToName(clazz), target);
             }
 
             @Override
             public Class<T> unpickle(PF source) throws Exception {
                 final String name = string_p().unpickle(source);
                 try {
-                    return (Class<T>)Class.forName(name);
-                } catch (ClassNotFoundException ex) {
-                    throw new IOException("Can not create class from name '" + name + "'", ex);
-                }
-            }
-        };
-    }
-
-    @Override
-    public <T, S extends T> Pickler<Class<S>, PF> class_p(Class<T> clazz) {
-
-        return new Pickler<Class<S>, PF>() {
-
-            @Override
-            public PF pickle(Class<S> clazz, PF target) throws Exception {
-                return string_p().pickle(clazz.getName(), target);
-            }
-
-            @Override
-            public Class<S> unpickle(PF source) throws Exception {
-                final String name = string_p().unpickle(source);
-                try {
-                    return (Class<S>)Class.forName(name);
+                    return (Class<T>)nameToClass(name);
                 } catch (ClassNotFoundException ex) {
                     throw new IOException("Can not create class from name '" + name + "'", ex);
                 }
@@ -427,12 +423,12 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
     @Override
     public Pickler<Object, PF> d_object_p() {
         // Create this object on the fly to avoid construction-order dependency issues.
-        return new DynamicObjectPickler<Object, PF>(this);
+        return new DynamicObjectPickler<Object, PF>(this, Object.class);
     }
 
     @Override
     public <T, S extends T> Pickler<S, PF> d_object_p(Class<T> clazz) {
-        return new DynamicObjectPickler<S, PF>(this);
+        return new DynamicObjectPickler<S, PF>(this, clazz);
     }
 
     @Override
@@ -465,31 +461,5 @@ public abstract class PicklerCoreBase<PF> implements PicklerCore<PF> {
             throw new PicklerException(clazz.getName() + " has no field called " + name);
         }
         return new Field<T, PF>(field.getName(), nullable(fieldReflector.inferPickler(field)));
-    }
-
-    @Override
-    public <T> Pickler<T, PF> nullable(final Pickler<T, PF> pickler) {
-
-        return new Pickler<T, PF>() {
-
-            @Override
-            public PF pickle(T t, PF target) throws Exception {
-                final PF target2 = boolean_p().pickle(t != null, target);
-                if (t != null) {
-                    return pickler.pickle(t, target2);
-                } else {
-                    return target2;
-                }
-            }
-
-            @Override
-            public T unpickle(PF source) throws Exception {
-                if (boolean_p().unpickle(source)) {
-                    return pickler.unpickle(source);
-                } else {
-                    return null;
-                }
-            }
-        };
     }
 }

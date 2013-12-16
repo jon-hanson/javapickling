@@ -1,27 +1,17 @@
 package org.javapickling.common;
 
+import com.google.common.base.Optional;
 import org.javapickling.core.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A pickler for the ComplexClass.
  * @param <PF>
  */
 public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
-
-    // Utility method for creating fields.
-    private <T> Field<T, PF> field(String name) {
-        return field(ComplexClass.class, name);
-    }
-    private <T> Field<T, PF> field2(String name) {
-        return field(ComplexClass.class, name);
-    }
-
-    // Utility method for creating nullable fields.
-    private <T> Field<T, PF> null_field(String name) {
-        return null_field(ComplexClass.class, name);
-    }
 
     private final Field<Boolean, PF>                booleanF    = field("booleanF");
     private final Field<Byte, PF>                   byteF       = field("byteF");
@@ -43,12 +33,13 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
     private final Field<Generic<IdWrapper>, PF>     genericF    = field("genericF");
     private final Field<Generic<Interface>, PF>     generic2F   = field("generic2F");
     private final Field<String[], PF>               strArrF     = field("strArrF");
-    private final Field<double[][], PF>             dblArrF     = field2("dblArrF");
+    private final Field<double[][], PF>             dblArrF     = field("dblArrF");
     private final Field<IdWrapper[], PF>            idWrapArrF  = field("idWrapArrF");
     private final Field<Interface[], PF>            intfArrF    = field("intfArrF");
+    private final Field<Optional<IdWrapper>, PF>    optionalF   = field("optionalF");
 
     public ComplexClassPickler(PicklerCore<PF> core) {
-        super(core);
+        super(core, ComplexClass.class);
     }
 
     @Override
@@ -77,6 +68,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
         fp.field(dblArrF,       sc.dblArrF);
         fp.field(idWrapArrF,    sc.idWrapArrF);
         fp.field(intfArrF,      sc.intfArrF);
+        fp.field(optionalF,     sc.optionalF);
         return fp.pickle(target);
     }
 
@@ -106,13 +98,14 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
                 fu.field(strArrF),
                 fu.field(dblArrF),
                 fu.field(idWrapArrF),
-                fu.field(intfArrF));
+                fu.field(intfArrF),
+                fu.field(optionalF));
     }
 
     public static class IdWrapperPickler<PF> extends PicklerBase<IdWrapper, PF> {
 
         public IdWrapperPickler(PicklerCore core) {
-            super(core);
+            super(core, IdWrapper.class);
         }
 
         @Override
@@ -131,7 +124,7 @@ public class ComplexClassPickler<PF> extends PicklerBase<ComplexClass, PF> {
         private final Field<T, PF> valueF;
 
         public GenericPickler(PicklerCore<PF> core, Pickler<T, PF> valuePickler) {
-            super(core);
+            super(core, Generic.class);
             valueF = field("value", valuePickler);
         }
 

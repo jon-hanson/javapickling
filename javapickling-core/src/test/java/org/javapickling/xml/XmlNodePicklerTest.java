@@ -9,13 +9,13 @@ import org.w3c.dom.Node;
 
 public class XmlNodePicklerTest {
 
-    private static final XmlNodePicklerCore xmlPickler = XmlNodePicklerCore.create();
+    private static final XmlNodePicklerCore picklerCore = XmlNodePicklerCore.create();
 
     static {
-        xmlPickler.registerClassShortName(Colour.class);
-        xmlPickler.registerClassShortName(ComplexClass.class);
-        xmlPickler.registerClassShortName(Generic.class);
-        xmlPickler.registerClassShortName(IdWrapper.class);
+        picklerCore.registerClassShortName(Colour.class);
+        picklerCore.registerClassShortName(ComplexClass.class);
+        picklerCore.registerClassShortName(Generic.class);
+        picklerCore.registerClassShortName(IdWrapper.class);
     }
 
     @Test
@@ -33,15 +33,15 @@ public class XmlNodePicklerTest {
 
     private static RoundTrip roundTripViaJson(ComplexClass complex) throws Exception {
 
-        final Pickler<ComplexClass, Node> pickler = xmlPickler.object_p(ComplexClass.class);
+        final Pickler<ComplexClass, Node> pickler = picklerCore.object_p(ComplexClass.class);
 
-        final Element rootNode = xmlPickler.doc.createElement("complex");
-        xmlPickler.doc.appendChild(rootNode);
+        final Element rootNode = picklerCore.doc.createElement("complex");
+        picklerCore.doc.appendChild(rootNode);
         final long startTime1 = System.nanoTime();
         final Node node = pickler.pickle(complex, rootNode);
         final long endTime1 = System.nanoTime();
 
-        final String xml = XmlNodePicklerCore.nodeToString(xmlPickler.doc, true);
+        final String xml = XmlNodePicklerCore.nodeToString(picklerCore.doc, true);
         System.out.println("XML=");
         System.out.println(xml);
 

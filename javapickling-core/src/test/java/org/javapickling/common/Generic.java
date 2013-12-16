@@ -5,7 +5,7 @@ import org.javapickling.core.DefaultPickler;
 import java.io.Serializable;
 
 @DefaultPickler(ComplexClassPickler.GenericPickler.class)
-public class Generic<T extends Interface> implements Serializable {
+public final class Generic<T extends Interface> implements Serializable {
 
     public final T value;
 
