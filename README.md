@@ -14,8 +14,7 @@ The custom picklers only need be defined once - the same pickler will be used re
 
 The design supports pickling into multiple pickled formats - JSON, XML and byte[] implementations are provided.
 
-See [ByteIOPicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/test/java/org/javapickling/byteio/ByteIOPicklerTest.java)
-and [JsonNodePicklerTest.java](http://github.com/jon-hanson/javapickling/blob/master/javapickling-json/src/test/java/org/javapickling/json/JsonNodePicklerTest.java) for example usage,
+See ByteIOPicklerTest.java and JsonNodePicklerTest.java for example usage,
 however once a PicklerCore set up this illustrates the basic API:
 
     void test(House house) {
@@ -48,8 +47,6 @@ In particular, a pickler for a class will be composed of picklers corresponding 
 
 ### Pickler
 
-[Source code](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/main/java/org/javapickling/core/Pickler.java)
-
     public interface Pickler<T, PF> {
         PF pickle(T t, PF target) throws IOException;
         T unpickle(PF source) throws IOException;
@@ -65,8 +62,6 @@ such as `string_p()` and `integer_p()`,
 and allows picklers to be expressed more concisely.
 
 ### PicklerCore
-
-[Source code](http://github.com/jon-hanson/javapickling/blob/master/javapickling-core/src/main/java/org/javapickling/core/PicklerCore.java)
 
 A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`,
 where the PF type parameter specifies the pickled format. For example,
@@ -109,7 +104,7 @@ E.g.
         }
     }
 
-If the class in question is more complex
+If the class in question is more complex,
 then the more general approach is to implement the pickler
 as being composed of picklers for each field comprising the class. E.g.:
 
@@ -236,7 +231,7 @@ In progress...
 The library was born out the need for a Java serialisation framework that satisfied the following requirements:
 
 1. Must be Java-based and able to serialise any Java type, including Collections, Enums, and all Generic types.
-1. Multiple target formats must be supportable, with byte arrays and JSON being the inital set of target formats.
+1. Multiple target formats must be supportable, with byte arrays and JSON being the initial set of target formats.
 1. Boilerplate serialisation code for custom classes is acceptable but should be minimal, and should not have to be repeated for each target format.
 1. Serialisers should be composable - it should be possible to express serialisers for classes as being composed of the serialisers for the constituent fields.
 1. Reflection use should be minimised.
@@ -259,5 +254,5 @@ One weekend of coding later I had a working basic implementation.
 1. Unit tests:
     1. More comprehensive tests.
     1. Individual unit tests for picklers.
-1. Reflection based generation of pciklers for classes.
+1. Reflection based generation of picklers for classes.
 1. More Javadocs and general documentation.

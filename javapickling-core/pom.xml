@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.javapickling</groupId>
+        <groupId>org.javafp</groupId>
         <artifactId>javapickling</artifactId>
         <version>0.3-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.javapickling</groupId>
+    <groupId>org.javafp</groupId>
     <artifactId>javapickling-core</artifactId>
     <version>0.3-SNAPSHOT</version>
 
