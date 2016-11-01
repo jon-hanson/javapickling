@@ -16,19 +16,19 @@ The design supports pickling into multiple pickled formats - JSON, XML and byte[
 
 See ByteIOPicklerTest.java and JsonNodePicklerTest.java for example usage,
 however once a PicklerCore set up this illustrates the basic API:
+```java
+void test(House house) {
 
-    void test(House house) {
+    // Create a pickler.
+    Pickler<House, JsonNode> pickler = jsonPickler.object_p(House.class);
 
-        // Create a pickler.
-        Pickler<House, JsonNode> pickler = jsonPickler.object_p(House.class);
+    // Pickle a sample House object into a JsonNode.
+    JsonNode node = pickler.pickle(house, null);
 
-        // Pickle a sample House object into a JsonNode.
-        JsonNode node = pickler.pickle(house, null);
-
-        // Unpickle the JsonNode back into a House.
-        House house2 = pickler.unpickle(node);
-    }
-
+    // Unpickle the JsonNode back into a House.
+    House house2 = pickler.unpickle(node);
+}
+```
 ## Quick Start
 
 1. Add the javapickling jar to your build.
@@ -46,12 +46,12 @@ Since this is based on a combinator framework, picklers are composable.
 In particular, a pickler for a class will be composed of picklers corresponding to the field types of that class.
 
 ### Pickler
-
-    public interface Pickler<T, PF> {
-        PF pickle(T t, PF target) throws IOException;
-        T unpickle(PF source) throws IOException;
-    }
-
+```java
+public interface Pickler<T, PF> {
+    PF pickle(T t, PF target) throws IOException;
+    T unpickle(PF source) throws IOException;
+}
+```
 A class which provides a pickling implementation for a class T implements `Pickler<T, PF>`.
 The `PF` type parameter represents the pickled format type (such as JsonNode),
 and remains a type parameter for the Pickler implementation class.
@@ -65,11 +65,11 @@ and allows picklers to be expressed more concisely.
 
 A class which provides an implementation of pickling to a specific format implements `PicklerCore<PF>`,
 where the PF type parameter specifies the pickled format. For example,
-
-    public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
-        // ...
-    }
-
+```java
+public class JsonPicklerCore extends PicklerCoreBase<JsonNode> {
+    // ...
+}
+```
 Implementations of `PicklerCore<PF>` provide `Pickler<T, PF>`
 implementations for the core types (primitives, collections and enums).
 It also provides the tools required to facilitate implementing picklers for custom classes.
@@ -81,69 +81,69 @@ Picklers for custom classes can take one of two forms.
 If the class in question supports a direct conversion to a core type supported by the PicklerCore, such as `String`,
 then the pickler can delegate directly to the pickler for that type.
 E.g.
+```java
+@DefaultPickler(MyTypePickler.class)
+public class MyType {
+    public MyType(String s) {...}
+    @Override public String toString() {...}
+}
 
-    @DefaultPickler(MyTypePickler.class)
-    public class MyType {
-        public MyType(String s) {...}
-        @Override public String toString() {...}
+public class MyTypePickler<PF> extends PicklerBase<MyType, PF> {
+    public MyTypePickler(PicklerCore<PF> core) {
+        super(core);
     }
 
-    public class MyTypePickler<PF> extends PicklerBase<MyType, PF> {
-        public MyTypePickler(PicklerCore<PF> core) {
-            super(core);
-        }
-
-        @Override
-        public PF pickle(MyType myType, PF target) throws IOException {
-            return string_p().pickle(myType.toString(), target);
-        }
-
-        @Override
-        public MyType unpickle(PF source) throws IOException {
-            return new MyType(string_p().unpickle(source));
-        }
+    @Override
+    public PF pickle(MyType myType, PF target) throws IOException {
+        return string_p().pickle(myType.toString(), target);
     }
 
+    @Override
+    public MyType unpickle(PF source) throws IOException {
+        return new MyType(string_p().unpickle(source));
+    }
+}
+```
 If the class in question is more complex,
 then the more general approach is to implement the pickler
 as being composed of picklers for each field comprising the class. E.g.:
+```java
+@DefaultPickler(MyTypePickler.class)
+public class MyType {
+    public final Integer id;
+    public final String name;
 
-    @DefaultPickler(MyTypePickler.class)
-    public class MyType {
-        public final Integer id;
-        public final String name;
+    public MyType(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
 
-        public MyType(Integer id, String name) {
-            this.id = id;
-            this.name = name;
-        }
+public class MyTypePickler<PF> extends PicklerBase<MyType, PF> {
+    private final Field<Integer, PF> id = field("id", integer_p());
+    private final Field<String, PF> name = field("name", string_p());
+
+    public MyTypePickler(PicklerCore<PF> core) {
+        super(core);
     }
 
-    public class MyTypePickler<PF> extends PicklerBase<MyType, PF> {
-        private final Field<Integer, PF> id = field("id", integer_p());
-        private final Field<String, PF> name = field("name", string_p());
-
-        public MyTypePickler(PicklerCore<PF> core) {
-            super(core);
-        }
-
-        @Override
-        public PF pickle(MyType myType, PF target) throws IOException {
-            final FieldPickler<PF> fp = object_map().pickler(target);
-            fp.field(id, myType.id);
-            fp.field(name, myType.name);
-            return fp.pickle(target);
-        }
-
-        @Override
-        public MyType unpickle(PF source) throws IOException {
-            final FieldUnpickler<PF> fu = object_map().unpickler(source);
-            return new MyType(
-                fu.field(id),
-                fu.field(name));
-        }
+    @Override
+    public PF pickle(MyType myType, PF target) throws IOException {
+        final FieldPickler<PF> fp = object_map().pickler(target);
+        fp.field(id, myType.id);
+        fp.field(name, myType.name);
+        return fp.pickle(target);
     }
 
+    @Override
+    public MyType unpickle(PF source) throws IOException {
+        final FieldUnpickler<PF> fu = object_map().unpickler(source);
+        return new MyType(
+            fu.field(id),
+            fu.field(name));
+    }
+}
+```
 A couple of things to note:
 * The pickler for MyType is expressed in terms of the picklers for the field types which comprise MyType, namely Integer and String.
 * The pickler is independent of the pickled format `PF`.
@@ -152,76 +152,76 @@ A couple of things to note:
 
 The javapickling-json module contains a set of simple classes under the test/java/org/javapickling/tutorial directory.
 The classes are as follows:
+```java
+public class Person implements Comparable<Person> {
+    public final String name;
+    public final boolean isFemale;
+    public final Date dateOfBirth;
 
-    public class Person implements Comparable<Person> {
-        public final String name;
-        public final boolean isFemale;
-        public final Date dateOfBirth;
-
-        public Person(String name, boolean isFemale, Date dateOfBirth) {
-            this.name = name;
-            this.isFemale = isFemale;
-            this.dateOfBirth = dateOfBirth;
-        }
-
-        // ...
+    public Person(String name, boolean isFemale, Date dateOfBirth) {
+        this.name = name;
+        this.isFemale = isFemale;
+        this.dateOfBirth = dateOfBirth;
     }
 
-    public class Team {
-        public enum Role {ANALYST, DEVELOPER, TESTER};
+    // ...
+}
 
-        public final Optional<Person> leader;
-        public final Map<Role, Set<Person>> members;
+public class Team {
+    public enum Role {ANALYST, DEVELOPER, TESTER};
 
-        public Team(Optional<Person> leader, Map<Role, Set<Person>> members) {
-            this.leader = leader;
-            this.members = members;
-        }
+    public final Optional<Person> leader;
+    public final Map<Role, Set<Person>> members;
+
+    public Team(Optional<Person> leader, Map<Role, Set<Person>> members) {
+        this.leader = leader;
+        this.members = members;
     }
-
+}
+```
 The pickler class for `Person` is a generic class
 which is parameterised with a `PF` type parameter and extends `PicklerBase<Person, PF>`:
-
-    public class PersonPickler<PF> extends PicklerBase<Person, PF> {
-
+```java
+public class PersonPickler<PF> extends PicklerBase<Person, PF> {
+```
 `Person` is composed of 3 members, and `PersonPickler` needs a `Field` member for each `Person` member:
-
-        private final Field<String, PF> name = field("name", string_p());
-        private final Field<Boolean, PF> isFemale = field("isFemale", boolean_p());
-        private final Field<Date, PF> dateOfBirth = field("dateOfBirth", object_p(Date.class));
-
+```java
+    private final Field<String, PF> name = field("name", string_p());
+    private final Field<Boolean, PF> isFemale = field("isFemale", boolean_p());
+    private final Field<Date, PF> dateOfBirth = field("dateOfBirth", object_p(Date.class));
+```
 The constructor for `PersonPickler` just takes the `PicklerCore<PF>` and passes it to the base class constructor:
-
-        public PersonPickler(PicklerCore<PF> core) {
-            super(core);
-        }
-
+```java
+    public PersonPickler(PicklerCore<PF> core) {
+        super(core);
+    }
+```
 The `pickle` method is responsible for pickling a `Person` object into the pickled format.
 It does this by requesting a `FieldPickler` and then passing it each of the fields comprising `Person`:
-
-        @Override
-        public PF pickle(Person person, PF target) throws Exception {
-            final FieldPickler<PF> fp = object_map().pickler(target);
-            fp.field(name,          person.name);
-            fp.field(isFemale,      person.isFemale);
-            fp.field(dateOfBirth,   person.dateOfBirth);
-            return fp.pickle(target);
-        }
-
+```java
+    @Override
+    public PF pickle(Person person, PF target) throws Exception {
+        final FieldPickler<PF> fp = object_map().pickler(target);
+        fp.field(name,          person.name);
+        fp.field(isFemale,      person.isFemale);
+        fp.field(dateOfBirth,   person.dateOfBirth);
+        return fp.pickle(target);
+    }
+```
 The `unpickle` method is responsible for unpickling a `Person` object from the pickled format.
 It does this by requesting a `FieldUnpickler` and extracting each field before passing them to the `Person` constructor.
-
-        @Override
-        public Person unpickle(PF source) throws Exception {
-            final FieldUnpickler<PF> fu = object_map().unpickler(source);
-            return new Person(
-                    fu.field(name),
-                    fu.field(isFemale),
-                    fu.field(dateOfBirth)
-                );
-        }
+```java
+    @Override
+    public Person unpickle(PF source) throws Exception {
+        final FieldUnpickler<PF> fu = object_map().unpickler(source);
+        return new Person(
+                fu.field(name),
+                fu.field(isFemale),
+                fu.field(dateOfBirth)
+            );
     }
-
+}
+```
 In progress...
 
 ## History
