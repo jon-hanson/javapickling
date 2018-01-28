@@ -1,6 +1,9 @@
 javapickling
 ============
 
+:warning: *__Note:__ JavaPickling has been superceded by [funcj.codec](
+https://github.com/typemeta/funcj/tree/master/codec).*
+
 **Java Pickling** is a Java framework for pickling Java object and values into target pickled formats,
 and unpickling the results back into the original objects and values.
 "Pickling" essentially means serialisation.
